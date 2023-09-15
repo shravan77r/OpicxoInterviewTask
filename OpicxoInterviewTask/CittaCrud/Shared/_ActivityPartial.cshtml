@@ -1,0 +1,540 @@
+﻿@model List<PropertyERP.Areas.Transactions.Models.ActivityUI>
+
+<input type="hidden" id="ModuleId_hdn" value="" />
+<input type="hidden" id="ActivtiyId_hdn" value="0" />
+<input type="hidden" id="LeadId_hdn" value="0" />
+<input type="hidden" id="LeadStatusId_hdn" value="0" />
+
+<div class="modal fade" id="ActivityModal"  aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Activity</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="fnCloseActivityModal();">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body p-0">
+                <div class="p-3">
+                    <ul class="nav nav-pills mb-3" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link active" onclick="fnLoadActivity(1);" id="tab-1" data-toggle="tab" href="#tab1">
+                                Follow-up (<span class="lblFollowUpCount">0</span>)
+                            </a>
+                        </li>
+                        @if (ViewBag.Page == "Opportunity")
+                        {
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link" onclick="fnLoadActivity(4);" id="tab-4" data-toggle="tab" href="#tab4">
+                                    Site Visit (<span class="lblSiteVisitCount">0</span>)
+                                </a>
+                            </li>
+                        }
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link" onclick="fnLoadActivity(2);" id="tab-2" data-toggle="tab" href="#tab2">
+                                Log a Call (<span class="lblLogACallCount">0</span>)
+                            </a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link" onclick="fnLoadActivity(3);" id="tab-3" data-toggle="tab" href="#tab3">
+                                Task (<span class="lblTaskCount">0</span>)
+                            </a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link" onclick="fnLoadActivity(5);" id="tab-5" data-toggle="tab" href="#tab5">
+                                Activity (<span class="lblLeadActivityCount">0</span>)
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="tab1" role="tabpanel">
+                        <div class="p-3 area-expand">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="form_control_1">
+                                            Subject
+                                            <span class="required">*</span>
+                                        </label>
+                                        @Html.DropDownList("FollowUpSubject", ViewBag.EmptyList as SelectList, "Select Subject", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="form_control_1">
+                                            Assign To
+                                            <span class="required">*</span>
+                                        </label>
+                                        @Html.DropDownList("FollowUpAssignTo", ViewBag.EmptyList as SelectList, "Select Assigned To", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <label>Description</label>
+                                        @Html.TextArea("FollowUpDescription", null, new { @class = "form-control", @placeholder = "Enter Description", @autocomplete = "off", @maxlength = "500" })
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="form_control_1">
+                                            Follow-up Objective
+                                            <span class="required">*</span>
+                                        </label>
+                                        @Html.DropDownList("FollowUpObjective", ViewBag.EmptyList as SelectList, "Select Follow-up Objective", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="form_control_1">
+                                            Next Follow-up Date/Time
+                                            <span class="required">*</span>
+                                        </label>
+                                        <div class="input-group">
+                                            @Html.TextBox("NextFollowUpDate", "", new { @class = "form-control datetimepickeralt datetimepicker-input", @data_toggle = "datetimepicker", @data_target = "#datetimepickeralt", @autocomplete = "off", @onchange = "NextFollowUpDate()" })
+                                            @*<input type="text" class="form-control datetimepickeralt" data-toggle="datetimepicker" data-target="#datetimepickeralt">*@
+                                            <div class="input-group-append">
+                                                <div class="input-group-text"><i class="fas fa-calendar-alt"></i></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <button type="submit" class="btn btn-primary" onclick="fnSubmitActivity(1);">Submit</button>
+                                    <button type="button" class="btn btn-danger" onclick="fnCancelActivity(1);">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-3 bg-light-gray bt-1 output-box">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="output-area">
+                                        <h5 class="mb-2 mt-2"><i class="fas fa-calendar-alt pr-2"></i>Schedule Activity</h5>
+                                        <div class="col-action-button">
+                                            <a href="javascript:;" class="area-expand-button"><i class='fa fa-arrow-up'></i></a>
+                                        </div>
+                                    </div>
+                                    <hr />
+                                </div>
+                                <div id="divFollowUpListPartial" class="col-lg-12">
+                                    @await Html.PartialAsync("_FollowUpListPartial", Model)
+                                </div>
+                            </div>
+                        </div>
+                        <!--<div class="p-3 bg-gray bt-1">
+        <div class="row">
+            <div class="col-lg-12">
+                <h5 class="mb-3 mt-2"><i class="fas fa-calendar-alt pr-2"></i>Schedule Activity</h5>
+            </div>
+            <div id="divFollowUpListPartial" class="col-lg-12">
+                @await Html.PartialAsync("_FollowUpListPartial", Model)
+            </div>
+        </div>
+    </div>-->
+                    </div>
+                    <div class="tab-pane p-3 fade" id="tab2" role="tabpanel">
+                        <div class="p-3 area-expand">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="form_control_1">
+                                            Subject
+                                            <span class="required">*</span>
+                                        </label>
+                                        @Html.DropDownList("LogACallSubject", ViewBag.EmptyList as SelectList, "Select Subject", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="form_control_1">
+                                            Comments
+                                        </label>
+                                        @Html.DropDownList("LogACallComment", ViewBag.EmptyList as SelectList, "Select Comment", new { @class = "form-control" })
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="form_control_1">
+                                            Description
+                                        </label>
+                                        @Html.TextArea("LogACallDescription", null, new { @class = "form-control", @placeholder = "Enter Description", @autocomplete = "off", @maxlength = "500" })
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <button type="submit" class="btn btn-primary" onclick="fnSubmitActivity(2);">Submit</button>
+                                    <button type="button" class="btn btn-danger" onclick="fnCancelActivity(2);">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-3 bg-light-gray bt-1 output-box">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="output-area">
+                                        <h5 class="mb-2 mt-2"><i class="fas fa-calendar-alt pr-2"></i>Call</h5>
+                                        <div class="col-action-button">
+                                            <a href="javascript:;" class="area-expand-button"><i class='fa fa-arrow-up'></i></a>
+                                        </div>
+                                    </div>
+                                    <hr />
+                                </div>
+                                <div id="divLogACallListPartial" class="col-lg-12">
+                                    @await Html.PartialAsync("_LogACallListPartial", Model)
+                                </div>
+                            </div>
+                        </div>
+                        <!--<div class="p-3 bg-gray bt-1">
+        <div class="row">
+            <div class="col-lg-12">
+                <h5 class="mb-3 mt-2"><i class="fas fa-calendar-alt pr-2"></i>Call</h5>
+            </div>
+            <div id="divLogACallListPartial" class="col-lg-12">
+                @await Html.PartialAsync("_LogACallListPartial", Model)
+            </div>
+        </div>
+    </div>-->
+                    </div>
+                    <div class="tab-pane p-3 fade" id="tab3" role="tabpanel">
+                        <div class="p-3 area-expand">
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label for="form_control_1">
+                                            Task
+                                            <span class="required">*</span>
+                                        </label>
+                                        @Html.DropDownList("Task", ViewBag.EmptyList as SelectList, "Select Task", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                @*<div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="form_control_1">
+                                            Subtask
+                                            <span class="required">*</span>
+                                        </label>
+                                        @Html.DropDownList("SubTask", ViewBag.EmptyList as SelectList, "Select Subtask", new { @class = "form-control" })
+                                    </div>
+                                </div>*@
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label for="form_control_1">
+                                            Start Date Time
+                                        </label>
+                                        <div class="input-group">
+                                            @Html.TextBox("StartDate", "", new { @class = "form-control datetimepickeralt datetimepicker-input", @data_toggle = "datetimepicker", @data_target = "#datetimepickeralt", @onchange = "FromDateToDate()", @onblur = "FromDateToDate()" })
+                                            <div class="input-group-append">
+                                                <div class="input-group-text"><i class="fas fa-calendar-alt"></i></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label for="form_control_1">
+                                            End Date Time
+                                        </label>
+                                        <div class="input-group">
+                                            @Html.TextBox("EndDate", "", new { @class = "form-control datetimepickeralt datetimepicker-input", @data_toggle = "datetimepicker", @data_target = "#datetimepickeralt", @onchange = "FromDateToDate()", @onblur = "FromDateToDate()" })
+                                            <div class="input-group-append">
+                                                <div class="input-group-text"><i class="fas fa-calendar-alt"></i></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <label for="form_control_1">
+                                            Task Detail
+                                            <span class="required">*</span>
+                                        </label>
+                                        @Html.TextArea("TaskDetails", null, new { @class = "form-control", @placeholder = "Enter Task Details", @autocomplete = "off", @maxlength = "500" })
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="form_control_1">
+                                            Assign To
+                                            <span class="required">*</span>
+                                        </label>
+                                        @Html.DropDownList("TaskTo", ViewBag.EmptyList as SelectList, "Select Assigned To", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="form_control_1">
+                                            Planned Hours
+                                            <span class="required">*</span>
+                                        </label>
+                                        @Html.TextBox("PlannedHours", null, new { @class = "form-control num", @placeholder = "Enter Planned Hours", @autocomplete = "off", @maxlength = "10" })
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="form_control_1">
+                                            Actual Hours
+                                            <span class="required">*</span>
+                                        </label>
+                                        @Html.TextBox("ActualHours", null, new { @class = "form-control num", @placeholder = "Enter Actual Hours", @autocomplete = "off", @maxlength = "10" })
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="form_control_1">
+                                            Task Status
+                                            <span class="required">*</span>
+                                        </label>
+                                        @Html.DropDownList("TaskActivityStatus", ViewBag.EmptyList as SelectList, "Select Task Status", new { @class = "form-control" })
+                                        @*<select class="form-control" id="TaskActivityStatus" name="TaskActivityStatus">
+                            <option value="1">Active</option>
+                            <option value="2">In Progress</option>
+                            <option value="3">Paused</option>
+                            <option value="4">Completed</option>
+                            <option value="5">Failed</option>
+                        </select>*@
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <button type="submit" class="btn btn-primary" onclick="fnSubmitActivity(3);">Submit</button>
+                                    <button type="button" class="btn btn-danger" onclick="fnCancelActivity(3);">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-3 bg-light-gray bt-1 output-box">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="output-area">
+                                        <h5 class="mb-2 mt-2"><i class="fas fa-calendar-alt pr-2"></i>Task</h5>
+                                        <div class="col-action-button">
+                                            <a href="javascript:;" class="area-expand-button"><i class='fa fa-arrow-up'></i></a>
+                                        </div>
+                                    </div>
+                                    <hr />
+                                </div>
+                                <div id="divTaskListPartial" class="col-lg-12">
+                                    @await Html.PartialAsync("_TaskListPartial", Model)
+                                </div>
+                            </div>
+                        </div>
+                        <!--<div class="p-3 bg-gray bt-1">
+        <div class="row">
+            <div class="col-lg-12">
+                <h5 class="mb-3 mt-2"><i class="fas fa-calendar-alt pr-2"></i>Task</h5>
+            </div>
+            <div id="divTaskListPartial" class="col-lg-12">
+                @await Html.PartialAsync("_TaskListPartial", Model)
+            </div>
+        </div>
+    </div>-->
+                    </div>
+                    <div class="tab-pane fade" id="tab4" role="tabpanel">
+                        <div class="p-3 area-expand">
+                            <div class="row">
+                                <div class="col-xl-6">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label>Property<span class="required">*</span></label>
+                                                @Html.DropDownList("SitevisitPropertyId", ViewBag.EmptyList as SelectList, "Select Property", new { @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label>Assign To</label>
+                                                <label for="form_control_1">
+                                                    Site Visit By
+                                                    <span class="required">*</span>
+                                                </label>
+                                                @Html.DropDownList("SiteVisitAssignTo", ViewBag.EmptyList as SelectList, "Select Employee", new { @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <label>Description</label>
+                                                @Html.TextArea("SiteVisitDescription", null, new { @class = "form-control", @placeholder = "Enter Description", @autocomplete = "off", @maxlength = "500" })
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <div class="form-group">
+                                                <label>Status<span class="required">*</span></label>
+                                                <select class="form-control" id="SiteVisitStatus">
+                                                    <option value="0">Select Status</option>
+                                                    <option value="1">Pending</option>
+                                                    <option value="2">Complete</option>
+                                                    <option value="3">Cancelled</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <div class="form-group">
+                                                <label>Next Site Visit Plan<span class="required">*</span></label>
+                                                <div class="input-group">
+                                                    @Html.TextBox("NextSiteVisitPlan", "", new { @class = "form-control datetimepickeralt datetimepicker-input", @data_toggle = "datetimepicker", @data_target = "#datetimepickeralt", @autocomplete = "off", @onchange = "NextSiteVisitPlanDate()" })
+                                                    <div class="input-group-append">
+                                                        <div class="input-group-text"><i class="fas fa-calendar-alt"></i></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-6">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label>Interested Project</label>
+                                                @Html.TextBox("SiteVisitInterestedProject", null, new { @class = "form-control", @placeholder = "Enter Interested Project", @autocomplete = "off", @maxlength = "100" })
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label>Max Budget (₹)</label>
+                                                @Html.TextBox("SiteVisitMaxBudget", null, new { @class = "form-control num", @placeholder = "Enter Max Budget (₹)", @autocomplete = "off", @maxlength = "10" })
+                                            </div>
+                                        </div>
+                                        @*<div class="col-lg-6">
+                            <div class="form-group">
+                                <label>BHK</label>
+                                <select class="form-control">
+                                    <option value="0">Select BHK</option>
+                                    <option value="1">1 BHK</option>
+                                    <option value="2">2 BHK</option>
+                                    <option value="3">3 BHK</option>
+                                    <option value="4">4 BHK</option>
+                                    <option value="5">5 BHK</option>
+                                    <option value="6">6 BHK</option>
+                                </select>
+                            </div>
+                        </div>*@
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <label>Remarks</label>
+                                                @Html.TextArea("SiteVisitRemarks", null, new { @class = "form-control", @placeholder = "Enter Remarks", @autocomplete = "off", @maxlength = "500" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <button type="submit" class="btn btn-primary" onclick="fnSubmitActivity(4);">Submit</button>
+                                    <button type="button" class="btn btn-danger" onclick="fnCancelActivity(4);">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-3 bg-light-gray bt-1 output-box">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="output-area">
+                                        <h5 class="mb-2 mt-2"><i class="fas fa-calendar-alt pr-2"></i>Site Visit</h5>
+                                        <div class="col-action-button">
+                                            <a href="javascript:;" class="area-expand-button"><i class='fa fa-arrow-up'></i></a>
+                                        </div>
+                                    </div>
+                                    <hr />
+                                </div>
+                                <div id="divSiteVisitListPartial" class="col-lg-12">
+                                    @await Html.PartialAsync("_SiteVisitListPartial", Model)
+                                </div>
+                            </div>
+                        </div>
+                        <!--<div class="p-3 bg-gray bt-1">
+        <div id="divSiteVisitListPartial">
+            @await Html.PartialAsync("_SiteVisitListPartial", Model)
+        </div>
+    </div>-->
+                    </div>
+                    <div class="tab-pane fade" id="tab5" role="tabpanel">
+                        <div class="p-3 area-expand">
+                            <div class="row">
+                                <div class="col-xl-12">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label>Current Date Time</label>
+                                                <div class="input-group">
+                                                    @Html.TextBox("ActivityDateTime", "", new { @class = "form-control datetimepickeralt datetimepicker-input", @data_toggle = "datetimepicker", @data_target = "#datetimepickeralt", @disabled = "disabled" })
+                                                    <div class="input-group-append">
+                                                        <div class="input-group-text"><i class="fas fa-calendar-alt"></i></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label>Activity By</label>
+                                                @Html.DropDownList("ActivityById", ViewBag.EmptyList as SelectList, "Select Employee", new { @class = "form-control", @disabled = "disabled" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-12">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label>Stage <span class="required">*</span></label>
+                                                @Html.DropDownList("ActivityStageId", ViewBag.EmptyList as SelectList, "Select Stage", new { @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label>Remarks</label>
+                                                @Html.TextArea("ActivityRemarks", null, new { @class = "form-control", @placeholder = "Enter Remarks", @autocomplete = "off", @maxlength = "500" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <button type="submit" class="btn btn-primary" onclick="fnSubmitActivity(5);">Submit</button>
+                                    <button type="button" class="btn btn-danger" onclick="fnCancelActivity(5);">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-3 bg-light-gray bt-1 output-box">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="output-area">
+                                        <h5 class="mb-2 mt-2"><i class="fas fa-calendar-alt pr-2"></i>Site Visit</h5>
+                                        <div class="col-action-button">
+                                            <a href="javascript:;" class="area-expand-button"><i class='fa fa-arrow-up'></i></a>
+                                        </div>
+                                    </div>
+                                    <hr />
+                                </div>
+                                <div id="divLeadActivityListPartial" class="col-lg-12">
+                                    @await Html.PartialAsync("_LeadActivityListPartial", Model)
+                                </div>
+                            </div>
+                        </div>
+                        <!--<div class="p-3 bg-gray bt-1">
+        <div id="divLeadActivityListPartial">
+            @await Html.PartialAsync("_LeadActivityListPartial", Model)
+        </div>
+    </div>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/Transactions/Content/js/Activity/Activity.js?version=0.2"></script>
+
+<script>
+    var toggle = false;
+    $(document).ready(function () {
+        $(".area-expand-button").click(function () {
+            toggle = !toggle;
+            if (toggle) {
+                $(".area-expand").hide();
+                $(".area-expand-button").html("<i class='fa fa-arrow-down'></i>");
+            } else {
+                $(".area-expand").show();
+                $(".area-expand-button").html("<i class='fa fa-arrow-up'></i>");
+            }
+        
+        });
+      
+    });
+</script>

@@ -1,0 +1,62 @@
+﻿@model OpicxoInterviewTask.Models.Person
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+@using (Html.BeginForm("Index", "Home", FormMethod.Post, new { @class = "needs-validation", @novalidate = "", enctype = "multipart/form-data", id = "myform" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    @Html.HiddenFor(model => model.Id)
+    <fieldset>
+        <legend>Person</legend>
+
+        <div class="editor-label">
+            Person Name*
+        </div>
+        <div class="editor-field">
+            @Html.TextBoxFor(model => model.PersonName, new { @maxlength = "100"})
+            @Html.ValidationMessageFor(model => model.PersonName)
+        </div>
+
+        <div class="editor-label">
+            Weight*
+        </div>
+        <div class="editor-field">
+            @Html.TextBoxFor(model => model.PersonWeight, new { @maxlength = "10" })
+            @Html.ValidationMessageFor(model => model.PersonWeight)
+        </div>
+
+        <div class="editor-label">
+            Height*
+        </div>
+        <div class="editor-field">
+            @Html.TextBoxFor(model => model.PersonHeight, new { @maxlength = "10"})
+            @Html.ValidationMessageFor(model => model.PersonHeight)
+        </div>
+
+        <div class="editor-label">
+            Gender
+        </div>
+        <div class="editor-field">
+            @Html.RadioButtonFor(model => model.Gender, 1)<span>Male</span>
+            @Html.RadioButtonFor(model => model.Gender, 2)<span>Female</span>
+            @Html.ValidationMessageFor(model => model.Gender)
+        </div>        
+        <p>
+            <input type="submit" value="Save" />
+        </p>
+    </fieldset>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "List")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

@@ -1,0 +1,770 @@
+﻿@model PropertyERP.Areas.Transactions.Models.LeadUI;
+@using PropertyERP.Common;
+@using Newtonsoft.Json;
+@{
+    ViewBag.Title = "Lead";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<!-- Header :: Start -->
+<div class="header-area">
+    <div class="card">
+        <div class="card-header bb-0">
+            <div class="card-header-title">
+                <h4>Lead Information</h4>
+                <div class="header-breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="@Url.Action("Dashboard","Home", new { Area = "Transactions"})"><i data-feather="home"></i></a></li>
+                        <li class="breadcrumb-item"><a href="@Url.Action("Lead","Home", new { Area = "Transactions"})">Lead</a></li>
+                        <li class="breadcrumb-item active">Lead Information</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Header :: End -->
+<!-- Main Area :: Start -->
+@using (Html.BeginForm("Form", "Lead", FormMethod.Post, new { @class = "needs-validation", @novalidate = "", enctype = "multipart/form-data", id = "myform", Area = "Transactions" }))
+{
+    @Html.HiddenFor(o => o.Id)
+    @Html.HiddenFor(o => o.AutoNo)
+    @Html.HiddenFor(o => o.No)
+    @Html.HiddenFor(o => o.PreFix)
+    @Html.HiddenFor(o => o.PostFix)
+    @Html.HiddenFor(o => o.PI)
+    @Html.HiddenFor(o => o.PS)
+    @Html.HiddenFor(o => o.ViewType)
+    @Html.HiddenFor(o => o.IsOpprtunity)
+    @Html.HiddenFor(o => o.IsAllowEdit, new { @id = "AllowEdit" })
+    <section class="main-area-section">
+        <div class="card">
+            <div class="card-header">
+                <h4>Quick Info</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-xl-3 col-md-6">
+                        <div class="form-group">
+                            <label>Lead ID</label>
+                            <span class="required text-danger">*</span>
+                            @Html.TextBoxFor(o => o.LeadNo, new { @class = "form-control", @placeholder = "Enter Lead No", @id = "LeadNo", @Readonly = "readonly" })
+                            @Html.ValidationMessageFor(o => o.LeadNo, "", new { @class = "help-block text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="form-group">
+                            <label>Lead Date</label>
+                            <span class="required text-danger">*</span>
+                            <div class="input-group">
+                                @Html.TextBoxFor(o => o.QuickLeadDate, new { @class = "form-control datetimepicker-input datetimepicker1 LeadDate", @placeholder = "DD/MM/YYYY", @data_toggle = "datetimepicker", @data_target = "#datetimepicker1", @onchange = "QuickLeadDateIndexChanged()" })
+                                <div class="input-group-append">
+                                    <div class="input-group-text"><i class="fas fa-calendar-alt"></i></div>
+                                </div>
+                            </div>
+                            @Html.ValidationMessageFor(o => o.QuickLeadDate, "", new { @class = "help-block text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="form-group">
+                            <label>Lead Business Type</label>
+                            <span class="required text-danger">*</span> <span data-toggle="tooltip" data-placement="top" title="Choose the lead's business requirement"><i class="fas fa-info-circle"></i></span>
+                            @Html.DropDownListFor(m => m.QuickPropertyForIdUI, new SelectList(Model.PropertyForId, "Key", "Value"), "Select Business Type", new { @class = "form-control select2 PropertyForIdUI", @title = "Choose the lead's business requirement" })
+                            <input id="PropertyForId_hdn" class="PropertyForId_hdn" value="@JsonConvert.SerializeObject(Model.PropertyForId)" type="hidden" />
+                            @Html.ValidationMessageFor(o => o.QuickPropertyForIdUI, "", new { @class = "help-block text-danger" })
+
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="form-group">
+                            <label>Property Category</label>
+                            <span class="required text-danger">*</span> <span data-toggle="tooltip" data-placement="top" title="Choose the relevant category for the property"><i class="fas fa-info-circle"></i></span>
+                            @Html.DropDownListFor(m => m.QuickPropertyCategoryIdsUI, new SelectList(Model.PropertyCategoryIds, "Key", "Value"), "Select Property Category", new { @class = "form-control select2 PropertyCategoryIdsUI" })
+                            <input id="PropertyCategoryIds_hdn" class="PropertyCategoryIds_hdn" value="@JsonConvert.SerializeObject(Model.PropertyCategoryIds)" type="hidden" />
+                            @Html.ValidationMessageFor(o => o.QuickPropertyCategoryIdsUI, "", new { @class = "help-block text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="form-group">
+                            <label>First Name</label>
+                            <span class="required text-danger">*</span>
+                            @Html.TextBoxFor(o => o.FirstName, new { @class = "form-control FirstName", @placeholder = "Enter First Name", @id = "FirstName", @maxlength = "50" })
+                            @Html.ValidationMessageFor(o => o.FirstName, "", new { @class = "help-block text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="form-group">
+                            <label>Last Name</label>
+                            @*<span class="required text-danger">*</span>*@
+                            @Html.TextBoxFor(o => o.LastName, new { @class = "form-control LastName", @placeholder = "Enter Last Name", @id = "LastName", @maxlength = "50" })
+                            @Html.ValidationMessageFor(o => o.LastName, "", new { @class = "help-block text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="form-group">
+                            <label>Mobile No.</label>
+                            <span class="required text-danger">*</span>
+                            @Html.TextBoxFor(o => o.MobileNo, new { @class = "form-control numM MobileNo", @placeholder = "Enter Mobile  No.", @autocomplete = "off", @maxlength = AppConstantUI.MobileNoMaxLength })
+                            @Html.ValidationMessageFor(o => o.MobileNo, "", new { @class = "help-block text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="form-group">
+                            <label>Email</label>
+                            @*<span class="required text-danger">*</span>*@
+                            @Html.TextBoxFor(o => o.Email, new { @class = "form-control Email", @placeholder = "Enter Email", @id = "Email" })
+                            @Html.ValidationMessageFor(o => o.Email, "", new { @class = "help-block text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="form-group">
+                            <label>Country</label>
+                            <span class="required text-danger">*</span>
+                            @Html.DropDownListFor(m => m.QuickCountryIdUI, new SelectList(Model.CountryId, "Key", "Value"), "Select Country", new { @class = "form-control select2 CountryIdUI" })
+                            <input id="CountryId_hdn" class="CountryId_hdn" value="@JsonConvert.SerializeObject(Model.CountryId)" type="hidden" />
+                            @Html.ValidationMessageFor(o => o.QuickCountryIdUI, "", new { @class = "help-block text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="form-group">
+                            <label>State</label>
+                            <span class="required text-danger">*</span>
+                            @Html.DropDownListFor(m => m.QuickStateIdUI, new SelectList(Model.StateId, "Key", "Value"), "Select State", new { @class = "form-control select2 StateIdUI" })
+                            <input id="StateId_hdn" class="StateId_hdn" value="@JsonConvert.SerializeObject(Model.StateId)" type="hidden" />
+                            @Html.ValidationMessageFor(o => o.QuickStateIdUI, "", new { @class = "help-block text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="form-group">
+                            <label>City</label>
+                            <span class="required text-danger">*</span>
+                            @Html.DropDownListFor(m => m.QuickCityIdUI, new SelectList(Model.CityId, "Key", "Value"), "Select City", new { @class = "form-control select2 CityIdUI" })
+                            <input id="CityId_hdn" class="CityId_hdn" value="@JsonConvert.SerializeObject(Model.CityId)" type="hidden" />
+                            @Html.ValidationMessageFor(o => o.QuickCityIdUI, "", new { @class = "help-block text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="form-group">
+                            <label>Area/Locality</label>
+                            <span class="required text-danger">*</span>
+                            @Html.DropDownListFor(m => m.QuickAreaIdUI, new SelectList(Model.AreaIds, "Key", "Value"), new { @class = "form-control select2 AreaIdUI", @onchange = "QuickAreaSelectedIndexChanged()" })
+                            <input id="AreaIds_hdn" class="AreaIds_hdn" name="AreaIds_hdn" value="@Model.AreaIds_hdn" type="hidden" />
+                            @Html.ValidationMessageFor(o => o.QuickAreaIdUI, "", new { @class = "help-block text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="form-group">
+                            <label>Requirements</label>
+                            <span class="required text-danger">*</span>
+                            @Html.TextAreaFor(o => o.Requirement, new { @class = "form-control Requirement", @placeholder = "Enter Requirements", @id = "Requirement", @maxlength = "300" })
+                            @Html.ValidationMessageFor(o => o.Requirement, "", new { @class = "help-block text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="form-group">
+                            <label>Lead Source</label> <span data-toggle="tooltip" data-placement="top" title="Choose the source of how your lead discover the business"><i class="fas fa-info-circle"></i></span>
+                            @*<span class="required text-danger">*</span>*@
+                            @Html.DropDownListFor(m => m.QuickLeadSourceIdUI, new SelectList(Model.LeadSourceId, "Key", "Value"), "Select Lead Source", new { @class = "form-control select2 LeadSourceIdUI", @title = "Choose the source of how your lead discover the business" })
+                            <input id="LeadSourceId_hdn" class="LeadSourceId_hdn" value="@JsonConvert.SerializeObject(Model.LeadSourceId)" type="hidden" />
+                            @Html.ValidationMessageFor(o => o.QuickLeadSourceIdUI, "", new { @class = "help-block text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6 PropertyCategoryHideShow">
+                        <div class="form-group">
+                            <label>Residential Structures</label>
+                            <span class="required text-danger">*</span> <span data-toggle="tooltip" data-placement="top" title="Choose the space division for the property"><i class="fas fa-info-circle"></i></span>
+                            @Html.DropDownListFor(m => m.QuickBHKIdsUI, new SelectList(Model.BHKs, "Key", "Value"), new { @class = "form-control select2 BHKIdsUI", @onchange = "QuickBHKSelectedIndexChanged()" })
+                            <input id="BHKIds_hdn" class="BHKIds_hdn" name="BHKIds_hdn" value="@Model.BHKIds_hdn" type="hidden" />
+                            @Html.ValidationMessageFor(o => o.QuickBHKIdsUI, "", new { @class = "help-block text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6 PropertyCategoryHideShow">
+                        <div class="form-group">
+                            <label>Tenant/Buyer Preference</label> <span data-toggle="tooltip" data-placement="top" title="Choose the Owner's tenant/buyer preference"><i class="fas fa-info-circle"></i></span>
+                            @*<span class="required text-danger">*</span>*@
+                            @Html.DropDownListFor(m => m.QuickAvailableForIdUI, new SelectList(Model.AvailableForIds, "Key", "Value"), "Select Tenant/Buyer Preference", new { @class = "form-control select2 AvailableForIdUI", @title = "Choose the Owner's tenant/buyer preference" })
+                            <input id="AvailableForIds_hdn" class="AvailableForIds_hdn" value="@JsonConvert.SerializeObject(Model.AvailableForIds)" type="hidden" />
+                            @Html.ValidationMessageFor(o => o.QuickAvailableForIdUI, "", new { @class = "help-block text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="form-group">
+                            <label>Budget(₹)</label>
+                            <div class="d-flex d-block-input">
+                                @Html.TextBoxFor(o => o.BudgetFrom, new { @class = "form-control num BudgetFrom", @placeholder = "Enter Budget From", @maxlength = "12" })
+                                @Html.ValidationMessageFor(o => o.BudgetFrom, "", new { @class = "help-block text-danger" })
+                                <div class="form-divider">-</div>
+                                @Html.TextBoxFor(o => o.BudgetTo, new { @class = "form-control num BudgetTo", @placeholder = "Enter Budget To", @maxlength = "12" })
+                                @Html.ValidationMessageFor(o => o.BudgetTo, "", new { @class = "help-block text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="form-group">
+                            <label>Furnished Status</label>
+                            <span class="required text-danger">*</span> <span data-toggle="tooltip" data-placement="top" title="Choose the current furnished status of property"><i class="fas fa-info-circle"></i></span>
+                            @Html.DropDownListFor(m => m.QuickFurnishStatusIdsUI, new SelectList(Model.FurnishStatusIds, "Key", "Value"), new { @class = "form-control select2 FurnishStatusIdsUI", @onchange = "QuickFurnishStatusSelectedIndexChanged()" })
+                            <input id="FurnishStatusIds_hdn" class="FurnishStatusIds_hdn" name="FurnishStatusIds_hdn" value="@Model.FurnishStatusIds_hdn" type="hidden" />
+                            @Html.ValidationMessageFor(o => o.QuickFurnishStatusIdsUI, "", new { @class = "help-block text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-xl-12 col-md-12">
+                        <div class="form-group text-right">
+                            <a href="javascript:;" class="text-bold-500 text-decoration-underline btn-advance-detail" id="showAdvanceMore">Show Advance Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="advance-more" style="display:none;">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Lead Details</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-3 col-md-6">
+                            <div class="form-group">
+                                <label>Lead ID</label>
+                                <span class="required text-danger">*</span>
+                                @Html.TextBoxFor(o => o.LeadNo, new { @class = "form-control", @placeholder = "Enter Lead No", @id = "LeadNo", @Readonly = "readonly" })
+                                @Html.ValidationMessageFor(o => o.LeadNo, "", new { @class = "help-block text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="form-group">
+                                <label>Lead Date</label>
+                                <span class="required text-danger">*</span>
+                                <div class="input-group">
+                                    @Html.TextBoxFor(o => o.LeadDate, new { @class = "form-control datetimepicker-input datetimepicker1 LeadDate", @placeholder = "DD/MM/YYYY", @data_toggle = "datetimepicker", @data_target = "#datetimepicker1", @onchange = "LeadDateIndexChanged()" })
+                                    <div class="input-group-append">
+                                        <div class="input-group-text"><i class="fas fa-calendar-alt"></i></div>
+                                    </div>
+                                </div>
+                                @Html.ValidationMessageFor(o => o.LeadDate, "", new { @class = "help-block text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="form-group">
+                                <label>Lead Business Type</label>
+                                <span class="required text-danger">*</span> <span data-toggle="tooltip" data-placement="top" title="Choose the lead's business requirement"><i class="fas fa-info-circle"></i></span>
+                                @Html.DropDownListFor(m => m.PropertyForIdUI, new SelectList(Model.PropertyForId, "Key", "Value"), "Select Business Type", new { @class = "form-control select2 PropertyForIdUI", @title = "Choose the lead's business requirement" })
+                                <input id="PropertyForId_hdn" class="PropertyForId_hdn" value="@JsonConvert.SerializeObject(Model.PropertyForId)" type="hidden" />
+                                @Html.ValidationMessageFor(o => o.PropertyForIdUI, "", new { @class = "help-block text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="form-group">
+                                <label>Property Category</label>
+                                <span class="required text-danger">*</span> <span data-toggle="tooltip" data-placement="top" title="Choose the relevant category for the property"><i class="fas fa-info-circle"></i></span>
+                                @Html.DropDownListFor(m => m.PropertyCategoryIdsUI, new SelectList(Model.PropertyCategoryIds, "Key", "Value"), "Select Property Category", new { @class = "form-control select2 PropertyCategoryIdsUI" })
+                                <input id="PropertyCategoryIds_hdn" class="PropertyCategoryIds_hdn" value="@JsonConvert.SerializeObject(Model.PropertyCategoryIds)" type="hidden" />
+                                @Html.ValidationMessageFor(o => o.PropertyCategoryIdsUI, "", new { @class = "help-block text-danger" })
+                                @Html.HiddenFor(m => m.PropertyCategoryNameHidden)
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="form-group">
+                                <label>Property Subcategory</label> <span data-toggle="tooltip" data-placement="top" title="Choose the relevant sub-category for the property"><i class="fas fa-info-circle"></i></span>
+                                @*<span class="required text-danger">*</span>*@
+                                @Html.DropDownListFor(m => m.PropertySubcategoryIdsUI, new SelectList(Model.PropertySubcategoryIds, "Key", "Value"), new { @class = "form-control select2", @onchange = "SubcategorySelectedIndexChanged()" })
+                                <input id="PropertySubcategoryIds_hdn" name="PropertySubcategoryIds_hdn" value="@Model.PropertySubcategoryIds_hdn" type="hidden" />
+                                @Html.ValidationMessageFor(o => o.PropertySubcategoryIdsUI, "", new { @class = "help-block text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="form-group form-checkbox">
+                                <div class="custom-control custom-checkbox">
+                                    @Html.CheckBoxFor(m => m.IsBrokerInvolved, new { @class = "custom-control-input", @id = "IsBrokerInvolved" })
+                                    <label class="custom-control-label" for="IsBrokerInvolved">Broker Involved</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6 IsLoanRequired">
+                            <div class="form-group form-checkbox">
+                                <div class="custom-control custom-checkbox">
+                                    @Html.CheckBoxFor(m => m.IsLoanRequired, new { @class = "custom-control-input", @id = "IsLoanRequired" })
+                                    <label class="custom-control-label" for="IsLoanRequired">Loan Required</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="form-group">
+                                <label>Preferred Project</label>
+                                @Html.DropDownListFor(m => m.PreferredProjectIdsUI, new SelectList(Model.PreferredProjectIds, "Key", "Value"), new { @class = "form-control select2", @onchange = "PreferredProjectSelectedIndexChanged()" })
+                                <input id="PreferredProjectIds_hdn" name="PreferredProjectIds_hdn" value="@Model.PreferredProjectIds_hdn" type="hidden" />
+                                @Html.ValidationMessageFor(o => o.PreferredProjectIdsUI, "", new { @class = "help-block text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="form-group">
+                                <label>Possession Date</label>
+                                <div class="input-group">
+                                    @Html.TextBoxFor(o => o.PossessionDateFrom, new { @class = "form-control daterange", @placeholder = "DD/MM/YYYY" })
+                                    @*<input type="text" class="form-control daterange">*@
+                                    <div class="input-group-append">
+                                        <div class="input-group-text"><i class="fas fa-calendar-alt"></i></div>
+                                    </div>
+                                </div>
+                                @Html.ValidationMessageFor(o => o.PossessionDateFrom, "", new { @class = "help-block text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="form-group">
+                                <label>Housing Segments</label> <span data-toggle="tooltip" data-placement="top" title="Choose the lead's financial affordability"><i class="fas fa-info-circle"></i></span>
+                                @*<span class="required text-danger">*</span>*@
+                                @Html.DropDownListFor(m => m.PropertyZoneIdUI, new SelectList(Model.PropertyZoneIds, "Key", "Value"), "Select Housing Segments", new { @class = "form-control select2", @title = "Choose the lead's financial affordability" })
+                                <input id="PropertyZoneIds_hdn" value="@JsonConvert.SerializeObject(Model.PropertyZoneIds)" type="hidden" />
+                                @Html.ValidationMessageFor(o => o.PropertyZoneIdUI, "", new { @class = "help-block text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h4>Contact Details</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-3 col-md-6">
+                            <div class="form-group">
+                                <label>Salutation</label>
+                                @*<span class="required text-danger">*</span>*@
+                                @Html.DropDownListFor(m => m.SalutationUI, new SelectList(Model.Salutation, "Key", "Value"), "Select Salutation", new { @class = "form-control select2" })
+                                <input id="Salutation_hdn" value="@JsonConvert.SerializeObject(Model.Salutation)" type="hidden" />
+                                @Html.ValidationMessageFor(o => o.SalutationUI, "", new { @class = "help-block text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="form-group">
+                                <label>First Name</label>
+                                <span class="required text-danger">*</span>
+                                @Html.TextBoxFor(o => o.FirstName, new { @class = "form-control FirstName", @placeholder = "Enter First Name", @id = "FirstName", @maxlength = "50" })
+                                @Html.ValidationMessageFor(o => o.FirstName, "", new { @class = "help-block text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="form-group">
+                                <label>Last Name</label>
+                                @*<span class="required text-danger">*</span>*@
+                                @Html.TextBoxFor(o => o.LastName, new { @class = "form-control LastName", @placeholder = "Enter Last Name", @id = "LastName", @maxlength = "50" })
+                                @Html.ValidationMessageFor(o => o.LastName, "", new { @class = "help-block text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="form-group">
+                                <label>Mobile No.</label>
+                                <span class="required text-danger">*</span>
+                                @Html.TextBoxFor(o => o.MobileNo, new { @class = "form-control numM MobileNo", @placeholder = "Enter Mobile  No.", @autocomplete = "off", @maxlength = AppConstantUI.MobileNoMaxLength })
+                                @Html.ValidationMessageFor(o => o.MobileNo, "", new { @class = "help-block text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="form-group">
+                                <label>Email</label>
+                                @*<span class="required text-danger">*</span>*@
+                                @Html.TextBoxFor(o => o.Email, new { @class = "form-control Email", @placeholder = "Enter Email", @id = "Email" })
+                                @Html.ValidationMessageFor(o => o.Email, "", new { @class = "help-block text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="form-group">
+                                <label>Alt. Mobile No.</label>
+                                @Html.TextBoxFor(o => o.MobileNo2, new { @class = "form-control numM", @placeholder = "Enter Alt. Mobile No.", @autocomplete = "off", @maxlength = AppConstantUI.MobileNoMaxLength })
+                                @Html.ValidationMessageFor(o => o.MobileNo2, "", new { @class = "help-block text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="form-group">
+                                <label>Birth Date</label>
+                                <div class="input-group">
+                                    @Html.TextBoxFor(o => o.BirthDate, new { @class = "form-control datetimepicker-input datetimepicker2", @placeholder = "DD/MM/YYYY", @data_toggle = "datetimepicker", @data_target = "#datetimepicker2", @autocomplete = "off", @onchange = "AnniversaryDateChanged()" })
+                                    <div class="input-group-append">
+                                        <div class="input-group-text"><i class="fas fa-calendar-alt"></i></div>
+                                    </div>
+                                </div>
+                                @Html.ValidationMessageFor(o => o.BirthDate, "", new { @class = "help-block text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="form-group">
+                                <label>Anniversary Date</label>
+                                <div class="input-group">
+                                    @Html.TextBoxFor(o => o.AnniversaryDate, new { @class = "form-control datetimepicker-input datetimepicker2", @placeholder = "DD/MM/YYYY", @data_toggle = "datetimepicker", @data_target = "#datetimepicker2", @autocomplete = "off", @onchange = "AnniversaryDateChanged()" })
+                                    <div class="input-group-append">
+                                        <div class="input-group-text"><i class="fas fa-calendar-alt"></i></div>
+                                    </div>
+                                </div>
+                                @Html.ValidationMessageFor(o => o.AnniversaryDate, "", new { @class = "help-block text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h4>Location Preference</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-3 col-md-6">
+                            <div class="form-group">
+                                <label>Country</label>
+                                <span class="required text-danger">*</span>
+                                @Html.DropDownListFor(m => m.CountryIdUI, new SelectList(Model.CountryId, "Key", "Value"), "Select Country", new { @class = "form-control select2 CountryIdUI" })
+                                <input id="CountryId_hdn" class="CountryId_hdn" value="@JsonConvert.SerializeObject(Model.CountryId)" type="hidden" />
+                                @Html.ValidationMessageFor(o => o.CountryIdUI, "", new { @class = "help-block text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="form-group">
+                                <label>State</label>
+                                <span class="required text-danger">*</span>
+                                @Html.DropDownListFor(m => m.StateIdUI, new SelectList(Model.StateId, "Key", "Value"), "Select State", new { @class = "form-control select2 StateIdUI" })
+                                <input id="StateId_hdn" class="StateId_hdn" value="@JsonConvert.SerializeObject(Model.StateId)" type="hidden" />
+                                @Html.ValidationMessageFor(o => o.StateIdUI, "", new { @class = "help-block text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="form-group">
+                                <label>City</label>
+                                <span class="required text-danger">*</span>
+                                @Html.DropDownListFor(m => m.CityIdUI, new SelectList(Model.CityId, "Key", "Value"), "Select City", new { @class = "form-control select2 CityIdUI" })
+                                <input id="CityId_hdn" class="CityId_hdn" value="@JsonConvert.SerializeObject(Model.CityId)" type="hidden" />
+                                @Html.ValidationMessageFor(o => o.CityIdUI, "", new { @class = "help-block text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="form-group">
+                                <label>Area/Locality</label>
+                                <span class="required text-danger">*</span>
+                                @Html.DropDownListFor(m => m.AreaIdUI, new SelectList(Model.AreaIds, "Key", "Value"), new { @class = "form-control select2 AreaIdUI", @onchange = "AreaSelectedIndexChanged()" })
+                                <input id="AreaIds_hdn" class="AreaIds_hdn" name="AreaIds_hdn" value="@Model.AreaIds_hdn" type="hidden" />
+                                @Html.ValidationMessageFor(o => o.AreaIdUI, "", new { @class = "help-block text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h4>Feature Preference</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-3 col-md-6">
+                            <div class="form-group">
+                                <label>Requirements</label>
+                                <span class="required text-danger">*</span>
+                                @Html.TextAreaFor(o => o.Requirement, new { @class = "form-control Requirement", @placeholder = "Enter Requirements", @id = "Requirement", @maxlength = "300" })
+                                @Html.ValidationMessageFor(o => o.Requirement, "", new { @class = "help-block text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6 PropertyCategoryHideShow">
+                            <div class="form-group">
+                                <label>Residential Structures</label>
+                                <span class="required text-danger">*</span> <span data-toggle="tooltip" data-placement="top" title="Choose the space division for the property"><i class="fas fa-info-circle"></i></span>
+                                @Html.DropDownListFor(m => m.BHKIdsUI, new SelectList(Model.BHKs, "Key", "Value"), new { @class = "form-control select2 BHKIdsUI", @onchange = "BHKSelectedIndexChanged()" })
+                                <input id="BHKIds_hdn" class="BHKIds_hdn" name="BHKIds_hdn" value="@Model.BHKIds_hdn" type="hidden" />
+                                @Html.ValidationMessageFor(o => o.BHKIdsUI, "", new { @class = "help-block text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="form-group">
+                                <label>Floor Preference</label> <span data-toggle="tooltip" data-placement="top" title="Choose the floor on which the property is situated"><i class="fas fa-info-circle"></i></span>
+                                @*<span class="required text-danger">*</span>*@
+                                @Html.DropDownListFor(m => m.FloorIdsUI, new SelectList(Model.FloorPreferenceIds, "Key", "Value"), new { @class = "form-control select2", @onchange = "FloorSelectedIndexChanged()" })
+                                <input id="FloorIds_hdn" name="FloorIds_hdn" value="@Model.FloorIds_hdn" type="hidden" />
+                                @Html.ValidationMessageFor(o => o.FloorIdsUI, "", new { @class = "help-block text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="form-group">
+                                <label>Furnished Status</label>
+                                @*<span class="required text-danger">*</span>*@
+                                <span data-toggle="tooltip" data-placement="top" title="Choose the current furnished status of property"><i class="fas fa-info-circle"></i></span>
+                                @Html.DropDownListFor(m => m.FurnishStatusIdsUI, new SelectList(Model.FurnishStatusIds, "Key", "Value"), new { @class = "form-control select2 FurnishStatusIdsUI", @onchange = "FurnishStatusSelectedIndexChanged()" })
+                                <input id="FurnishStatusIds_hdn" class="FurnishStatusIds_hdn" name="FurnishStatusIds_hdn" value="@Model.FurnishStatusIds_hdn" type="hidden" />
+                                @Html.ValidationMessageFor(o => o.FurnishStatusIdsUI, "", new { @class = "help-block text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="form-group">
+                                <label>Door Facing Direction</label>
+                                @Html.DropDownListFor(m => m.DoorFacingDirectionIdsUI, new SelectList(Model.DoorFacingDirectionId, "Key", "Value"), new { @class = "form-control select2", @onchange = "DoorFacingDirectionSelectedIndexChanged()" })
+                                <input id="DoorFacingDirectionId_hdn" name="DoorFacingDirectionId_hdn" value="@Model.DoorFacingDirectionId_hdn" type="hidden" />
+                                @Html.ValidationMessageFor(o => o.DoorFacingDirectionIdsUI, "", new { @class = "help-block text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6 PropertyCategoryHideShow">
+                            <div class="form-group">
+                                <label>Tenant/Buyer Preference</label> <span data-toggle="tooltip" data-placement="top" title="Choose the Owner's tenant/buyer preference"><i class="fas fa-info-circle"></i></span>
+                                @*<span class="required text-danger">*</span>*@
+                                @Html.DropDownListFor(m => m.AvailableForIdUI, new SelectList(Model.AvailableForIds, "Key", "Value"), "Select Tenant/Buyer Preference", new { @class = "form-control select2 AvailableForIdUI", @title = "Choose the Owner's tenant/buyer preference" })
+                                <input id="AvailableForIds_hdn" class="AvailableForIds_hdn" value="@JsonConvert.SerializeObject(Model.AvailableForIds)" type="hidden" />
+                                @Html.ValidationMessageFor(o => o.AvailableForIdUI, "", new { @class = "help-block text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6" hidden>
+                            <div class="form-group">
+                                <label>Project Category</label> <span data-toggle="tooltip" data-placement="top" title="Choose the prefered project category"><i class="fas fa-info-circle"></i></span>
+                                @Html.DropDownListFor(m => m.ProjectTypeIdUI, new SelectList(Model.ProjectTypeIds, "Key", "Value"), "Select Project Category", new { @class = "form-control select2", @title = "Choose the prefered project category" })
+                                <input id="ProjectTypeIds_hdn" value="@JsonConvert.SerializeObject(Model.ProjectTypeIds)" type="hidden" />
+                                @Html.ValidationMessageFor(o => o.ProjectTypeIdUI, "", new { @class = "help-block text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="form-group">
+                                <label>Budget(₹)</label>
+                                <div class="d-flex d-block-input">
+                                    @Html.TextBoxFor(o => o.BudgetFrom, new { @class = "form-control num BudgetFrom", @placeholder = "Enter Budget From", @maxlength = "12" })
+                                    @Html.ValidationMessageFor(o => o.BudgetFrom, "", new { @class = "help-block text-danger" })
+                                    <div class="form-divider">-</div>
+                                    @Html.TextBoxFor(o => o.BudgetTo, new { @class = "form-control num BudgetTo", @placeholder = "Enter Budget To", @maxlength = "12" })
+                                    @Html.ValidationMessageFor(o => o.BudgetTo, "", new { @class = "help-block text-danger" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="form-group">
+                                <label>Super built up Area</label>
+                                <div class="d-flex d-block-input">
+                                    @Html.TextBoxFor(o => o.SuperBuildupAreaFrom, new { @class = "form-control num", @placeholder = "Enter Area From", @maxlength = "12" })
+                                    @Html.ValidationMessageFor(o => o.SuperBuildupAreaFrom, "", new { @class = "help-block text-danger" })
+                                    <div class="form-divider">-</div>
+                                    @Html.TextBoxFor(o => o.SuperBuildupAreaTo, new { @class = "form-control num", @placeholder = "Enter Area To", @maxlength = "12" })
+                                    @Html.ValidationMessageFor(o => o.SuperBuildupAreaTo, "", new { @class = "help-block text-danger" })
+                                    <div class="input-group-append">
+                                        <div class="input-group-text p-0">
+                                            @Html.DropDownListFor(m => m.SuperBuildupAreaUnitIdUI, new SelectList(Model.SuperBuildupAreaUnitId, "Key", "Value"), "Select Unit", new { @class = "form-control select2" })
+                                            <input id="SuperBuildupAreaUnitId_hdn" value="@JsonConvert.SerializeObject(Model.SuperBuildupAreaUnitId)" type="hidden" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="form-group">
+                                <label>Carpet Area</label>
+                                <div class="d-flex d-block-input">
+                                    @Html.TextBoxFor(o => o.CarpetAreaFrom, new { @class = "form-control num", @placeholder = "Enter Area From", @maxlength = "12" })
+                                    @Html.ValidationMessageFor(o => o.CarpetAreaFrom, "", new { @class = "help-block text-danger" })
+                                    <div class="form-divider">-</div>
+                                    @Html.TextBoxFor(o => o.CarpetAreaTo, new { @class = "form-control num", @placeholder = "Enter Area To", @maxlength = "12" })
+                                    @Html.ValidationMessageFor(o => o.CarpetAreaTo, "", new { @class = "help-block text-danger" })
+                                    <div class="input-group-append">
+                                        <div class="input-group-text p-0">
+                                            @Html.DropDownListFor(m => m.CarpetAreaUnitIdUI, new SelectList(Model.CarpetAreaUnitId, "Key", "Value"), "Select Unit", new { @class = "form-control select2" })
+                                            <input id="CarpetAreaUnitId_hdn" value="@JsonConvert.SerializeObject(Model.CarpetAreaUnitId)" type="hidden" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="form-group">
+                                <label>Special Notes</label>
+                                @Html.TextAreaFor(o => o.SpecialNote, new { @class = "form-control", @placeholder = "Enter Special Notes", @maxlength = "500" })
+                                @Html.ValidationMessageFor(o => o.SpecialNote, "", new { @class = "help-block text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h4>Key Attributes</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-3 col-md-6">
+                            <div class="form-group">
+                                <label>Assign To</label>
+                                <span class="required text-danger">*</span>
+                                @Html.DropDownListFor(m => m.AssignToUI, new SelectList(Model.AssignTo, "Key", "Value"), "Select AssignTo", new { @class = "form-control select2" })
+                                <input id="AssignTo_hdn" value="@JsonConvert.SerializeObject(Model.AssignTo)" type="hidden" />
+                                @Html.ValidationMessageFor(o => o.AssignToUI, "", new { @class = "help-block text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="form-group form-checkbox">
+                                <div class="custom-control custom-checkbox">
+                                    @Html.CheckBoxFor(m => m.IsEmailToAssignor, new { @class = "custom-control-input", @id = "EmailAssignorCheck" })
+                                    <label class="custom-control-label" for="EmailAssignorCheck">Email to assignor</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="form-group form-checkbox">
+                                <div class="custom-control custom-checkbox">
+                                    @Html.CheckBoxFor(m => m.IsSMSToAssignor, new { @class = "custom-control-input", @id = "SmsAssignorCheck" })
+                                    <label class="custom-control-label" for="SmsAssignorCheck">SMS to assignor</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="form-group">
+                                <label>Lead Source</label> <span data-toggle="tooltip" data-placement="top" title="Choose the source of how your lead discover the business"><i class="fas fa-info-circle"></i></span>
+                                @*<span class="required text-danger">*</span>*@
+                                @Html.DropDownListFor(m => m.LeadSourceIdUI, new SelectList(Model.LeadSourceId, "Key", "Value"), "Select Lead Source", new { @class = "form-control select2 LeadSourceIdUI", @title = "Choose the source of how your lead discover the business" })
+                                <input id="LeadSourceId_hdn" class="LeadSourceId_hdn" value="@JsonConvert.SerializeObject(Model.LeadSourceId)" type="hidden" />
+                                @Html.ValidationMessageFor(o => o.LeadSourceIdUI, "", new { @class = "help-block text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="form-group">
+                                <label>Lead Subsource</label> <span data-toggle="tooltip" data-placement="top" title="Classify the sub-source of your lead source"><i class="fas fa-info-circle"></i></span>
+                                @*<span class="required text-danger">*</span>*@
+                                @Html.DropDownListFor(m => m.LeadSubsourceIdUI, new SelectList(Model.LeadSubsourceId, "Key", "Value"), "Select Lead Subsource", new { @class = "form-control select2", @title = "Classify the sub-source of your lead source" })
+                                <input id="LeadSubsourceId_hdn" value="@JsonConvert.SerializeObject(Model.LeadSubsourceId)" type="hidden" />
+                                @Html.ValidationMessageFor(o => o.LeadSubsourceIdUI, "", new { @class = "help-block text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="form-group">
+                                <label>Lead Status</label>
+                                <span class="required text-danger">*</span> <span data-toggle="tooltip" data-placement="top" title="Choose the current process of working with the lead"><i class="fas fa-info-circle"></i></span>
+                                @Html.DropDownListFor(m => m.LeadStageIdUI, new SelectList(Model.LeadStageId, "Key", "Value"), "Select Lead Status", new { @class = "form-control select2", @title = "Choose the current process of working with the lead" })
+                                <input id="LeadStageId_hdn" value="@JsonConvert.SerializeObject(Model.LeadStageId)" type="hidden" />
+                                @Html.ValidationMessageFor(o => o.LeadStageIdUI, "", new { @class = "help-block text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="form-group">
+                                <label>Interest</label>
+                                @*<span class="required text-danger">*</span>*@
+                                <span data-toggle="tooltip" data-placement="top" title="Choose your lead's interest level for the business"><i class="fas fa-info-circle"></i></span>
+                                @Html.DropDownListFor(m => m.LeadPriorityIdUI, new SelectList(Model.LeadPriorityId, "Key", "Value"), "Select Lead Interest", new { @class = "form-control select2", @title = "Choose your lead's interest level for the business" })
+                                <input id="LeadPriorityId_hdn" value="@JsonConvert.SerializeObject(Model.LeadPriorityId)" type="hidden" />
+                                @Html.ValidationMessageFor(o => o.LeadPriorityIdUI, "", new { @class = "help-block text-danger" })
+                            </div>
+                        </div>
+                        @* <!--<div class="col-xl-3 col-md-6">
+                            <div class="form-group">
+                                <label>Lost Reason</label> <span data-toggle="tooltip" data-placement="top" title="Choose the reason due to which lead is parked in marketing wasteland"><i class="fas fa-info-circle"></i></span>-->
+                                <!--<span class="required text-danger">*</span>-->
+                                <!--@Html.DropDownListFor(m => m.LeadLostReasonIdUI, new SelectList(Model.LeadLostReasonId, "Key", "Value"), "Select Lost Reason", new { @class = "form-control select2", @title = "Choose the reason due to which lead is parked in marketing wasteland" })
+                                <input id="LeadLostReasonId_hdn" value="@JsonConvert.SerializeObject(Model.LeadLostReasonId)" type="hidden" />
+                                @Html.ValidationMessageFor(o => o.LeadLostReasonIdUI, "", new { @class = "help-block text-danger" })
+                                    </div>
+                                        </div>-->*@
+                        <div class="col-xl-3 col-md-6">
+                            <div class="form-group">
+                                <label>Lead Score</label> <span data-toggle="tooltip" data-placement="top" title="Choose the worthiness of your lead, or potential customer"><i class="fas fa-info-circle"></i></span>
+                                @*<span class="required text-danger">*</span>*@
+                                @Html.DropDownListFor(m => m.LeadScoreIdUI, new SelectList(Model.LeadScoreId, "Key", "Value"), "Select Lead Score", new { @class = "form-control select2", @title = "Choose the worthiness of your lead, or potential coustomer" })
+                                <input id="LeadScoreId_hdn" value="@JsonConvert.SerializeObject(Model.LeadScoreId)" type="hidden" />
+                                @Html.ValidationMessageFor(o => o.LeadScoreIdUI, "", new { @class = "help-block text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-6 col-md-6">
+                            <div class="form-group">
+                                <label>Remarks</label>
+                                @Html.TextAreaFor(o => o.Remarks, new { @class = "form-control", @placeholder = "Enter Remarks", @maxlength = "500" })
+                                @Html.ValidationMessageFor(o => o.Remarks, "", new { @class = "help-block text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-3 col-md-6">
+                            <div class="form-group form-checkbox">
+                                <div class="custom-control custom-checkbox">
+                                    @Html.CheckBoxFor(m => m.IsEmailToInquier, new { @class = "custom-control-input", @id = "EmailInquierCheck" })
+                                    <label class="custom-control-label" for="EmailInquierCheck">Email to Inquire</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="form-group form-checkbox">
+                                <div class="custom-control custom-checkbox">
+                                    @Html.CheckBoxFor(m => m.IsSMSToInquier, new { @class = "custom-control-input", @id = "SmsInquierCheck" })
+                                    <label class="custom-control-label" for="SmsInquierCheck">SMS to Inquire</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card quick-info-action">
+            <div class="card-body">
+                @*<button class="btn btn-primary" type="submit" id="btnSubmit" name="button" onclick="return BudgetFromTOValid();" value="Quick"> Submit</button>*@
+                @if (Model.IsAllowEdit)
+                {
+                    <button class="btn btn-primary" type="submit" id="btnSubmit" name="button" onclick="return BudgetFromTOValid();" value="Quick"> Submit</button>
+                    <button class="btn btn-primary" type="submit" id="btnSubmit" name="button" onclick="return BudgetFromTOValid();" value="QuickNew"> Submit & New</button>
+                }
+                @if (Model.IsOpprtunity == 1)
+                {
+                    @if ((Model.PI >= 0) && (Model.PS > 0))
+                    {
+                        var PIval = Model.PI;
+                        var PSval = Model.PS;
+                        var ViewType = Model.ViewType;
+                        var EditId = Helper.AppCommon.EncryptString(Convert.ToString(Model.Id));
+                        <a class="btn btn-danger btnCancel" href="@Url.Action("List", "Opportunity", new { Area = "Transactions",PI = PIval,PS = PSval,ViewType = ViewType,EditId = EditId})">Cancel</a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-danger btnCancel" href="@Url.Action("List", "Opportunity", new { Area = "Transactions"})">Cancel</a>
+                    }
+                }
+                else
+                {
+                    @if ((Model.PI >= 0) && (Model.PS > 0))
+                    {
+                        var PIval = Model.PI;
+                        var PSval = Model.PS;
+                        var ViewType = Model.ViewType;
+                        var EditId = Helper.AppCommon.EncryptString(Convert.ToString(Model.Id));
+                        <a class="btn btn-danger btnCancel" href="@Url.Action("List", "Lead", new { Area = "Transactions",PI = PIval,PS = PSval,ViewType = ViewType,EditId = EditId})">Cancel</a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-danger btnCancel" href="@Url.Action("List", "Lead", new { Area = "Transactions"})">Cancel</a>
+                    }
+                }
+
+
+
+            </div>
+        </div>
+        <div class="card advance-more-action" style="display:none">
+            <div class="card-body">
+                @if (Model.IsAllowEdit)
+                {
+                    <button class="btn btn-primary" type="submit" id="btnSubmit" name="button" onclick="return BudgetFromTOValid();" value="Submit"> Submit</button>
+                    <button class="btn btn-primary" type="submit" id="btnSubmit" name="button" onclick="return BudgetFromTOValid();" value="new"> Submit & New</button>
+                }
+                <a class="btn btn-danger btnCancel" href="@Url.Action("List", "Lead", new { Area = "Transactions", PI = Model.PI})">Cancel</a>
+            </div>
+        </div>
+    </section>
+}
+<!-- Main Area :: End -->
+<script src="/Transactions/Content/js/Lead/Form.js?version=0.6"></script>
+<script type="text/javascript">
+    $(window).on('load', function () {
+        $('#BirthDate').val('@Model.BirthDate').trigger('change');
+        $('#AnniversaryDate').val('@Model.AnniversaryDate').trigger('change');
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $('#showAdvanceMore').click(function () {
+            if ($('.advance-more').is(':hidden')) {
+                $(".advance-more").show();
+                $(".advance-more-action").show();
+                $(".quick-info-action").hide();
+                $(".btn-advance-detail").html("Hide Advance Details");
+            } else {
+                $('.advance-more').hide();
+                $('.advance-more-action').hide();
+                $(".quick-info-action").show();
+                $(".btn-advance-detail").html("Show Advance Details");
+            }
+        });
+    });
+</script>

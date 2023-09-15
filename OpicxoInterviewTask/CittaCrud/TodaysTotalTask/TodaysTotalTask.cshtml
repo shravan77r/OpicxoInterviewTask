@@ -1,0 +1,225 @@
+﻿@using Newtonsoft.Json;
+@using PropertyERP.Common;
+@{
+        ViewBag.Title = "Today's Total Tasks";
+        Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<!-- Header :: Start -->
+<div class="header-area">
+    <div class="card">
+        <div class="card-header bb-0">
+            <div class="card-header-title">
+                <h4>Today's Total Tasks</h4>
+                <div class="header-breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="@Url.Action("Dashboard","Home")"><i data-feather="home"></i></a></li>
+                        <li class="breadcrumb-item"><a href="@Url.Action("Dashboard","Home")">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Today's Total Tasks</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Header :: End -->
+<!-- Main Area :: Start -->
+<section class="main-area-section">
+    <div class="row">
+        <div class="col-xl-12 col-lg-12">
+            <ul class="nav head-nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <button type="button" class="nav-link @ViewBag.followupsTab" onclick="BindListfollowups()" id="tab_1" data-target="#tab-followups" data-toggle="tab" aria-selected="false">Follow-Ups (<span id="FollowUpsCount">0</span>)</button>
+                </li>
+                <li class="nav-item">
+                    <button type="button" class="nav-link @ViewBag.SitesVisitsTab" onclick="BindListSitesVisits()" id="tab_2" data-target="#tab-SitesVisits" data-toggle="tab" aria-selected="false">Sites Visits (<span id="SitesVisitsCount">0</span>)</button>
+                </li>
+            </ul>
+            <div class="tab-content" id="myDateFilter">
+                <div class="card card-flush">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-3">
+                                <div class="form-group">
+                                    <label>Start Date</label>
+                                    <div class="input-group">
+                                        @Html.TextBox("FromDate", "", new { @class = "form-control datetimepicker1 datetimepicker-input", @data_toggle = "datetimepicker", @data_target = "#datetimepicker1", @onchange = "fnFromDateToDate();" })
+                                        <div class="input-group-append">
+                                            <div class="input-group-text"><i class="fas fa-calendar-alt"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="form-group">
+                                    <label>End Date</label>
+                                    <div class="input-group">
+                                        @Html.TextBox("ToDate", "", new { @class = "form-control datetimepicker1 datetimepicker-input", @data_toggle = "datetimepicker", @data_target = "#datetimepicker1", @onchange = "fnFromDateToDate();" })
+                                        <div class="input-group-append">
+                                            <div class="input-group-text"><i class="fas fa-calendar-alt"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="hidden" id="RightsGroupName" value="@AllFunctions.getSessionValueByKey("RightsGroupName")" />
+                            <input type="hidden" id="UserId" value="@ViewBag.AssignToId" />
+                            <input type="hidden" id="UserName" value="@ViewBag.AssignToName" />
+                            <input id="AssignToIds_hdn" class="AssignToIds_hdn" name="AssignToIds_hdn" value="" type="hidden" />
+                            <div class="col-lg-3">
+                                <div class="form-group">
+                                    <label>Employee</label>
+                                    <div class="input-group">
+                                        @Html.DropDownList("AssignToUI", new SelectList(ViewBag.EmptyList, "Key", "Value"), new { @class = "form-control multiselect-dropdown" })
+                                    </div>
+                                </div>
+                            </div>
+                            <input id="FollowUpsStatusIds_hdn" class="FollowUpsStatusIds_hdn" name="FollowUpsStatusIds_hdn" value="" type="hidden" />
+                            <div class="col-lg-3 FollowUpsStatus">
+                                <div class="form-group">
+                                    <label>Status</label>
+                                    <div class="input-group" style="border: 1px solid #ced4da;">
+                                        @{
+                                            var listFollowUpsStatus = new List<SelectListItem>();
+                                            listFollowUpsStatus.Add(new SelectListItem
+                                            {
+                                                Text = "Select Status",
+                                                Value = ""
+                                            });
+                                            listFollowUpsStatus.Add(new SelectListItem
+                                            {
+                                                Text = "In Process",
+                                                Value = "0"
+                                            });
+                                            listFollowUpsStatus.Add(new SelectListItem
+                                            {
+                                                Text = "Completed",
+                                                Value = "1"
+                                            });
+                                        }
+                                        @Html.DropDownList("FollowUpsStatusIdUI", new SelectList(listFollowUpsStatus, "Value", "Text"), new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                            <input id="SitesVisitsStatusIds_hdn" class="SitesVisitsStatusIds_hdn" name="SitesVisitsStatusIds_hdn" value="" type="hidden" />
+                            <div class="col-lg-3 SitesVisitsStatus">
+                                <div class="form-group">
+                                    <label>Status</label>
+                                    <div class="input-group" style="border: 1px solid #ced4da;">
+                                        @{
+                                            var listSitesVisitsStatus = new List<SelectListItem>();
+                                            listSitesVisitsStatus.Add(new SelectListItem
+                                            {
+                                                Text = "Select Status",
+                                                Value = ""
+                                            });
+                                            listSitesVisitsStatus.Add(new SelectListItem
+                                            {
+                                                Text = "Pending",
+                                                Value = "1"
+                                            });
+                                            listSitesVisitsStatus.Add(new SelectListItem
+                                            {
+                                                Text = "Complete",
+                                                Value = "2"
+                                            });
+                                            listSitesVisitsStatus.Add(new SelectListItem
+                                            {
+                                                Text = "Cancelled",
+                                                Value = "3"
+                                            });
+                                        }
+                                        @Html.DropDownList("SitesVisitsStatusIdUI", new  SelectList(listSitesVisitsStatus, "Value", "Text"), new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade @ViewBag.followupsShowTab" id="tab-followups">
+                    <div class="card card-flush">
+                        <div class="card-header d-md-flex d-sm-block pt-7">
+                            <div class="card-title">
+                                <h3 class="card-title align-items-start flex-column">
+                                    <span class="card-label fw-bolder text-dark">Follow-Ups</span>
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="card-body pt-5">
+                            <div class="table-responsive">
+                                <table id="data-table-follow-ups" class="table table-bordered align-middle">
+                                    <thead>
+                                        <tr class="text-start th-row">
+                                            <th data-orderable="false">#</th>
+                                            <th>No</th>
+                                            <th>Date</th>
+                                            <th>Module Type</th>
+                                            <th>Subject</th>
+                                            <th>Assign To</th>
+                                            <th>Description</th>
+                                            <th>Follow-up Objective</th>
+                                            <th>Next Followup</th>
+                                            <th>Customer Name</th>
+                                            <th>Contact No</th>
+                                            <th>Requirement</th>
+                                            <th>Status</th>
+                                            <th></th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="fw-bold text-gray-600">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade @ViewBag.SitesVisitsShowTab" id="tab-SitesVisits">
+                    <div class="card card-flush">
+                        <div class="card-header d-md-flex d-sm-block pt-7">
+                            <div class="card-title">
+                                <h3 class="card-title align-items-start flex-column">
+                                    <span class="card-label fw-bolder text-dark">Sites Visits</span>
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="card-body pt-5">
+                            <div class="table-responsive">
+                                <table id="data-table-Sites-Visits" class="table table-bordered align-middle">
+                                    <thead>
+                                        <tr class="text-start th-row">
+                                            <th data-orderable="false">#</th>
+                                            <th>No</th>
+                                            <th>Date</th>
+                                            <th>Property</th>
+                                            <th>Assign To</th>
+                                            <th>Project</th>
+                                            <th>Max Budget</th>
+                                            <th>Description</th>
+                                            <th>Remarks</th>
+                                            <th>Next Site Visit Plan</th>
+                                            <th>Customer Name</th>
+                                            <th>Contact No</th>
+                                            <th>Requirement</th>
+                                            <th>Status</th>
+                                            <th></th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="fw-bold text-gray-600">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<input id="AssignTo_hdn" value="@JsonConvert.SerializeObject(ViewBag.SiteVisitAssignTo)" type="hidden" />
+<input type="hidden" id="IsFrom_hdn" value="" />
+<div id="listActivity">
+</div>
+<script src="/Transactions/Content/js/TodaysTotalTask/TodaysTotalTask.js?version=0.3"></script>
+

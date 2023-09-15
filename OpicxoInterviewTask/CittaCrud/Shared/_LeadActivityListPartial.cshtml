@@ -1,0 +1,40 @@
+﻿@model List<PropertyERP.Areas.Transactions.Models.ActivityUI>
+
+<div class="col-xl-12 col-lg-12 p-0">
+    <div class="table-responsive">
+        <table class="table cust-table table-bordered site-visit">
+            <thead>
+                <tr>
+                    <th class="text-center">#</th>
+                    <th>Date Time</th>
+                    <th>Activity By</th>
+                    <th>Stage</th>
+                    <th>Remarks</th>
+                    <th class="text-center">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null)
+                {
+                    var i = 1;
+                    foreach (var item in Model.Where(o => o.ActivityTypeId == 5))
+                    {
+
+                        <tr>
+                            <td class="text-center">@i</td>
+                            <td>@item.ActivityDateTime</td>
+                            <td>@item.ActivityByName</td>
+                            <td>@item.ActivityStageName</td>
+                            <td>@item.ActivityRemarks</td>
+                            <td class="text-center whitespace-rap">
+                                <button type="button" class="btn btn-primary btn-sm" onclick="fnEditActivity(@item.Id, 5);" title="Edit"><i class="fas fa-edit"></i></button>
+                                <button type="button" class="btn btn-danger btn-sm" onclick="fnDeleteActivity(@item.Id, 5);" title="Delete" hidden><i class="fas fa-trash-alt"></i></button>
+                            </td>
+                        </tr>
+                        i++;
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

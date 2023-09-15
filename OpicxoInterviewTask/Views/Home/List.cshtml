@@ -1,0 +1,429 @@
+﻿@model IEnumerable<OpicxoInterviewTask.Models.Person>
+
+@{
+    ViewBag.Title = "List";
+}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+<script>
+    
+    var app = angular.module("myapp", []);
+    app.controller("mycontroller", function ($scope, $http) {
+        $scope.GetAllData = function () {
+            $http({
+                method: "get",
+                url: "@Url.Action("ListGetData", "Home")",
+            }).then(function (response) {
+                $scope.Persons = response.data;
+            }, function () {
+                alert("error");
+            });
+        }
+        $scope.GetAllData();
+        $scope.DeletePersonRecord = function (obj) {
+            $http({
+                method: "post",
+                url: "Home/DeletePersonRecord",
+                datatype: "json",
+                data: JSON.stringify(obj)
+            }).then(function (resp) {
+                if (resp.data == "FAILED")
+                    alert("Record cannot be deleted");
+                else
+                    alert("Record Deleted Successfully");
+                $scope.GetAllData();
+            })
+        }
+        $scope.ViewActivities = function (PersonId, IsAll, PersonName) {
+            $("#hdn_PersonId").val(PersonId);
+            if (IsAll == 1)
+                $('#Modaltitle').html(PersonName + ' all activities');
+            else
+                $('#Modaltitle').html(PersonName + ' last two weeks activities');
+
+            var dlgElem = angular.element("#myModal");
+            if (dlgElem) {
+                dlgElem.modal("show");
+            }
+
+            fnLoadActivity(PersonId, IsAll);
+        }
+    });
+</script>
+<script>
+    // List Get list of All Activity
+    function fnShowAllData() {
+        var PersonId = $("#hdn_PersonId").val();
+        fnLoadActivity(PersonId, 1);
+    }
+    function fnLoadActivity(PersonId, IsAll) {
+        if (PersonId) {
+            $.ajax({
+                type: "POST",
+                url: "/Home/GetActivityList",
+                data: {
+                    PersonId: PersonId,
+                    IsAll: IsAll
+                },
+                async: !0,
+                cache: !1,
+                success: function (data) {
+                    $('#divActivitiListPartial').html(data);
+                },
+                error: function (response) {
+                    console.log(response);
+                },
+            });
+        }
+    }
+    // Submit Activity Details
+    function fnSubmitActivity() {
+        var PersonId = $('#hdn_PersonId').val();
+        var Id = $('#hdn_ActivityId').val();
+        var ActivityDate = $('#ActivityDate').val();
+        if (!ActivityDate) {
+            alert("Please Select Activity Date!");
+            $('#ActivityDate').focus();
+            return false;
+        }
+        var WakeUpTime = $('#ActivityWakeuptime').val();
+        if (!WakeUpTime) {
+            alert("Please Select Wake Up Time!");
+            $('#ActivityWakeuptime').focus();
+            return false;
+        };
+
+        var ActivityIsGym = $("input[type='radio'][name='IsGym']:checked").val();
+        var ActivityIsMeditation = $("input[type='radio'][name='IsMeditation']:checked").val();
+        var ActivityIsReading = $("input[type='radio'][name='IsReading']:checked").val();
+
+        var IsGym = ActivityIsGym;
+        var IsMeditation = ActivityIsMeditation;
+        var MeditationMinutes = $('#ActivityMinutes').val();
+        if (ActivityIsMeditation == 1 && MeditationMinutes == '') {
+            alert("Please Enter Meditation Minutes!");
+        }
+        var IsRead = ActivityIsReading;
+
+        var ReadPages = $("#ActivityNoPages").val();
+        if (IsRead == 1 && ReadPages == '') {
+            alert("Please Enter No. Pages!");
+        }
+
+        if (PersonId) {
+            $.ajax({
+                type: "POST",
+                url: "/Home/SaveActivity",
+                data: {
+                    PersonId: PersonId,
+                    Id: Id,
+                    ActivityDate: ActivityDate,
+                    WakeUpTime: WakeUpTime,
+                    IsGym: IsGym,
+                    IsMeditation: IsMeditation,
+                    MeditationMinutes: MeditationMinutes,
+                    IsRead: IsRead,
+                    ReadPages: ReadPages,
+                },
+                async: !1,
+                cache: !1,
+                success: function (data) {
+                    if (data.data == "FAILED")
+                        alert("Record cannot be deleted");
+                    else
+                        alert("Record Saved Successfully");
+
+                    fnLoadActivity(PersonId, 0);
+                },
+                error: function (response) {
+                    console.log(response);
+                },
+                complete: function () {
+                    fnClearActivityData();
+                },
+            });
+        }
+    }
+
+    // Clear Activity Form
+    function fnClearActivityData() {
+        $(".MeditationHideShow").hide();
+        $(".ReadingHideShow").hide();
+
+        $('input:radio[name="IsGym"]').prop('checked', false);
+        $('input:radio[name="IsMeditation"]').prop('checked', false);
+        $('input:radio[name="IsReading"]').prop('checked', false);
+
+        $("#hdn_ActivityId").val(0);
+        $('#ActivityDate').val('');
+        $('#ActivityWakeuptime').val('');
+        $('#ActivityMinutes').val('');
+        $('#ActivityNoPages').val('');
+    }
+
+    // Load Activity Data for Edit
+    function fnEditActivity(ActivityId) {
+        if (ActivityId) {
+            $('#hdn_ActivityId').val(ActivityId);
+
+            $.ajax({
+                type: "POST",
+                url: "/Home/GetActivityDataById",
+                data: {
+                    Id: ActivityId
+                },
+                async: !1,
+                cache: !1,
+                success: function (data) {
+                    var obj = data;
+                    debugger;
+                    var now = obj.ActivityDate.split('/');
+                    var today = now[2] + "-" + now[1] + "-" + now[0];
+
+                    $('#ActivityDate').val(today);
+                    $('#ActivityWakeuptime').val(obj.WakeUpTime);
+                    if (obj.IsGym==1) 
+                        $('#IsGymYes').prop('checked', true);                    
+                    else
+                        $('#IsGymNo').prop('checked', true);
+
+                    if (obj.IsMeditation == 1) {
+                        $('#IsMeditationYes').prop('checked', true);
+                        $(".MeditationHideShow").show();
+                    }
+                    else {
+                        $('#IsMeditationNo').prop('checked', true);
+                        $(".MeditationHideShow").hide();
+                    }
+                    $('#ActivityMinutes').val(obj.MeditationMinutes);
+
+                    if (obj.IsReading == 1) {
+                        $('#IsReadingYes').prop('checked', true);
+                        $(".ReadingHideShow").show();
+                    }
+                    else {
+                        $('#IsReadingNo').prop('checked', true);
+                        $(".ReadingHideShow").hide();
+                    }
+                    $('#ActivityNoPages').val(obj.ReadPages);
+                },
+                error: function (response) {
+                    console.log(response);
+                },
+            });
+        }
+    }
+
+    function fnCancelActivity(TypeId) {
+        fnClearActivityData();
+        $('#hdn_PersonId').val(0);
+        var dlgElem = angular.element("#myModal");
+        if (dlgElem) {
+            dlgElem.modal("hide");
+        }
+    }
+    // Delete Activity Data
+    function fnDeleteActivity(ActivityId) {
+        var PersonId = $('#hdn_PersonId').val();
+        $.ajax({
+            type: "POST",
+            url: "/Home/DeletePersonActivities",
+            data: {
+                Id: ActivityId
+            },
+            async: !1,
+            cache: !1,
+            success: function (data) {
+                if (data.data == "FAILED")
+                    alert("Record cannot be deleted");
+                else
+                    alert("Record Deleted Successfully");
+
+                fnLoadActivity(PersonId, 0);
+            },
+            error: function (response) {
+                console.log(response);
+            },
+        });
+    }
+    function fnMeditationHideShow() {
+        var ActivityIsMeditation = $("input[type='radio'][name='IsMeditation']:checked").val();
+        if (ActivityIsMeditation == 1)
+            $(".MeditationHideShow").show();
+        else
+            $(".MeditationHideShow").hide();
+    }
+    function fnReadingHideShow() {
+        var ActivityIsReading = $("input[type='radio'][name='IsReading']:checked").val();
+        if (ActivityIsReading == 1)
+            $(".ReadingHideShow").show();
+        else
+            $(".ReadingHideShow").hide();
+    }
+</script>
+<h2>List</h2>
+<section class="main-area-section">
+    <div class="row">
+        <div class="col-xl-9 col-lg-12" style="text-align:right;margin-left: -30px;">
+            <p>
+                @Html.ActionLink("Add New", "Index")
+            </p>
+        </div>
+        <div ng-app="myapp" ng-controller="mycontroller">
+
+            <div class="col-xl-12 col-lg-12 p-0">
+                <div class="table-responsive">
+                    <table class="table cust-table table-bordered site-visit">
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Height</th>
+                            <th>Weight</th>
+                            <th>Gender</th>
+                            <th>BMI</th>
+                            <th>View Activities</th>
+                            <th>Action</th>
+                        </tr>
+
+                        <tr ng-repeat="item in Persons">
+                            <td>
+                                {{item.SrNo}}
+                            </td>
+                            <td>
+                                {{item.PersonName}}
+                            </td>
+                            <td>
+                                {{item.PersonHeight}}
+                            </td>
+                            <td>
+                                {{item.PersonWeight}}
+                            </td>
+                            <td>
+                                {{item.GenderName}}
+                            </td>
+                            <td>
+                                {{item.BMI}}
+                            </td>
+                            <td>
+                                <a ng-click="ViewActivities(item.Id,0,item.PersonName)">Activities</a>
+                            </td>
+                            <td>
+                                <a href="/Home/Index?Id={{item.Id}}">Edit</a> || <a ng-click="DeletePersonRecord(item)">Delete</a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <!-- The Modal -->
+            <div class="modal" id="myModal" role="dialog">
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+
+                        <!-- Modal Header -->
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="Modaltitle"></h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="fnCancelActivity();">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+
+                        <!-- Modal body -->
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="form_control_1">
+                                            ActivityDate
+                                            <span class="required">*</span>
+                                        </label>
+                                        <input type="hidden" id="hdn_PersonId" value="0" />
+                                        <input type="hidden" id="hdn_ActivityId" value="0" />
+                                        <input type="date" id="ActivityDate" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="form_control_1">
+                                            Wake up time
+                                            <span class="required">*</span>
+                                        </label>
+                                        <input type="time" id="ActivityWakeuptime" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="form-check">
+                                        <label for="form_control_1">Gym :</label>
+                                        <input type="radio" name="IsGym" id="IsGymYes" value="1" class="form-check-input" />
+                                        <label class="form-check-label" for="IsIsGym1">
+                                            Yes
+                                        </label>
+                                        <input type="radio" name="IsGym" id="IsGymNo" value="0" class="form-check-input" />
+                                        <label class="form-check-label" for="IsIsGym1">
+                                            No
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="form-check">
+                                        <label for="form_control_1">Meditation :</label>
+                                        <input type="radio" name="IsMeditation" id="IsMeditationYes" value="1" onclick="fnMeditationHideShow();" class="form-check-input" />
+                                        <label class="form-check-label" for="IsMeditation1">
+                                            Yes
+                                        </label>
+                                        <input type="radio" name="IsMeditation" id="IsMeditationNo" value="0" onclick="fnMeditationHideShow();" class="form-check-input" />
+                                        <label class="form-check-label" for="IsMeditation1">
+                                            No
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 MeditationHideShow" style="display:none;">
+                                    <div class="form-group">
+                                        <label for="form_control_1">Minutes </label>
+                                        <input type="text" id="ActivityMinutes" class="form-control" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="form-check">
+                                        <label for="form_control_1">Reading :</label>
+                                        <input type="radio" name="IsReading" id="IsReadingYes" value="1" onclick="fnReadingHideShow();" class="form-check-input" />
+                                        <label class="form-check-label" for="IsReading1">
+                                            Yes
+                                        </label>
+                                        <input type="radio" name="IsReading" id="IsReadingNo" value="0" onclick="fnReadingHideShow();" class="form-check-input" />
+                                        <label class="form-check-label" for="IsReading1">
+                                            No
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 ReadingHideShow" style="display:none;">
+                                    <div class="form-group">
+                                        <label for="form_control_1">no. of pages read </label>
+                                        <input type="text" id="ActivityNoPages" class="form-control" />
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Modal footer -->
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary" onclick="fnSubmitActivity();">Save</button>
+                                <button type="button" class="btn btn-danger" onclick="fnClearActivityData();" >Clear</button>
+                            </div>
+                            <div class="row">
+                                <div id="divActivitiListPartial" class="col-lg-12">
+                                    @Html.Partial("_ActivityListPartial", Model)
+                                </div>
+                            </div>
+                        </div>                        
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

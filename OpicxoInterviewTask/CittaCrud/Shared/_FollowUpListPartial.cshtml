@@ -1,0 +1,76 @@
+﻿@model List<PropertyERP.Areas.Transactions.Models.ActivityUI>
+@if (Model != null)
+{
+    foreach (var item in Model.Where(o => o.ActivityTypeId == 1))
+    {
+
+        <div class="col-lg-12 p-0">
+            <div class="schedule-box">
+                <div class="row">
+                    <div class="col-xl-12">
+                        <div class="card list-card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-xl-9 col-lg-12">
+                                        <div class="list-details">
+                                            <div class="list-details-section col-xl-2">
+                                                <h4>Date:</h4>
+                                                <span>@item.EntryDate</span>
+                                            </div>
+                                            <div class="list-details-section col-xl-2">
+                                                <h4>Subject:</h4>
+                                                <span>@item.SubjectName</span>
+                                            </div>
+                                            <div class="list-details-section col-xl-2">
+                                                <h4>Assign To:</h4>
+                                                <span>@item.AssignedName</span>
+                                            </div>
+                                            <div class="list-details-section col-xl-3">
+                                                <h4>Follow-up Objective:</h4>
+                                                <span>@item.FollowupObjectiveName</span>
+                                            </div>
+                                            <div class="list-details-section col-xl-3">
+                                                <h4>Next Follow-up Date/Time:</h4>
+                                                <span>@item.NextFollowUpDate</span>
+                                            </div>
+                                        </div>
+                                        <div class="list-details d-block">
+                                            <div class="list-details-section w-100">
+                                                <h4>Description:</h4>
+                                                <span>@item.Description</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-3 col-lg-12">
+                                        <div class="action-area follow-up-area">
+                                            <div class="list-details">
+                                                <div class="list-details-section status-area">
+                                                    @if (item.FollowupStatusName == "In Process")
+                                                    {
+                                                        <span class="badge badge-warning">In Process</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="badge badge-success">Completed</span>
+                                                    }
+                                                </div>
+                                                <div class="list-details-section ac-button">
+                                                    <button type="button" class="btn btn-primary btn-sm" onclick="fnEditActivity(@item.Id, 1);" title="Edit Followup"><i class="fas fa-edit"></i></button>
+                                                    <button type="button" class="btn btn-danger btn-sm" onclick="fnDeleteActivity(@item.Id, 1);" title="Delete Followup" hidden><i class="fas fa-trash-alt"></i></button>
+                                                    @if (item.FollowupStatusName == "In Process")
+                                                    {
+                                                        <button type="button" class="btn btn-success btn-sm" onclick="fnCompleteActivity(@item.Id, 1)" title="Mark As Complete"><i class="fas fa-check"></i></button>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}

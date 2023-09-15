@@ -1,0 +1,924 @@
+﻿@model PropertyERP.Areas.Transactions.Models.OpportunityUI;
+@using PropertyERP.Common;
+@using Newtonsoft.Json;
+
+@{
+    ViewBag.Title = "Opportunity";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<style type="text/css">
+    .activeButton {
+        background-color: #fff;
+        border-color: #fff;
+        color: #032b4f;
+    }
+
+        .activeButton .text-primary {
+            color: #fff !important
+        }
+
+        .activeButton:active, .activeButton:hover, .activeButton:focus {
+            background-color: #fff;
+            border-color: #fff;
+            color: #032b4f;
+        }
+
+    .overflow-scroll {
+        overflow-x: scroll
+    }
+
+    #chart_div table {
+        border-collapse: separate !important;
+    }
+
+    .form-control.Close_Won ~ .select2 .select2-selection {
+        border-color: #84d784;
+        color: #fff !important;
+    }
+
+        .form-control.Close_Won ~ .select2 .select2-selection .select2-selection__rendered {
+            color: #56b956 !important;
+        }
+
+    .form-control.Close_Lost ~ .select2 .select2-selection {
+        border-color: #d8232a;
+        color: #fff !important;
+    }
+
+        .form-control.Close_Lost ~ .select2 .select2-selection .select2-selection__rendered {
+            color: #d8232a !important;
+        }
+</style>
+<!-- Header :: Start -->
+<div class="header-area">
+    <div class="card">
+        <div class="card-header bb-0">
+            <div class="card-header-title">
+                <h4>Opportunity Management</h4>
+                <div class="header-breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="@Url.Action("Dashboard","Home", new { Area = "Transactions"})"><i data-feather="home"></i></a></li>
+                        <li class="breadcrumb-item"><a href="@Url.Action("Dashboard","Home", new { Area = "Transactions"})">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Opportunity</li>
+                    </ol>
+                </div>
+            </div>
+            <div class="card-header-action">
+                <span class="mr-3">
+                    <button type="button" class="btn btn-white-alt activeButton" data-toggle="tooltip" data-placement="top" title="Assigned" value="1" name="Command" onclick="fnChangeAssignedType(event, 1);" id="btnAssigned"><i class="fas fa-user"></i></button>
+                    <button type="button" class="btn btn-white-alt" data-toggle="tooltip" data-placement="top" title="Assignee" value="2" name="Command" onclick="fnChangeAssignedType(event, 2);" id="btnAssignee"><i class="fas fa-user-plus"></i></button>
+                    @if (ViewBag.TeamRights)
+                    {
+                        <button type="button" class="btn btn-white-alt" data-toggle="tooltip" data-placement="top" title="Team" value="3" name="Command" onclick="fnChangeAssignedType(event, 3);" id="btnTeam"><i class="fas fa-users"></i></button>
+                    }
+                    @if (ViewBag.AllRights)
+                    {
+                        <button type="button" class="btn btn-white-alt" data-toggle="tooltip" data-placement="top" title="All" value="4" name="Command" onclick="fnChangeAssignedType(event, 4);" id="btnAll"><i class="fas fa-users-cog"></i></button>
+                    }
+                </span>
+                @*<button type="button" class="btn btn-white-alt" data-toggle="tooltip" data-placement="top" title="Send Email"><i class="fas fa-envelope"></i></button>*@
+                @*<button type="button" class="btn btn-white-alt" data-toggle="tooltip" data-placement="top" title="Chat"><i class="fas fa-comments"></i></button>*@
+                @*<button type="button" class="btn btn-white-alt" data-toggle="tooltip" data-placement="top" title="WhatsApp"><i class="fab fa-whatsapp"></i></button>*@
+                <button type="button" class="btn btn-white-alt" title="Bookmark" value="1" name="Command" onclick="fnToggleBookmarkOff(event);" id="btnBookmark"><i class="fas fa-star"></i></button>
+                <button type="button" class="btn btn-white-alt activeButton" title="Bookmark" value="2" name="Command" onclick="fnToggleBookmarkOn(event);" id="btnBookmark1" hidden><i class="fas fa-star"></i></button>
+                <span class="nav nav-pills-header">
+                    <a class="btn btn-white-alt nav-link active" title="Gridview" onclick="fnChangeView(1)" id="viewgrid-tab" data-toggle="tab" href="#view-grid"><i class="fas fa-th"></i></a>
+                    <a class="btn btn-white-alt nav-link" title="Listview" onclick="fnChangeView(2)" id="viewlist-tab" data-toggle="tab" href="#view-list"><i class="fas fa-list-ul"></i></a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Header :: End -->
+<!-- Main Area :: Start -->
+<section class="main-area-section">
+    <div class="row">
+        <div class="col-xl-9 col-lg-12">
+            <div class="tab-content" id="nav-tabContent">
+                <div class="tab-pane fade show active" id="view-grid">
+
+                </div>
+                <div class="tab-pane fade" id="view-list">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table id="TBL" class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" class="custom-control-input" id="allCheckBox" onclick="return initializeAllCheckBox();" name="allCheckBox">
+                                                    <label class="custom-control-label" for="allCheckBox"></label>
+                                                </div>
+                                            </th>
+                                            <th class="text-center">
+                                                <div class="list-li wishlist"><i class="far fa-star"></i></div>
+                                            </th>
+                                            <th class="text-center">#</th>
+                                            <th>Opportunity ID</th>
+                                            <th>Qualify Date</th>
+                                            <th>Lead Id</th>
+                                            <th>Lead Date</th>
+                                            <th>Assign To</th>
+                                            <th class="text-center">Special Notes</th>
+                                            <th>Name</th>
+                                            <th>Mobile No.</th>
+                                            <th>Next Follow-up Date</th>
+                                            <th>Follow-up</th>
+                                            <th>Next Site Visit Date</th>
+                                            <th class="text-center">Property Detail</th>
+                                            <th class="text-center">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="view-listtBody">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="pagination-area Pagingdiv" id="listdivPaging">
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-lg-12">
+            <div class="card" style="height: 50px !important; ">
+                <div class="card-header" style="align-self: flex-start !important; ">
+                    Show&nbsp;
+                    @{
+                        var list = new List<SelectListItem>();
+                        list.Add(new SelectListItem
+                        {
+                            Text = "10",
+                            Value = "10",
+                            Selected = true,
+                        });
+                        list.Add(new SelectListItem
+                        {
+                            Text = "25",
+                            Value = "25"
+                        });
+                        list.Add(new SelectListItem
+                        {
+                            Text = "50",
+                            Value = "50"
+                        });
+                        list.Add(new SelectListItem
+                        {
+                            Text = "100",
+                            Value = "100"
+                        });
+                    }
+
+                    @Html.DropDownList("NewpageSize", new SelectList(list, "Value", "Text"), new { @class = "form-control", @id = "NewpageSize", @style = "width:50%" })
+                    &nbsp;Records
+                </div>
+
+            </div>
+
+            <div class="card" style="margin-top:-26px">
+                <div class="card-header">
+                    <h4><i class="fas fa-filter pr-1"></i> Filters (<span id="FiltersTotalCount">0</span>)</h4>
+                    <div class="ml-auto">
+                        <button class="btn-clear" onclick="fnClearAdvanceFilter()">Clear Filter</button>
+                    </div>
+                </div>
+                <div class="card-body filter-body">
+                    @*<div class="form-group">
+                            <label>Relevance</label>
+                            <select class="form-control">
+                                <option value="0"></option>
+                                <option value="1">Relevance 1</option>
+                                <option value="2">Relevance 2</option>
+                                <option value="3">Relevance 3</option>
+                            </select>
+                        </div>*@
+                    <div class="form-group">
+                        <label>Search</label> <span data-toggle="tooltip" data-placement="top" title="Search by Opportunity ID, Lead Id, Lead Date, Lead Business Type, Property Category, Property Subcategory, First Name, Last Name, Mobile No., Email, Area/Locality, Requirements, Special Notes, Lead Source, Assign To."><i class="fas fa-info-circle"></i></span>
+                        @Html.TextBoxFor(o => o.WildSearch, new { @class = "form-control", @placeholder = "Search by Opportunity ID, Assign To, Lead Id, Lead Date, etc.", @maxlength = "100" })
+                    </div>
+                    <div class="form-group">
+                        <label>Date</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control daterange" id="FromToDate" value="@ViewBag.FromToDate">
+                            <div class="input-group-append">
+                                <div class="input-group-text"><i class="fas fa-calendar-alt"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Opportunity Status</label> <span data-toggle="tooltip" data-placement="top" title="Choose the current process of working with the lead"><i class="fas fa-info-circle"></i></span>
+                        @Html.DropDownListFor(m => m.LeadStageIdUI, new SelectList(ViewBag.EmptyList, "Key", "Value"), new { @class = "form-control multiselect-dropdown" })
+                        @Html.ValidationMessageFor(o => o.LeadStageIdUI, "", new { @class = "help-block text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label> <span data-toggle="tooltip" data-placement="top" title="Choose the relevant category for the property"><i class="fas fa-info-circle"></i></span>
+                        @Html.DropDownListFor(m => m.PropertyCategoryIdsUI, new SelectList(ViewBag.EmptyList, "Key", "Value"), new { @class = "form-control multiselect-dropdown" })
+                        @Html.ValidationMessageFor(o => o.PropertyCategoryIdsUI, "", new { @class = "help-block text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label>Subcategory</label> <span data-toggle="tooltip" data-placement="top" title="Choose the relevant sub-category for the property"><i class="fas fa-info-circle"></i></span>
+                        @Html.DropDownListFor(m => m.PropertySubcategoryIdsUI, new SelectList(ViewBag.EmptyList, "Key", "Value"), new { @class = "form-control multiselect-dropdown" })
+                        @Html.ValidationMessageFor(o => o.PropertySubcategoryIdsUI, "", new { @class = "help-block text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label>Residential Structures</label> <span data-toggle="tooltip" data-placement="top" title="Choose the space division for the property"><i class="fas fa-info-circle"></i></span>
+                        @Html.DropDownListFor(m => m.BHKIdsUI, new SelectList(ViewBag.EmptyList, "Key", "Value"), new { @class = "form-control multiselect-dropdown" })
+                        @Html.ValidationMessageFor(o => o.BHKIdsUI, "", new { @class = "help-block text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label>Floor</label> <span data-toggle="tooltip" data-placement="top" title="Choose the floor on which the property is situated "><i class="fas fa-info-circle"></i></span>
+                        @Html.DropDownListFor(m => m.FloorIdsUI, new SelectList(ViewBag.EmptyList, "Key", "Value"), new { @class = "form-control multiselect-dropdown" })
+                        @Html.ValidationMessageFor(o => o.FloorIdsUI, "", new { @class = "help-block text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label>Housing Segments</label> <span data-toggle="tooltip" data-placement="top" title="Choose the lead's financial affordability"><i class="fas fa-info-circle"></i></span>
+                        @Html.DropDownListFor(m => m.PropertyZoneIdUI, new SelectList(ViewBag.EmptyList, "Key", "Value"), new { @class = "form-control multiselect-dropdown", @title = "Choose the lead's financial affordability " })
+                        @Html.ValidationMessageFor(o => o.PropertyZoneIdUI, "", new { @class = "help-block text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label>Furnished Status</label> <span data-toggle="tooltip" data-placement="top" title="Choose the current furnished status of property"><i class="fas fa-info-circle"></i></span>
+                        @Html.DropDownListFor(m => m.FurnishStatusIdsUI, new SelectList(ViewBag.EmptyList, "Key", "Value"), new { @class = "form-control multiselect-dropdown" })
+                        @Html.ValidationMessageFor(o => o.FurnishStatusIdsUI, "", new { @class = "help-block text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label>City</label>
+                        @Html.DropDownListFor(m => m.CityIdUI, new SelectList(ViewBag.EmptyList, "Key", "Value"), new { @class = "form-control multiselect-dropdown" })
+                        @Html.ValidationMessageFor(o => o.CityIdUI, "", new { @class = "help-block text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label>Area / Locality</label>
+                        @Html.DropDownListFor(m => m.AreaIdUI, new SelectList(ViewBag.EmptyList, "Key", "Value"), new { @class = "form-control multiselect-dropdown" })
+                        @Html.ValidationMessageFor(o => o.AreaIdUI, "", new { @class = "help-block text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label>Price(₹)</label>
+                        <div class="d-flex d-block-input">
+                            <input type="text" class="form-control num" id="PriceFrom">
+                            <div class="form-divider">-</div>
+                            <input type="text" class="form-control num" id="PriceTo">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Total Area</label>
+                        <div class="d-flex d-block-input">
+                            <input type="text" class="form-control num" id="TotalAreaFrom">
+                            <div class="form-divider">-</div>
+                            <input type="text" class="form-control num" id="TotalAreaTo">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Assign To</label>
+                        @Html.DropDownListFor(m => m.AssignToUI, new SelectList(ViewBag.EmptyList, "Key", "Value"), new { @class = "form-control multiselect-dropdown" })
+                        @Html.ValidationMessageFor(o => o.AssignToUI, "", new { @class = "help-block text-danger" })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Main Area :: End -->
+<!-- Modal -->
+<input type="hidden" id="IsFrom_hdn" value="2" />
+@await Html.PartialAsync("_ActivityPartial", Model.listActivity)
+
+<!-- To Do -->
+<input type="hidden" id="MainAssignToIds" value="1" />
+<input type="hidden" id="AssignTypeId" value="1" />
+<input type="hidden" id="IsBookMarked" value="0" />
+@if (ViewBag.view == true)
+{
+    <input type="hidden" id="RightsView" value="true" />
+}
+else
+{
+    <input type="hidden" id="RightsView" value="false" />
+}
+@if (ViewBag.edit == true)
+{
+    <input type="hidden" id="RightsEdit" value="true" />
+}
+else
+{
+    <input type="hidden" id="RightsEdit" value="false" />
+}
+<input type="hidden" id="RightsDelete" value="@ViewBag.delete" />
+<input type="hidden" id="ListEmployee" value="@ViewBag.listEmployee" />
+<input type="hidden" id="ApprovalCount" value="@ViewBag.ApprovalCount" />
+<input id="AssignTo_hdn" value="@JsonConvert.SerializeObject(ViewBag.SiteVisitAssignTo)" type="hidden" />
+<input id="DefaultAssignTo_hdn" value="@ViewBag.AssignToId" type="hidden" />
+<input id="DefaultAssignToName_hdn" value="@ViewBag.AssignToName" type="hidden" />
+<input id="PI_hdn" value="@ViewBag.PI" type="hidden" />
+<input id="PS_hdn" value="@ViewBag.PS" type="hidden" />
+<input id="ViewType_hdn" value="@ViewBag.ViewType" type="hidden" />
+<input id="position_hdn" value="500" type="hidden" />
+<input id="EditId_hdn" value="@ViewBag.EditId" type="hidden" />
+
+<div class="modal fade" id="PropertyDetailModal" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xxl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Property Detail</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body p-0">
+                <input type="hidden" id="PropertyDetailPopupId" value="0" />
+                <div class="p-3">
+                    <ul class="nav nav-pills mb-3" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link active" id="Mappedtab-1" onclick="fnChangePropertyDetailTab(1)" data-toggle="tab">Mapped (<span id="MappedCount">0</span>)</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="tab-content" id="MappedTabContent">
+                    <div class="tab-pane fade show active" id="PropertyDetailtab1" role="tabpanel">
+                        <div class="p-3">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="table-responsive">
+                                        <table id="TBLMappedProperty" class="table table-bordered table-striped" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th data-orderable="false" class="text-center">#</th>
+                                                    <th>Property ID</th>
+                                                    <th>Property Availability</th>
+                                                    <th>Property Category</th>
+                                                    <th>Property Subcategory</th>
+                                                    <th>Property Contract</th>
+                                                    <th>Residential Structures</th>
+                                                    <th>Locality</th>
+                                                    <th>Super Buildup</th>
+                                                    <th>Carpet</th>
+                                                    <th>Project Name</th>
+                                                    <th>Available Date</th>
+                                                    <th>Status</th>
+                                                    <th>Furnished Status</th>
+                                                    <th>Tenant/Buyer Preference</th>
+                                                    <th>Possesion Status</th>
+                                                    <th class="text-center"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="QualifyConfirmationModal" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xxl ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="exampleModalLabel">Are you sure?</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="fnCancelQualifyConfirmationModal();">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body p-0">
+                <div class="p-3">
+                    <div class="row">
+                        <input type="hidden" value="0" id="QualifyOpportunityId" />
+                        <input type="hidden" value="0" id="QualifyOpportunityStageId" />
+                        <input type="hidden" value="0" id="QualifySelectedOpportunityStageId" />
+                        <input type="hidden" value="0" id="QualifyLeadId_hdn" />
+                        <div class="col-lg-12">
+                            <h4 class="modal-title">Confirmation Detail</h4>
+                        </div>
+                        <div class="col-lg-6" id="ShowClose">
+                            <div class="form-group">
+                                <label>Opportunity Lost Reason</label>
+                                <span class="required text-danger">*</span>
+                                @Html.DropDownList("OppLostReasonId", ViewBag.EmptyList as SelectList, "Select Lost Reason", new { @class = "form-control " })
+                            </div>
+                        </div>
+                        <div class="col-lg-6" id="ShowWon">
+                            <div class="form-group">
+                                <label>Assigned To</label>
+                                <span class="required text-danger">*</span>
+                                @Html.DropDownList("OppAssignedToId", ViewBag.EmptyList as SelectList, "Select Assigned To", new { @class = "form-control " })
+                                <span class="help-block text-danger field-validation-error" id="OppAssignedToIdErrorMessage"></span>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 ShowWon">
+                            <div class="form-group">
+                                <label>Property<span class="required">*</span></label>
+                                @Html.DropDownList("WonPropertyId", ViewBag.EmptyList as SelectList, "Select Property", new { @class = "form-control" })
+                                <span class="help-block text-danger field-validation-error" id="WonPropertyIdErrorMessage"></span>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Remarks</label>
+                                <span class="required text-danger">*</span>
+                                @Html.TextArea("OppRemarks", null, new { @class = "form-control", @placeholder = "Enter Remarks", @autocomplete = "off", @maxlength = "500" })
+                                <span class="help-block text-danger field-validation-error" id="OppRemarksErrorMessage"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6 ShowWon" id="ProjectDetails" hidden>
+                            <label><b>Project Name:</b></label>
+                            <span id="ProjectName"></span>&nbsp;&nbsp;
+                            <label><b>Block:</b></label>
+                            <span id="BlockNo"></span>&nbsp;&nbsp;
+                            <label><b>BHK:</b></label>
+                            <span id="BHKName"></span>&nbsp;&nbsp;
+                            <label><b>Floor:</b></label>
+                            <span id="FloorName"></span>&nbsp;&nbsp;
+                            <label><b>Unit No:</b></label>
+                            <span id="UnitNo"></span>&nbsp;&nbsp;
+                            <label><b>Address:</b></label>
+                            <span id="Address1"></span>&nbsp;&nbsp;
+                            <label><b>CarpetArea(<span id="CarpetAreaUnitName">sq.ft</span>):</b></label>
+                            <span id="CarpetArea"></span>&nbsp;&nbsp;
+                            <label><b>Super Build Up Area(<span id="SuperBuildupAreaUnitName">sq.ft</span>):</b></label>
+                            <span id="SuperBuildupArea"></span>&nbsp;&nbsp;
+                            <label><b>Basic Cost:</b></label>
+                            <span id="BasicPrice"></span>&nbsp;&nbsp;
+                        </div>
+                    </div>
+                    <div class="row ShowWon">
+                        <div class="col-lg-6">
+                            <div class="row" style="border-right: 2px solid gray;">
+                                <div class="col-lg-12">
+                                    <h4 class="modal-title">Seller Detail</h4>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>Name</label>
+                                        <span class="required text-danger">*</span>
+                                        @Html.TextBox("SellerName", null, new { @class = "form-control", @placeholder = "Enter Name", @autocomplete = "off" })
+                                        <span class="help-block text-danger field-validation-error" id="SellerNameErrorMessage"></span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>Mobile No</label>
+                                        <span class="required text-danger">*</span>
+                                        @Html.TextBox("SellerMobileNo", null, new { @class = "form-control numM", @placeholder = "Enter Mobile No", @autocomplete = "off", @maxlength = AppConstantUI.MobileNoMaxLength })
+                                        <span class="help-block text-danger field-validation-error" id="SellerMobileNoErrorMessage"></span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>Email</label>
+                                        <span class="required text-danger">*</span>
+                                        @Html.TextBox("SellerEmail", null, new { @class = "form-control", @placeholder = "Enter Email", @autocomplete = "off" })
+                                        <span class="help-block text-danger field-validation-error" id="SellerEmailErrorMessage"></span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6" hidden>
+                                    <div class="form-group">
+                                        <label>Country</label>
+                                        <span class="required text-danger">*</span>
+                                        @Html.DropDownList("SellerCountry", ViewBag.EmptyList as SelectList, "Select Country", new { @class = "form-control select2" })
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>State</label>
+                                        <span class="required text-danger">*</span>
+                                        @Html.DropDownList("SellerState", ViewBag.EmptyList as SelectList, "Select State", new { @class = "form-control select2" })
+                                        <span class="help-block text-danger field-validation-error" id="SellerStateErrorMessage"></span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>City</label>
+                                        <span class="required text-danger">*</span>
+                                        @Html.DropDownList("SellerCity", ViewBag.EmptyList as SelectList, "Select City", new { @class = "form-control select2" })
+                                        <span class="help-block text-danger field-validation-error" id="SellerCityErrorMessage"></span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6" hidden>
+                                    <div class="form-group">
+                                        <label>Area/Locality</label>
+                                        <span class="required text-danger">*</span>
+                                        @Html.DropDownList("SellerArea", ViewBag.EmptyList as SelectList, new { @class = "form-control select2" })
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>Address</label>
+                                        <span class="required text-danger">*</span>
+                                        @Html.TextArea("SellerAddress", null, new { @class = "form-control", @placeholder = "Enter Address", @autocomplete = "off" })
+                                        <span class="help-block text-danger field-validation-error" id="SellerAddressErrorMessage"></span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="form-group form-checkbox">
+                                        <div class="custom-control custom-checkbox">
+                                            @Html.CheckBox("IsSellerBrokerInvolved", new { @class = "custom-control-input" })
+                                            <label class="custom-control-label" for="IsSellerBrokerInvolved">Broker Involved</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-8 SellerBrokerName">
+                                    <div class="form-group">
+                                        <label>Broker Name</label>
+                                        <span class="required text-danger">*</span>
+                                        @Html.TextBox("SellerBrokerName", null, new { @class = "form-control", @placeholder = "Enter Broker Name", @autocomplete = "off" })
+                                        <span class="help-block text-danger field-validation-error" id="SellerBrokerNameErrorMessage"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <h4 class="modal-title">Buyer Detail</h4>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>Name</label>
+                                        <span class="required text-danger">*</span>
+                                        @Html.TextBox("BuyerName", null, new { @class = "form-control", @placeholder = "Enter Name", @autocomplete = "off" })
+                                        <span class="help-block text-danger field-validation-error" id="BuyerNameErrorMessage"></span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>Mobile No</label>
+                                        <span class="required text-danger">*</span>
+                                        @Html.TextBox("BuyerMobileNo", null, new { @class = "form-control numM", @placeholder = "Enter Mobile No", @autocomplete = "off", @maxlength = AppConstantUI.MobileNoMaxLength })
+                                        <span class="help-block text-danger field-validation-error" id="BuyerMobileNoErrorMessage"></span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>Email</label>
+                                        <span class="required text-danger">*</span>
+                                        @Html.TextBox("BuyerEmail", null, new { @class = "form-control", @placeholder = "Enter Email", @autocomplete = "off" })
+                                        <span class="help-block text-danger field-validation-error" id="BuyerEmailErrorMessage"></span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6" hidden>
+                                    <div class="form-group">
+                                        <label>Country</label>
+                                        <span class="required text-danger">*</span>
+                                        @Html.DropDownList("BuyerCountry", ViewBag.EmptyList as SelectList, "Select Country", new { @class = "form-control select2" })
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>State</label>
+                                        <span class="required text-danger">*</span>
+                                        @Html.DropDownList("BuyerState", ViewBag.EmptyList as SelectList, "Select State", new { @class = "form-control select2" })
+                                        <span class="help-block text-danger field-validation-error" id="BuyerStateErrorMessage"></span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>City</label>
+                                        <span class="required text-danger">*</span>
+                                        @Html.DropDownList("BuyerCity", ViewBag.EmptyList as SelectList, "Select City", new { @class = "form-control select2" })
+                                        <span class="help-block text-danger field-validation-error" id="BuyerCityErrorMessage"></span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6" hidden>
+                                    <div class="form-group">
+                                        <label>Area/Locality</label>
+                                        <span class="required text-danger">*</span>
+                                        @Html.DropDownList("BuyerArea", ViewBag.EmptyList as SelectList, new { @class = "form-control select2" })
+                                        <span class="help-block text-danger field-validation-error" id="BuyerAreaErrorMessage"></span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>Address</label>
+                                        <span class="required text-danger">*</span>
+                                        @Html.TextArea("BuyerAddress", null, new { @class = "form-control", @placeholder = "Enter Address", @autocomplete = "off" })
+                                        <span class="help-block text-danger field-validation-error" id="BuyerAddressErrorMessage"></span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="form-group form-checkbox">
+                                        <div class="custom-control custom-checkbox">
+                                            @Html.CheckBox("IsBuyerBrokerInvolved", new { @class = "custom-control-input" })
+                                            <label class="custom-control-label" for="IsBuyerBrokerInvolved">Broker Involved</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-8 BuyerBrokerName">
+                                    <div class="form-group">
+                                        <label>Broker Name</label>
+                                        <span class="required text-danger">*</span>
+                                        @Html.TextBox("BuyerBrokerName", null, new { @class = "form-control", @placeholder = "Enter Broker Name", @autocomplete = "off" })
+                                        <span class="help-block text-danger field-validation-error" id="BuyerBrokerNameErrorMessage"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row ShowWon">
+                        <div class="col-lg-12">
+                            <h4 class="modal-title">Commercial Detail</h4>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label>Transaction Value</label>
+                                <span class="required text-danger">*</span>
+                                @Html.TextBox("TransactionValue", null, new { @class = "form-control num", @placeholder = "Enter Transaction Value", @autocomplete = "off", @maxlength = "12", @onkeyup = "fnTotalTransactionValue();", @style = "text-align: right;" })
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label>Other Component</label>
+                                <span class="required text-danger">*</span>
+                                @Html.TextBox("OtherValue", null, new { @class = "form-control num", @placeholder = "Enter Other Component", @autocomplete = "off", @maxlength = "12", @onkeyup = "fnTotalTransactionValue();", @style = "text-align: right;" })
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label>Sale Deed Value</label>
+                                <span class="required text-danger">*</span>
+                                @Html.TextBox("SaleDeedValue", null, new { @class = "form-control num", @placeholder = "Enter Sale Deed Value", @autocomplete = "off", @maxlength = "12", @onkeyup = "fnTotalTransactionValue();", @style = "text-align: right;" })
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label>Total Transaction Value</label>
+                                <span class="required text-danger">*</span>
+                                @Html.TextBox("TotalTransactionValue", null, new { @class = "form-control num", @placeholder = "Enter Total Transaction Value", @autocomplete = "off", @Readonly = "readonly", @maxlength = "12", @style = "text-align: right;" })
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label>Time Period(Days)</label>
+                                <span class="required text-danger">*</span>
+                                @Html.TextBox("TimePeriod", null, new { @class = "form-control numI", @placeholder = "Enter Time Period(Days)", @autocomplete = "off", @maxlength = "4", @style = "text-align: right;" })
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label>Approx. Loan Token</label>
+                                <span class="required text-danger">*</span>
+                                @Html.TextBox("LoanAmount", null, new { @class = "form-control num", @placeholder = "Enter Approx. Loan Token", @autocomplete = "off", @maxlength = "12", @style = "text-align: right;" })
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label>Brokerage</label>
+                                <span class="required text-danger">*</span>
+                                @Html.TextBox("Brokerage", null, new { @class = "form-control num", @placeholder = "Enter Brokerage", @autocomplete = "off", @maxlength = "12", @style = "text-align: right;" })
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12">
+                            <h4 class="modal-title">Provisional Payment Terms Detail</h4>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label>Date</label>
+                                <span class="required text-danger">*</span>
+                                <div class="input-group">
+                                    @Html.TextBox("Date", "", new { @class = "form-control datetimepicker-input datetimepicker1", @placeholder = "DD/MM/YYYY", @data_toggle = "datetimepicker", @data_target = "#datetimepicker1", @autocomplete = "off", @onchange = "fnDateValidation();" })
+                                    <div class="input-group-append">
+                                        <div class="input-group-text DatChange"><i class="fas fa-calendar-alt"></i></div>
+                                    </div>
+                                </div>
+                                <span class="help-block text-danger field-validation-error" id="DateErrorMessage"></span>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label>Description</label>
+                                <span class="required text-danger">*</span>
+                                @Html.TextBox("Description", null, new { @class = "form-control", @placeholder = "Enter Description", @autocomplete = "off" })
+                                <span class="help-block text-danger field-validation-error" id="DescriptionErrorMessage"></span>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label>Amount</label>
+                                <span class="required text-danger">*</span>
+                                @Html.TextBox("Amount", null, new { @class = "form-control num", @placeholder = "Enter Amount", @autocomplete = "off", @maxlength = "12", @style = "text-align: right;" })
+                                <span class="help-block text-danger field-validation-error" id="AmountErrorMessage"></span>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group" style="float: right; padding-top: 23px;">
+                                <a href="javascript:;" onclick="fnAddPaymentDetails()" class="btn btn-success btn-icon"><i class="fas fa-plus pr-1"></i>Add</a>
+                                <a href="javascript:;" onclick="fnClearPaymentTermsDetail();" class="btn btn-secondary btn-icon" style="background-color: #ffc107"><i class="fas fa-backspace pr-1"></i>Clear</a>
+                            </div>
+                        </div>
+                        <div class="form-group col-xl-12 col-lg-12 col-md-12 table-responsive">
+                            <input type="hidden" id="UpdateId" />
+                            <input type="hidden" id="DetailId" />
+                            <table class="table table-bordered table-striped checkbox-table mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Date</th>
+                                        <th>Description</th>
+                                        <th>Amount</th>
+                                        <th>Edit</th>
+                                        <th>Delete</th>
+                                        <th hidden>Delete</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tblPaymentTermsDetail">
+                                    <tr id="tr_0">
+                                        <td colspan="6" style="text-align: center;">No Record Found</td>
+                                    </tr>
+                                </tbody>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="3" style="text-align:right"><b>Total Amount</b></td>
+                                        <td id="PaymentTermsDetailTotalAmount"><b>0.00</b></td>
+                                        <td colspan="2"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <button type="submit" class="btn btn-primary" onclick="return fnAcceptQualifyConfirmationModal();">Okay</button>
+                            <button type="button" class="btn btn-danger" onclick="fnCancelQualifyConfirmationModal();">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Select Employees Modal :: Start -->
+<div class="modal fade" id="teamModel" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Choose Employees</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="accordion-core-02">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="structure-tree-area accordion" id="chart_div">
+                            @{
+                                int i = 1;
+                                var CEOId = 0;
+                                int TotalReportersCount = 0;
+                                //int MinDepth = 0;
+                                //int MaxDepth = 0;
+                            }
+                            @foreach (var ceoitem in Model.ReportingStructureList.Where(o => o.Depth == 1))
+                            {
+                                if (i == 1)
+                                {
+                                    CEOId = ceoitem.EmployeeId;
+                                    TotalReportersCount = (Model.ReportingStructureList.Where(o => o.ReportingToId == ceoitem.EmployeeId).Count());
+                                    //MinDepth = (Model.ReportingStructureList.OrderBy(o => o.Depth).Take(1).ToList().FirstOrDefault().Depth);
+                                    //MaxDepth = (Model.ReportingStructureList.OrderByDescending(o => o.Depth).Take(1).ToList().FirstOrDefault().Depth);
+                                    <div class="structure-tree-head">
+                                        @*<input type="hidden" id="MinDepth" value="@MinDepth" />
+                                            <input type="hidden" id="MaxDepth" value="@MaxDepth" />*@
+                                        <div class="panel-collapse-top" id="accordion-core-01">
+                                            <div class="structure-tree-box">
+                                                <div class="structure-tree-inner">
+                                                    <div class="structure-tree-userimg">
+                                                        <img class="img-fluid" src="@ceoitem.ProfileImage" alt="@ceoitem.EmployeeName">
+                                                    </div>
+                                                    <div class="structure-tree-userinfo">
+                                                        <div class="checkbox-control custom-control custom-checkbox">
+                                                            <input type="checkbox" class="custom-control-input employee-input clsCheckBox" row="1" id="employeeCheck_@ceoitem.EmployeeId">
+                                                            <label class="custom-control-label" for="employeeCheck_@ceoitem.EmployeeId"></label>
+                                                        </div>
+                                                        <div class="structure-tree-username">@ceoitem.EmployeeName</div>
+                                                        <div class="structure-tree-userposition">@ceoitem.DesignationName</div>
+                                                    </div>
+                                                </div>
+                                                <div class="structure-tree-action">
+                                                    <button type="button" class="structure-tree-reports main-collapse collapsed" id="@ceoitem.EmployeeId" data-target="#report_1" data-toggle="collapse" aria-expanded="true">@TotalReportersCount</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            <div class="structure-tree-body" id="accordion-core-02">
+                                <div id="report_1" class="panel-collapse collapse show">
+                                    <div class="semiborder"><div class="semiborder-left"></div><div class="semiborder-right"></div></div>
+                                    <div class="structure-boxcollapse main-collapse collapse" data-target="#report_1" data-toggle="collapse" aria-expanded="true">Collapse <i class="fas fa-angle-up"></i></div>
+                                    <div class="structure-tree-report-box">
+                                        @foreach (var Manageritem in Model.ReportingStructureList)
+                                        {
+                                            if (Manageritem.ReportingToId == CEOId || Manageritem.EmployeeId == Manageritem.ReportingToId)
+                                            {
+                                                if (Manageritem.EmployeeId != CEOId)
+                                                {
+                                                    int EmployeeCount = Model.ReportingStructureList.Where(o => o.ReportingToId == Manageritem.EmployeeId).Count();
+                                                    <div class="structure-tree-box">
+                                                        <div class="structure-tree-inner">
+                                                            <div class="structure-tree-userimg">
+                                                                <img class="img-fluid" src="@Manageritem.ProfileImage" alt="@Manageritem.EmployeeName">
+                                                            </div>
+                                                            <div class="structure-tree-userinfo">
+                                                                <div class="checkbox-control custom-control custom-checkbox">
+                                                                    <input type="checkbox" class="custom-control-input employee-input clsCheckBox" FullPathIds="@Manageritem.DepthClass" row="@Manageritem.EmployeeId" EmployeeCount="@EmployeeCount" id="employeeCheck_@Manageritem.EmployeeId">
+                                                                    <label class="custom-control-label" for="employeeCheck_@Manageritem.EmployeeId"></label>
+                                                                </div>
+                                                                <div class="structure-tree-username">@Manageritem.EmployeeName</div>
+                                                                <div class="structure-tree-userposition">@Manageritem.DesignationName</div>
+                                                            </div>
+                                                        </div>
+                                                        @if (EmployeeCount > 0)
+                                                        {
+                                                            <div class="structure-tree-action">
+                                                                <button type="button" class="inner-click structure-tree-reports collapsed" onclick="fnexpandteam(this)" data-target="#report_@Manageritem.EmployeeId" id="colbtn_@Manageritem.EmployeeId" data-bs-toggle="collapse" aria-expanded="false">@EmployeeCount</button>
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                }
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                                @{ int ManagerId = 0;}
+                                @foreach (var Employee in Model.ReportingStructureList)
+                                {
+                                    ManagerId = Employee.ReportingToId;
+                                    if (Employee.EmployeeId != CEOId)
+                                    {
+                                        <div id="report_@Employee.EmployeeId" class="panel-collapse collapse">
+                                            <div class="structure-tree-report-manager">
+                                                <div class="structure-tree-report-manager-box collapse show" data-target="#report_@Employee.EmployeeId" id="data_@Employee.EmployeeId" data-toggle="collapse" aria-expanded="true">
+                                                    <div class="structure-tree-report-manager-img">
+                                                        <img class="img-fluid" src="@Employee.ProfileImage" alt="@Employee.EmployeeName">
+                                                    </div>
+                                                    <div class="structure-tree-report-manager-name">@Employee.EmployeeName</div>
+                                                </div>
+                                            </div>
+                                            <div class="semiborder"><div class="semiborder-left"></div><div class="semiborder-right"></div></div>
+                                            <div class="structure-boxcollapse collapse" data-target="#report_@Employee.EmployeeId" id="data_@Employee.EmployeeId" data-toggle="collapse" aria-expanded="true">Collapse <i class="fas fa-angle-up"></i></div>
+                                            <div class="structure-tree-report-box">
+                                                @foreach (var Developer in Model.ReportingStructureList)
+                                                {
+                                                    if (Developer.ReportingToId == Employee.EmployeeId && Developer.EmployeeId != Developer.ReportingToId)
+                                                    {
+                                                        int EmployeeCount = 0;
+                                                        foreach (var item in Model.ReportingStructureList.Where(o => o.ReportingToId == Developer.EmployeeId && o.ReportingToId != Developer.ReportingToId).GroupBy(o => o.ReportingToId).Select(group => new { Count = group.Count() }))
+                                                        {
+                                                            EmployeeCount = item.Count;
+                                                        }
+                                                        <div class="structure-tree-box">
+                                                            <div class="structure-tree-inner">
+                                                                <div class="structure-tree-userimg">
+                                                                    @if (!string.IsNullOrEmpty(Developer.ProfileImage))
+                                                                    {
+                                                                        <img class="img-fluid" src="@Developer.ProfileImage" alt="@Developer.EmployeeName" />
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <img class="img-fluid" src="/Content/profile-picture/profile3.png" alt="@Developer.EmployeeName" />
+                                                                    }
+                                                                </div>
+                                                                <div class="structure-tree-userinfo">
+                                                                    <div class="checkbox-control custom-control custom-checkbox">
+                                                                        <input type="checkbox" class="custom-control-input employee-input clsCheckBox" FullPathIds="@Developer.DepthClass" row="@Developer.EmployeeId" EmployeeCount="@EmployeeCount" id="employeeCheck_@Developer.EmployeeId">
+                                                                        <label class="custom-control-label" for="employeeCheck_@Developer.EmployeeId"></label>
+                                                                    </div>
+                                                                    <div class="structure-tree-username">@Developer.EmployeeName</div>
+                                                                    <div class="structure-tree-userposition">@Developer.DesignationName</div>
+                                                                </div>
+                                                            </div>
+                                                            @if (EmployeeCount > 0)
+                                                            {
+                                                                <div class="structure-tree-action">
+                                                                    <button type="button" class="inner-click structure-tree-reports collapsed" onclick="fnexpandteam(this)" data-target="#report_@Developer.EmployeeId" id="colbtn_@Developer.EmployeeId" data-bs-toggle="collapse" aria-expanded="false">@EmployeeCount</button>
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer text-center">
+                <button type="button" class="btn btn-primary" id="btnApplyTeamFilter">Select</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Select Employees Modal :: End -->
+
+<script src="/Transactions/Content/js/Opportunity/List.js?version=0.11"></script>
+

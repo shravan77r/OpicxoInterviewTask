@@ -1,0 +1,106 @@
+﻿@model List<PropertyERP.Areas.Transactions.Models.ActivityUI>
+@if (Model != null)
+{
+    foreach (var item in Model.Where(o => o.ActivityTypeId == 3))
+    {
+        <div class="col-xl-12 p-0">
+            <div class="schedule-box">
+                <div class="card list-card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-xl-10 col-lg-12">
+                                <div class="list-details">
+                                    <div class="list-details-section">
+                                        <h4>Task:</h4>
+                                        <span>@item.TaskName</span>
+                                    </div>
+                                    @*<div class="list-details-section">
+                                        <h4>Subtask:</h4>
+                                        <span>@item.SubtaskName</span>
+                                    </div>*@
+                                    <div class="list-details-section">
+                                        <h4>Start Date Time:</h4>
+                                        <span>@item.StartDate</span>
+                                    </div>
+                                    <div class="list-details-section">
+                                        <h4>End Date Time:</h4>
+                                        <span>@item.EndDate</span>
+                                    </div>
+                                </div>
+                                <div class="list-details">
+                                    <div class="list-details-section">
+                                        <h4>Assign To:</h4>
+                                        <span>@item.AssignedName</span>
+                                    </div>
+                                    <div class="list-details-section">
+                                        <h4>Task Status:</h4>
+                                        <span>@item.TaskStatusName</span>
+                                    </div>
+                                </div>
+                                <div class="list-details d-block">
+                                    <div class="list-details-section w-100">
+                                        <h4>Task Detail:</h4>
+                                        <span>@item.ActionStep</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-2 col-lg-12">
+                                <div class="action-area follow-up-area">
+                                    <div class="list-details">
+                                        <div class="list-details-section status-area">
+                                            <button type="button" class="btn btn-primary btn-sm" onclick="fnEditActivity(@item.Id, 3);" title="Edit Followup"><i class="fas fa-edit"></i></button>
+                                            <button type="button" class="btn btn-danger btn-sm" onclick="fnDeleteActivity(@item.Id, 3);" title="Delete Followup" hidden><i class="fas fa-trash-alt"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--<div class="col-lg-12">
+            <div class="schedule-box">
+                <div class="row">
+                    <div class="col-lg-9">
+                        <div class="modal-card">
+                            <div class="features-list">
+                                <label class="list-features-label">Task:</label>
+                                <label class="list-features-text assignto-label">@item.TaskName</label>
+                            </div>
+                            <div class="features-list">
+                                <label class="list-features-label">Subtask:</label>
+                                <label class="list-features-text assignto-label">@item.SubtaskName</label>
+                            </div>
+                            <div class="features-list">
+                                <label class="list-features-label">Start Date Time:</label>
+                                <label class="list-features-text assignto-label">@item.StartDate</label>
+                            </div>
+                            <div class="features-list">
+                                <label class="list-features-label">End Date Time:</label>
+                                <label class="list-features-text assignto-label">@item.EndDate</label>
+                            </div>
+                            <div class="features-list">
+                                <label class="list-features-label">Task Detail:</label>
+                                <label class="list-features-text assignto-label">@item.ActionStep</label>
+                            </div>
+                            <div class="features-list">
+                                <label class="list-features-label">Assign To:</label>
+                                <label class="list-features-text assignto-label">@item.AssignedName</label>
+                            </div>
+                            <div class="features-list">
+                                <label class="list-features-label">Task Status:</label>
+                                <label class="list-features-text assignto-label">@item.TaskStatusName</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <button type="button" class="btn btn-primary btn-sm" onclick="fnEditActivity(@item.Id, 3);" title="Edit Followup"><i class="fas fa-edit"></i></button>
+                        <button type="button" class="btn btn-danger btn-sm" onclick="fnDeleteActivity(@item.Id, 3);" title="Delete Followup"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>-->
+    }
+}

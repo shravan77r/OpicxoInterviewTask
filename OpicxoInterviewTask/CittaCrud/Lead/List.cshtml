@@ -1,0 +1,1417 @@
+﻿@model PropertyERP.Areas.Transactions.Models.LeadUI;
+@using Newtonsoft.Json;
+@using PropertyERP.Common;
+
+@{
+    ViewBag.Title = "Lead";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<style type="text/css">
+    .activeButton {
+        background-color: #fff;
+        border-color: #fff;
+        color: #032b4f;
+    }
+
+        .activeButton .text-primary {
+            color: #fff !important
+        }
+
+        .activeButton:active, .activeButton:hover, .activeButton:focus {
+            background-color: #fff;
+            border-color: #fff;
+            color: #032b4f;
+        }
+
+    .overflow-scroll {
+        overflow-x: scroll
+    }
+
+    #chart_div table {
+        border-collapse: separate !important;
+    }
+
+    .form-control.Qualify_Status ~ .select2 .select2-selection {
+        border-color: #84d784;
+        color: #fff !important;
+    }
+
+        .form-control.Qualify_Status ~ .select2 .select2-selection .select2-selection__rendered {
+            color: #56b956 !important;
+        }
+
+    .form-control.Disqualify_Status ~ .select2 .select2-selection {
+        border-color: #d8232a;
+        color: #fff !important;
+    }
+
+        .form-control.Disqualify_Status ~ .select2 .select2-selection .select2-selection__rendered {
+            color: #d8232a !important;
+        }
+</style>
+<!-- Header :: Start -->
+<div class="header-area">
+    <div class="card">
+        <div class="card-header bb-0">
+            <div class="card-header-title">
+                <h4>Lead Management</h4>
+                <div class="header-breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="@Url.Action("Dashboard","Home", new { Area = "Transactions"})"><i data-feather="home"></i></a></li>
+                        <li class="breadcrumb-item"><a href="@Url.Action("Dashboard","Home", new { Area = "Transactions"})">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Lead</li>
+                    </ol>
+                </div>
+            </div>
+            <div class="card-header-action">
+                <span class="mr-3">
+                    <button type="button" class="btn btn-white-alt activeButton" data-toggle="tooltip" data-placement="top" title="Assigned" value="1" name="Command" onclick="fnChangeAssignedType(event, 1);" id="btnAssigned"><i class="fas fa-user"></i></button>
+                    <button type="button" class="btn btn-white-alt" data-toggle="tooltip" data-placement="top" title="Assignee" value="2" name="Command" onclick="fnChangeAssignedType(event, 2);" id="btnAssignee"><i class="fas fa-user-plus"></i></button>
+                    @if (ViewBag.TeamRights)
+                    {
+                        <button type="button" class="btn btn-white-alt" data-toggle="tooltip" data-placement="top" title="Team" value="3" name="Command" onclick="fnChangeAssignedType(event, 3);" id="btnTeam"><i class="fas fa-users"></i></button>
+                    }
+                    @if (ViewBag.AllRights)
+                    {
+                        <button type="button" class="btn btn-white-alt" data-toggle="tooltip" data-placement="top" title="All" value="4" name="Command" onclick="fnChangeAssignedType(event, 4);" id="btnAll"><i class="fas fa-users-cog"></i></button>
+                    }
+                    <button type="button" class="btn btn-white-alt" data-toggle="tooltip" data-placement="top" title="Bulk Lead Assign" name="Command" onclick="fnLeadAssignTo();" id="btnAssign"><i class="fas fa-share-square"></i></button>
+                </span>
+                @*<button type="button" class="btn btn-white-alt" data-toggle="tooltip" data-placement="top" title="Send Email"><i class="fas fa-envelope"></i></button>*@
+                @*<button type="button" class="btn btn-white-alt" data-toggle="tooltip" data-placement="top" title="Chat"><i class="fas fa-comments"></i></button>*@
+                @*<button type="button" class="btn btn-white-alt" data-toggle="tooltip" data-placement="top" title="WhatsApp"><i class="fab fa-whatsapp"></i></button>*@
+                <button type="button" class="btn btn-white-alt" title="Bookmark" value="1" name="Command" onclick="fnToggleBookmarkOff(event);" id="btnBookmark"><i class="fas fa-star"></i></button>
+                <button type="button" class="btn btn-white-alt activeButton" title="Bookmark" value="2" name="Command" onclick="fnToggleBookmarkOn(event);" id="btnBookmark1" hidden><i class="fas fa-star"></i></button>
+                <span class="nav nav-pills-header">
+                    <a class="btn btn-white-alt nav-link active" title="Gridview" onclick="fnChangeView(1)" id="viewgrid-tab" data-toggle="tab" href="#view-grid"><i class="fas fa-th"></i></a>
+                    <a class="btn btn-white-alt nav-link" title="Listview" onclick="fnChangeView(2)" id="viewlist-tab" data-toggle="tab" href="#view-list"><i class="fas fa-list-ul"></i></a>
+                </span>
+                @if (ViewBag.addnew == true)
+                {
+                    <a href="@Url.Action("Form", "Lead", new { Area = "Transactions" })" class="btn btn-white" data-toggle="tooltip" data-placement="top" title="Add New"><i class="far fa-plus"></i> Add</a>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Header :: End -->
+<!-- Main Area :: Start -->
+<section class="main-area-section">
+    <div class="row">
+        <div class="col-xl-9 col-lg-12">
+            <div class="tab-content" id="nav-tabContent">
+                <div class="tab-pane fade show active" id="view-grid">
+                    <!--<div class="card">
+                        <div class="card-body">
+                            <div class="list-row">
+                                <div class="listcol-full">
+                                    <div class="list-action">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="ListCheck1">
+                                            <label class="custom-control-label" for="ListCheck1"></label>
+                                        </div>
+                                        <div class="list-li wishlist"><i class="far fa-star"></i></div>
+                                        <div class="list-li diamond"><i class="far fa-trophy"></i></div>
+                                    </div>
+                                    <div class="list-info">
+                                        <div class="list-id">ID: PP_4407</div>
+                                        <div class="list-postdate mb-2">Lead Date: 01/07/2021 08 Days Ago</div>
+                                        <h1 class="list-title mb-3">Looking for 3,4 BHK Independent Bunglow</h1>
+                                        <div class="row">
+                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                                <div class="features-list">
+                                                    <label class="list-features-label">Preferred Projects:</label>
+                                                    <label class="list-features-text assignto-label">Sktvilla, Skyview</label>
+                                                </div>
+                                                <div class="features-list">
+                                                    <label class="list-features-label">Preferred Area:</label>
+                                                    <label class="list-features-text">Nikol, Naroda, Bapunagar</label>
+                                                </div>
+                                                <div class="features-list">
+                                                    <label class="list-features-label">Budget Range:</label>
+                                                    <label class="list-features-text price-label">₹45-55 Lac</label>
+                                                </div>
+                                                <div class="features-list">
+                                                    <label class="list-features-label">Super Buildup Area:</label>
+                                                    <label class="list-features-text">1400-1799 Sq Ft</label>
+                                                </div>
+                                                <div class="features-list">
+                                                    <label class="list-features-label">Carpet Area:</label>
+                                                    <label class="list-features-text">1499 Sq Ft</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                                <div class="features-list">
+                                                    <label class="list-features-label">Lead Score:</label>
+                                                    <label class="list-features-text">
+                                                        <span class="d-flex">
+                                                            <span class="fas fa-star fill-yellow"></span>
+                                                            <span class="fas fa-star fill-yellow"></span>
+                                                            <span class="fas fa-star fill-yellow"></span>
+                                                            <span class="fas fa-star fill-yellow"></span>
+                                                            <span class="far fa-star fill-yellow"></span>
+                                                        </span>
+                                                    </label>
+                                                </div>
+                                                <div class="features-list">
+                                                    <label class="list-features-label">Lead Zone:</label>
+                                                    <label class="list-features-text">Affordable</label>
+                                                </div>
+                                                <div class="features-list">
+                                                    <label class="list-features-label">Lead Priority:</label>
+                                                    <label class="list-features-text">
+                                                        <span data-toggle="tooltip" data-placement="top" title="Hot">
+                                                            <img class="list-icon" src="~/adminpanel/images/fire.png" />
+                                                        </span>
+                                                    </label>
+                                                </div>
+                                                <div class="features-list">
+                                                    <label class="list-features-label">Status:</label>
+                                                    <label class="list-features-text">
+                                                        <select class="form-control">
+                                                            <option value="">In Process</option>
+                                                            <option value="">Quality</option>
+                                                            <option value="">Disquality</option>
+                                                        </select>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                                <div class="features-list">
+                                                    <label class="list-features-label">Followup Taken:</label>
+                                                    <label class="list-features-text">
+                                                        <a href="#" class="list-link">02</a>
+                                                    </label>
+                                                    <span class="hint-text d-block">To call him on 18/06/2021 04:00 PM</span>
+                                                </div>
+                                                <div class="features-list">
+                                                    <label class="list-features-label">Next Followup Taken:</label>
+                                                    <label class="list-features-text">25/06/2021</label>
+                                                </div>
+                                                <div class="features-list">
+                                                    <label class="list-features-text">
+                                                        <a href="#" class="list-link">Property Detail (06)</a>
+                                                    </label>
+                                                </div>
+                                                <div class="features-list">
+                                                    <label class="list-features-text">
+                                                        <a href="#" class="list-link">Matching Property (10)</a>
+                                                    </label>
+                                                </div>
+                                                <div class="features-list">
+                                                    <label class="list-features-label">Assign To:</label>
+                                                    <label class="list-features-text">
+                                                        <select class="form-control">
+                                                            <option value="">Rohit Patel</option>
+                                                            <option value="">Manish Patel</option>
+                                                            <option value="">Akash Shah</option>
+                                                        </select>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-xl-4">
+                                                <div class="box-hint-desc">
+                                                    <p>Internal Desc. : Sale | Residental | Flat | 4BHK | 2nd Floor | Affordable</p>
+                                                    <p>External Desc. : Sale | Residental | Flat | 4BHK | 2nd Floor | Affordable</p>
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-4">
+                                                <div class="form-group mb-0">
+                                                    <input type="text" class="form-control" placeholder="Enter Special Note">
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-4">
+                                                <div class="owner-box">
+                                                    <div class="features-list mb-0">
+                                                        <label class="list-features-text">Mehul Dave</label>
+                                                        <div class="list-features-text ml-2">
+                                                            <ul class="list-social">
+                                                                <li>
+                                                                    <a href="#" class="list-social-link"><i class="far fa-eye"></i></a>
+                                                                </li>
+                                                                <li>
+                                                                    <a href="#" class="list-social-link"><i class="far fa-edit"></i></a>
+                                                                </li>
+                                                                <li>
+                                                                    <a href="#" class="list-social-link"><i class="far fa-trash"></i></a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                    <div class="ownercontact">9273542242 | mehuldave@gmail.com</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="list-row">
+                                <div class="listcol-full">
+                                    <div class="list-action">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="ListCheck2">
+                                            <label class="custom-control-label" for="ListCheck2"></label>
+                                        </div>
+                                        <div class="list-li wishlist"><i class="far fa-star"></i></div>
+                                        <div class="list-li diamond"><i class="far fa-trophy"></i></div>
+                                    </div>
+                                    <div class="list-info">
+                                        <div class="list-id">ID: PP_4407</div>
+                                        <div class="list-postdate mb-2">Lead Date: 01/07/2021 08 Days Ago</div>
+                                        <h1 class="list-title mb-3">Looking for 3,4 BHK Independent Bunglow</h1>
+                                        <div class="row">
+                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                                <div class="features-list">
+                                                    <label class="list-features-label">Preferred Projects:</label>
+                                                    <label class="list-features-text assignto-label">Sktvilla, Skyview</label>
+                                                </div>
+                                                <div class="features-list">
+                                                    <label class="list-features-label">Preferred Area:</label>
+                                                    <label class="list-features-text">Nikol, Naroda, Bapunagar</label>
+                                                </div>
+                                                <div class="features-list">
+                                                    <label class="list-features-label">Budget Range:</label>
+                                                    <label class="list-features-text price-label">₹45-55 Lac</label>
+                                                </div>
+                                                <div class="features-list">
+                                                    <label class="list-features-label">Super Buildup Area:</label>
+                                                    <label class="list-features-text">1400-1799 Sq Ft</label>
+                                                </div>
+                                                <div class="features-list">
+                                                    <label class="list-features-label">Carpet Area:</label>
+                                                    <label class="list-features-text">1499 Sq Ft</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                                <div class="features-list">
+                                                    <label class="list-features-label">Lead Score:</label>
+                                                    <label class="list-features-text">
+                                                        <span class="d-flex">
+                                                            <span class="fas fa-star fill-yellow"></span>
+                                                            <span class="fas fa-star fill-yellow"></span>
+                                                            <span class="fas fa-star fill-yellow"></span>
+                                                            <span class="fas fa-star fill-yellow"></span>
+                                                            <span class="far fa-star fill-yellow"></span>
+                                                        </span>
+                                                    </label>
+                                                </div>
+                                                <div class="features-list">
+                                                    <label class="list-features-label">Lead Zone:</label>
+                                                    <label class="list-features-text">Affordable</label>
+                                                </div>
+                                                <div class="features-list">
+                                                    <label class="list-features-label">Lead Priority:</label>
+                                                    <label class="list-features-text">
+                                                        <span data-toggle="tooltip" data-placement="top" title="Hot">
+                                                            <img class="list-icon" src="~/adminpanel/images/fire.png" />
+                                                        </span>
+                                                    </label>
+                                                </div>
+                                                <div class="features-list">
+                                                    <label class="list-features-label">Status:</label>
+                                                    <label class="list-features-text">
+                                                        <select class="form-control">
+                                                            <option value="">In Process</option>
+                                                            <option value="">Quality</option>
+                                                            <option value="">Disquality</option>
+                                                        </select>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                                <div class="features-list">
+                                                    <label class="list-features-label">Followup Taken:</label>
+                                                    <label class="list-features-text">
+                                                        <a href="#" class="list-link">02</a>
+                                                    </label>
+                                                    <span class="hint-text d-block">To call him on 18/06/2021 04:00 PM</span>
+                                                </div>
+                                                <div class="features-list">
+                                                    <label class="list-features-label">Next Followup Taken:</label>
+                                                    <label class="list-features-text">25/06/2021</label>
+                                                </div>
+                                                <div class="features-list">
+                                                    <label class="list-features-text">
+                                                        <a href="#" class="list-link">Property Detail (06)</a>
+                                                    </label>
+                                                </div>
+                                                <div class="features-list">
+                                                    <label class="list-features-text">
+                                                        <a href="#" class="list-link">Matching Property (10)</a>
+                                                    </label>
+                                                </div>
+                                                <div class="features-list">
+                                                    <label class="list-features-label">Assign To:</label>
+                                                    <label class="list-features-text">
+                                                        <select class="form-control">
+                                                            <option value="">Rohit Patel</option>
+                                                            <option value="">Manish Patel</option>
+                                                            <option value="">Akash Shah</option>
+                                                        </select>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-xl-4">
+                                                <div class="box-hint-desc">
+                                                    <p>Internal Desc. : Sale | Residental | Flat | 4BHK | 2nd Floor | Affordable</p>
+                                                    <p>External Desc. : Sale | Residental | Flat | 4BHK | 2nd Floor | Affordable</p>
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-4">
+                                                <div class="form-group mb-0">
+                                                    <input type="text" class="form-control" placeholder="Enter Special Note">
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-4">
+                                                <div class="owner-box">
+                                                    <div class="features-list mb-0">
+                                                        <label class="list-features-text">Mehul Dave</label>
+                                                        <div class="list-features-text ml-2">
+                                                            <ul class="list-social">
+                                                                <li>
+                                                                    <a href="#" class="list-social-link"><i class="far fa-eye"></i></a>
+                                                                </li>
+                                                                <li>
+                                                                    <a href="#" class="list-social-link"><i class="far fa-edit"></i></a>
+                                                                </li>
+                                                                <li>
+                                                                    <a href="#" class="list-social-link"><i class="far fa-trash"></i></a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                    <div class="ownercontact">9273542242 | mehuldave@gmail.com</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="list-row">
+                                <div class="listcol-full">
+                                    <div class="list-action">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="ListCheck3">
+                                            <label class="custom-control-label" for="ListCheck3"></label>
+                                        </div>
+                                        <div class="list-li wishlist"><i class="far fa-star"></i></div>
+                                        <div class="list-li diamond"><i class="far fa-trophy"></i></div>
+                                    </div>
+                                    <div class="list-info">
+                                        <div class="list-id">ID: PP_4407</div>
+                                        <div class="list-postdate mb-2">Lead Date: 01/07/2021 08 Days Ago</div>
+                                        <h1 class="list-title mb-3">Looking for 3,4 BHK Independent Bunglow</h1>
+                                        <div class="row">
+                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                                <div class="features-list">
+                                                    <label class="list-features-label">Preferred Projects:</label>
+                                                    <label class="list-features-text assignto-label">Sktvilla, Skyview</label>
+                                                </div>
+                                                <div class="features-list">
+                                                    <label class="list-features-label">Preferred Area:</label>
+                                                    <label class="list-features-text">Nikol, Naroda, Bapunagar</label>
+                                                </div>
+                                                <div class="features-list">
+                                                    <label class="list-features-label">Budget Range:</label>
+                                                    <label class="list-features-text price-label">₹45-55 Lac</label>
+                                                </div>
+                                                <div class="features-list">
+                                                    <label class="list-features-label">Super Buildup Area:</label>
+                                                    <label class="list-features-text">1400-1799 Sq Ft</label>
+                                                </div>
+                                                <div class="features-list">
+                                                    <label class="list-features-label">Carpet Area:</label>
+                                                    <label class="list-features-text">1499 Sq Ft</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                                <div class="features-list">
+                                                    <label class="list-features-label">Lead Score:</label>
+                                                    <label class="list-features-text">
+                                                        <span class="d-flex">
+                                                            <span class="fas fa-star fill-yellow"></span>
+                                                            <span class="fas fa-star fill-yellow"></span>
+                                                            <span class="fas fa-star fill-yellow"></span>
+                                                            <span class="fas fa-star fill-yellow"></span>
+                                                            <span class="far fa-star fill-yellow"></span>
+                                                        </span>
+                                                    </label>
+                                                </div>
+                                                <div class="features-list">
+                                                    <label class="list-features-label">Lead Zone:</label>
+                                                    <label class="list-features-text">Affordable</label>
+                                                </div>
+                                                <div class="features-list">
+                                                    <label class="list-features-label">Lead Priority:</label>
+                                                    <label class="list-features-text">
+                                                        <span data-toggle="tooltip" data-placement="top" title="Hot">
+                                                            <img class="list-icon" src="~/adminpanel/images/fire.png" />
+                                                        </span>
+                                                    </label>
+                                                </div>
+                                                <div class="features-list">
+                                                    <label class="list-features-label">Status:</label>
+                                                    <label class="list-features-text">
+                                                        <select class="form-control">
+                                                            <option value="">In Process</option>
+                                                            <option value="">Quality</option>
+                                                            <option value="">Disquality</option>
+                                                        </select>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                                <div class="features-list">
+                                                    <label class="list-features-label">Followup Taken:</label>
+                                                    <label class="list-features-text">
+                                                        <a href="#" class="list-link">02</a>
+                                                    </label>
+                                                    <span class="hint-text d-block">To call him on 18/06/2021 04:00 PM</span>
+                                                </div>
+                                                <div class="features-list">
+                                                    <label class="list-features-label">Next Followup Taken:</label>
+                                                    <label class="list-features-text">25/06/2021</label>
+                                                </div>
+                                                <div class="features-list">
+                                                    <label class="list-features-text">
+                                                        <a href="#" class="list-link">Property Detail (06)</a>
+                                                    </label>
+                                                </div>
+                                                <div class="features-list">
+                                                    <label class="list-features-text">
+                                                        <a href="#" class="list-link">Matching Property (10)</a>
+                                                    </label>
+                                                </div>
+                                                <div class="features-list">
+                                                    <label class="list-features-label">Assign To:</label>
+                                                    <label class="list-features-text">
+                                                        <select class="form-control">
+                                                            <option value="">Rohit Patel</option>
+                                                            <option value="">Manish Patel</option>
+                                                            <option value="">Akash Shah</option>
+                                                        </select>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-xl-4">
+                                                <div class="box-hint-desc">
+                                                    <p>Internal Desc. : Sale | Residental | Flat | 4BHK | 2nd Floor | Affordable</p>
+                                                    <p>External Desc. : Sale | Residental | Flat | 4BHK | 2nd Floor | Affordable</p>
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-4">
+                                                <div class="form-group mb-0">
+                                                    <input type="text" class="form-control" placeholder="Enter Special Note">
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-4">
+                                                <div class="owner-box">
+                                                    <div class="features-list mb-0">
+                                                        <label class="list-features-text">Mehul Dave</label>
+                                                        <div class="list-features-text ml-2">
+                                                            <ul class="list-social">
+                                                                <li>
+                                                                    <a href="#" class="list-social-link"><i class="far fa-eye"></i></a>
+                                                                </li>
+                                                                <li>
+                                                                    <a href="#" class="list-social-link"><i class="far fa-edit"></i></a>
+                                                                </li>
+                                                                <li>
+                                                                    <a href="#" class="list-social-link"><i class="far fa-trash"></i></a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                    <div class="ownercontact">9273542242 | mehuldave@gmail.com</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pagination-area">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                        </ul>
+                    </div>-->
+                </div>
+                <div class="tab-pane fade" id="view-list">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table id="TBL" class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" class="custom-control-input" id="allCheckBoxAssign" onclick="return initializeAllCheckBoxAssign();" name="allCheckBoxAssign">
+                                                    <label class="custom-control-label" for="allCheckBoxAssign"></label>
+                                                </div>
+                                            </th>
+                                            <th class="text-center">
+                                                <div class="list-li wishlist"><i class="far fa-star"></i></div>
+                                            </th>
+                                            <th class="text-center">#</th>
+                                            <th>Lead ID</th>
+                                            <th>Date (days)</th>
+                                            <th>Assign To</th>
+                                            <th class="text-center">Special Notes</th>
+                                            <th>Name</th>
+                                            <th>Mobile No.</th>
+                                            <th>Residential Structures</th>
+                                            <th>Budget Range</th>
+                                            <th>Project Requirement</th>
+                                            <th>Next Follow-up Date</th>
+                                            <th>Follow-up</th>
+                                            <th class="text-center">Auto Match Property</th>
+                                            <th>Lead Detail</th>
+                                            <th class="text-center">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="view-listtBody">
+                                        <!--
+                                            <tr>
+                                                <td class="text-center">
+                                                    <div class="custom-control custom-checkbox">
+                                                        <input type="checkbox" class="custom-control-input" id="ListCheck12">
+                                                        <label class="custom-control-label" for="ListCheck12"></label>
+                                                    </div>
+                                                </td>
+                                                <td class="text-center">
+                                                    <div class="list-li wishlist"><i class="far fa-star"></i></div>
+                                                </td>
+                                                <td class="text-center">1</td>
+                                                <td>PP_4407</td>
+                                                <td class="whitespace-rap">01/07/2021 08 Days Ago</td>
+                                                <td class="whitespace-rap">Rohit Patel</td>
+                                                <td>
+                                                    <div class="tb-width-300">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</div>
+                                                </td>
+                                                <td class="whitespace-rap">Mehul Dave</td>
+                                                <td>9273542242</td>
+                                                <td class="whitespace-rap">3 BHK</td>
+                                                <td>₹45-55 Lac</td>
+                                                <td>1400-1799 Sq Ft</td>
+                                                <td>25/06/2021</td>
+                                                <td>18/06/2021</td>
+                                                <td class="text-center">
+                                                    <a href="#" class="list-link">Properties</a>
+                                                </td>
+                                                <td>Looking for 3,4 BHK Independent Bunglow</td>
+                                                <td class="text-center whitespace-rap">
+                                                    <button type="button" class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="" data-original-title="Convert"><i class="fas fa-sync"></i></button>
+                                                    <button type="button" class="btn btn-success btn-sm" data-toggle="tooltip" data-placement="top" title="" data-original-title="View"><i class="fas fa-eye"></i></button>
+                                                    <button type="button" class="btn btn-info btn-sm" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"><i class="fas fa-edit"></i></button>
+                                                    <button type="button" class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="" data-original-title="Delete"><i class="fas fa-trash-alt"></i></button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-center">
+                                                    <div class="custom-control custom-checkbox">
+                                                        <input type="checkbox" class="custom-control-input" id="ListCheck13">
+                                                        <label class="custom-control-label" for="ListCheck13"></label>
+                                                    </div>
+                                                </td>
+                                                <td class="text-center">
+                                                    <div class="list-li wishlist"><i class="far fa-star"></i></div>
+                                                </td>
+                                                <td class="text-center">1</td>
+                                                <td>PP_4407</td>
+                                                <td class="whitespace-rap">01/07/2021 08 Days Ago</td>
+                                                <td class="whitespace-rap">Rohit Patel</td>
+                                                <td>
+                                                    <div class="tb-width-300">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</div>
+                                                </td>
+                                                <td class="whitespace-rap">Mehul Dave</td>
+                                                <td>9273542242</td>
+                                                <td class="whitespace-rap">3 BHK</td>
+                                                <td>₹45-55 Lac</td>
+                                                <td>1400-1799 Sq Ft</td>
+                                                <td>25/06/2021</td>
+                                                <td>18/06/2021</td>
+                                                <td class="text-center">
+                                                    <a href="#" class="list-link">Properties</a>
+                                                </td>
+                                                <td>Looking for 3,4 BHK Independent Bunglow</td>
+                                                <td class="text-center whitespace-rap">
+                                                    <button type="button" class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="" data-original-title="Convert"><i class="fas fa-sync"></i></button>
+                                                    <button type="button" class="btn btn-success btn-sm" data-toggle="tooltip" data-placement="top" title="" data-original-title="View"><i class="fas fa-eye"></i></button>
+                                                    <button type="button" class="btn btn-info btn-sm" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"><i class="fas fa-edit"></i></button>
+                                                    <button type="button" class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="" data-original-title="Delete"><i class="fas fa-trash-alt"></i></button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-center">
+                                                    <div class="custom-control custom-checkbox">
+                                                        <input type="checkbox" class="custom-control-input" id="ListCheck14">
+                                                        <label class="custom-control-label" for="ListCheck14"></label>
+                                                    </div>
+                                                </td>
+                                                <td class="text-center">
+                                                    <div class="list-li wishlist"><i class="far fa-star"></i></div>
+                                                </td>
+                                                <td class="text-center">1</td>
+                                                <td>PP_4407</td>
+                                                <td class="whitespace-rap">01/07/2021 08 Days Ago</td>
+                                                <td class="whitespace-rap">Rohit Patel</td>
+                                                <td>
+                                                    <div class="tb-width-300">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</div>
+                                                </td>
+                                                <td class="whitespace-rap">Mehul Dave</td>
+                                                <td>9273542242</td>
+                                                <td class="whitespace-rap">3 BHK</td>
+                                                <td>₹45-55 Lac</td>
+                                                <td>1400-1799 Sq Ft</td>
+                                                <td>25/06/2021</td>
+                                                <td>18/06/2021</td>
+                                                <td class="text-center">
+                                                    <a href="#" class="list-link">Properties</a>
+                                                </td>
+                                                <td>Looking for 3,4 BHK Independent Bunglow</td>
+                                                <td class="text-center whitespace-rap">
+                                                    <button type="button" class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="" data-original-title="Convert"><i class="fas fa-sync"></i></button>
+                                                    <button type="button" class="btn btn-success btn-sm" data-toggle="tooltip" data-placement="top" title="" data-original-title="View"><i class="fas fa-eye"></i></button>
+                                                    <button type="button" class="btn btn-info btn-sm" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"><i class="fas fa-edit"></i></button>
+                                                    <button type="button" class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="" data-original-title="Delete"><i class="fas fa-trash-alt"></i></button>
+                                                </td>
+                                            </tr>
+                                        -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="pagination-area Pagingdiv" id="listdivPaging">
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-lg-12">
+            <div class="card" style="height: 50px !important; ">
+                <div class="card-header" style="align-self: flex-start !important; ">
+                    Show&nbsp;
+                    @{
+                        var list = new List<SelectListItem>();
+                        list.Add(new SelectListItem
+                        {
+                            Text = "10",
+                            Value = "10",
+                            Selected = true,
+                        });
+                        list.Add(new SelectListItem
+                        {
+                            Text = "25",
+                            Value = "25"
+                        });
+                        list.Add(new SelectListItem
+                        {
+                            Text = "50",
+                            Value = "50"
+                        });
+                        list.Add(new SelectListItem
+                        {
+                            Text = "100",
+                            Value = "100"
+                        });
+                    }
+
+                    @Html.DropDownList("NewpageSize", new SelectList(list, "Value", "Text"), new { @class = "form-control", @id = "NewpageSize", @style = "width:50%" })
+                    &nbsp;Records
+                </div>
+
+            </div>
+
+            <div class="card" style="margin-top:-26px">
+                <div class="card-header">
+                    <h4><i class="fas fa-filter pr-1"></i> Filters (<span id="FiltersTotalCount">0</span>)</h4>
+                    <div class="ml-auto">
+                        <button class="btn-clear" onclick="fnClearAdvanceFilter()">Clear Filter</button>
+                    </div>
+                </div>
+                <div class="card-body filter-body">
+                    @*<div class="form-group">
+                <label>Relevance</label>
+                <select class="form-control">
+                <option value="0"></option>
+                <option value="1">Relevance 1</option>
+                <option value="2">Relevance 2</option>
+                <option value="3">Relevance 3</option>
+                </select>
+                </div>*@
+                    <div class="form-group">
+                        <label>Search</label> <span data-toggle="tooltip" data-placement="top" title="Search by Lead Id, Lead Date, Lead Business Type, Property Category, Property Subcategory, First Name, Last Name, Mobile No., Email, Area/Locality, Requirements, Special Notes, Lead Source, Assign To."><i class="fas fa-info-circle"></i></span>
+                        @Html.TextBoxFor(o => o.WildSearch, new { @class = "form-control", @placeholder = "Search by Lead Id, Requirements, Assign To, Area/Locality, etc.", @maxlength = "100" })
+                    </div>
+                    <div class="form-group">
+                        <label>Date</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control daterange" id="FromToDate" value="@ViewBag.FromToDate">
+                            <div class="input-group-append">
+                                <div class="input-group-text"><i class="fas fa-calendar-alt"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Lead Status</label> <span data-toggle="tooltip" data-placement="top" title="Choose the current process of working with the lead"><i class="fas fa-info-circle"></i></span>
+                        @Html.DropDownListFor(m => m.LeadStageIdUI, new SelectList(ViewBag.EmptyList, "Key", "Value"), new { @class = "form-control multiselect-dropdown", @title = "Choose the current process of working with the lead" })
+                        @Html.ValidationMessageFor(o => o.LeadStageIdUI, "", new { @class = "help-block text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label>Lead Business Type</label> <span data-toggle="tooltip" data-placement="top" title="Choose the lead's business requirement"><i class="fas fa-info-circle"></i></span>
+                        @Html.DropDownListFor(m => m.PropertyForIdUI, new SelectList(ViewBag.EmptyList, "Key", "Value"), new { @class = "form-control multiselect-dropdown", @title = "Choose the lead's business requirement" })
+                        @Html.ValidationMessageFor(o => o.PropertyForIdUI, "", new { @class = "help-block text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label> <span data-toggle="tooltip" data-placement="top" title="Choose the relevant category for the property"><i class="fas fa-info-circle"></i></span>
+                        @Html.DropDownListFor(m => m.PropertyCategoryIdsUI, new SelectList(ViewBag.EmptyList, "Key", "Value"), new { @class = "form-control multiselect-dropdown" })
+                        @Html.ValidationMessageFor(o => o.PropertyCategoryIdsUI, "", new { @class = "help-block text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label>Subcategory</label> <span data-toggle="tooltip" data-placement="top" title="Choose the relevant sub-category for the property"><i class="fas fa-info-circle"></i></span>
+                        @Html.DropDownListFor(m => m.PropertySubcategoryIdsUI, new SelectList(ViewBag.EmptyList, "Key", "Value"), new { @class = "form-control multiselect-dropdown" })
+                        @Html.ValidationMessageFor(o => o.PropertySubcategoryIdsUI, "", new { @class = "help-block text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label>Residential Structures</label> <span data-toggle="tooltip" data-placement="top" title="Choose the space division for the property"><i class="fas fa-info-circle"></i></span>
+                        @Html.DropDownListFor(m => m.BHKIdsUI, new SelectList(ViewBag.EmptyList, "Key", "Value"), new { @class = "form-control multiselect-dropdown" })
+                        @Html.ValidationMessageFor(o => o.BHKIdsUI, "", new { @class = "help-block text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label>Floor</label> <span data-toggle="tooltip" data-placement="top" title="Choose the floor on which the property is situated "><i class="fas fa-info-circle"></i></span>
+                        @Html.DropDownListFor(m => m.FloorIdsUI, new SelectList(ViewBag.EmptyList, "Key", "Value"), new { @class = "form-control multiselect-dropdown" })
+                        @Html.ValidationMessageFor(o => o.FloorIdsUI, "", new { @class = "help-block text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label>Housing Segments</label> <span data-toggle="tooltip" data-placement="top" title="Choose the lead's financial affordability"><i class="fas fa-info-circle"></i></span>
+                        @Html.DropDownListFor(m => m.PropertyZoneIdUI, new SelectList(ViewBag.EmptyList, "Key", "Value"), new { @class = "form-control multiselect-dropdown", @title = "Choose the lead's financial affordability " })
+                        @Html.ValidationMessageFor(o => o.PropertyZoneIdUI, "", new { @class = "help-block text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label>Furnish Status</label> <span data-toggle="tooltip" data-placement="top" title="Choose the current furnished status of property"><i class="fas fa-info-circle"></i></span>
+                        @Html.DropDownListFor(m => m.FurnishStatusIdsUI, new SelectList(ViewBag.EmptyList, "Key", "Value"), new { @class = "form-control multiselect-dropdown" })
+                        @Html.ValidationMessageFor(o => o.FurnishStatusIdsUI, "", new { @class = "help-block text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label>City</label>
+                        @Html.DropDownListFor(m => m.CityIdUI, new SelectList(ViewBag.EmptyList, "Key", "Value"), new { @class = "form-control multiselect-dropdown" })
+                        @Html.ValidationMessageFor(o => o.CityIdUI, "", new { @class = "help-block text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label>Area / Locality</label>
+                        @Html.DropDownListFor(m => m.AreaIdUI, new SelectList(ViewBag.EmptyList, "Key", "Value"), new { @class = "form-control multiselect-dropdown" })
+                        @Html.ValidationMessageFor(o => o.AreaIdUI, "", new { @class = "help-block text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label>Price(₹)</label>
+                        <div class="d-flex d-block-input">
+                            <input type="text" class="form-control num" id="PriceFrom">
+                            <div class="form-divider">-</div>
+                            <input type="text" class="form-control num" id="PriceTo">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Total Area</label>
+                        <div class="d-flex d-block-input">
+                            <input type="text" class="form-control num" id="TotalAreaFrom">
+                            <div class="form-divider">-</div>
+                            <input type="text" class="form-control num" id="TotalAreaTo">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Assign To</label>
+                        @Html.DropDownListFor(m => m.AssignToUI, new SelectList(ViewBag.EmptyList, "Key", "Value"), new { @class = "form-control multiselect-dropdown" })
+                        @Html.ValidationMessageFor(o => o.AssignToUI, "", new { @class = "help-block text-danger" })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Main Area :: End -->
+<!-- Modal -->
+<input type="hidden" id="IsFrom_hdn" value="1" />
+@await Html.PartialAsync("_ActivityPartial", Model.listActivity)
+
+<!-- To Do -->
+<input type="hidden" id="MainAssignToIds" value="1" />
+<input type="hidden" id="AssignTypeId" value="1" />
+<input type="hidden" id="IsBookMarked" value="0" />
+@*<input type="hidden" id="RightsView" value="@ViewBag.view" />
+    <input type="hidden" id="RightsEdit" value="@ViewBag.edit" />
+    <input type="hidden" id="RightsDelete" value="@ViewBag.delete" />*@
+<input type="hidden" id="ListEmployee" value="@ViewBag.listEmployee" />
+<input type="hidden" id="ApprovalCount" value="@ViewBag.ApprovalCount" />
+<input id="DefaultAssignTo_hdn" value="@ViewBag.AssignToId" type="hidden" />
+<input id="DefaultAssignToName_hdn" value="@ViewBag.AssignToName" type="hidden" />
+<input id="PI_hdn" value="@ViewBag.PI" type="hidden" />
+<input id="PS_hdn" value="@ViewBag.PS" type="hidden" />
+<input id="ViewType_hdn" value="@ViewBag.ViewType" type="hidden" />
+<input id="position_hdn" value="500" type="hidden" />
+<input id="EditId_hdn" value="@ViewBag.EditId" type="hidden" />
+
+<div class="modal fade p-0 property-details" id="PropertyDetailModal" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xxl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Property Detail</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body p-0">
+                <input type="hidden" id="PropertyDetailPopupLeadId" value="0" />
+                <div class="p-3">
+                    <div class="d-flex">
+                        <ul class="nav nav-pills mb-0" id="myTab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <a href="javascript:void(0);" class="nav-link active" id="Mappedtab-1" onclick="fnChangePropertyDetailTab(1)" data-toggle="tab">Mapped (<span id="MappedCount">0</span>)</a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a href="javascript:void(0);" class="nav-link" id="Matchingtab-2" onclick="fnChangePropertyDetailTab(2)" data-toggle="tab">Matching (<span id="MatchingCount">0</span>)</a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a href="javascript:void(0);" class="nav-link" id="Alltab-3" onclick="fnChangePropertyDetailTab(3)" data-toggle="tab">All (<span id="AllCount">0</span>)</a>
+                            </li>
+                        </ul>
+                        <div class="ml-auto">
+                            <a href="javascript:void(0);" id="SharePropertyPopup" class="btn btn-primary" data-dismiss="modal">Share Properties</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content" id="MappedTabContent">
+                    <div class="tab-pane fade show active" id="PropertyDetailtab1" role="tabpanel">
+                        <div class="p-3">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="table-responsive tb-scroll-v">
+                                        <table id="TBLMappedProperty" class="table table-bordered table-striped" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th data-orderable="false" class="text-center">#</th>
+                                                    <th>Property ID</th>
+                                                    <th>Property Availability</th>
+                                                    <th>Property Category</th>
+                                                    <th>Property Subcategory</th>
+                                                    <th>Property Contract</th>
+                                                    <th>Residential Structures</th>
+                                                    <th>Locality</th>
+                                                    <th>Super Buildup</th>
+                                                    <th>Carpet</th>
+                                                    <th>Project Name</th>
+                                                    <th>Available Date</th>
+                                                    <th>Status</th>
+                                                    <th>Furnished Status</th>
+                                                    <th>Tenant/Buyer Preference</th>
+                                                    <th>Possesion Status</th>
+                                                    <th class="text-center"></th>
+                                                    <th class="text-center"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="PropertyDetailtab2" role="tabpanel">
+                        <div class="p-3">
+                            <div class="row">
+                                <div class="col-xl-2 col-md-4">
+                                    <div class="form-group">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input clsMatchingPropertyCheckBox" id="IsMapCategory" checked="@ViewBag.IsCategory">
+                                            <label class="custom-control-label" for="IsMapCategory">Property Category</label>
+                                            <input type="hidden" id="IsMapCategoryhidden" value="@ViewBag.IsCategory" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-2 col-md-4">
+                                    <div class="form-group">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input clsMatchingPropertyCheckBox" id="IsMapSubCategory" checked="@ViewBag.IsSubCategory">
+                                            <label class="custom-control-label" for="IsMapSubCategory">Property Subcategory</label>
+                                            <input type="hidden" id="IsMapSubCategoryhidden" value="@ViewBag.IsSubCategory" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-2 col-md-4">
+                                    <div class="form-group">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input clsMatchingPropertyCheckBox" id="IsMapArea" checked="@ViewBag.IsArea">
+                                            <label class="custom-control-label" for="IsMapArea">Area</label>
+                                            <input type="hidden" id="IsMapAreahidden" value="@ViewBag.IsArea" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-2 col-md-4">
+                                    <div class="form-group">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input clsMatchingPropertyCheckBox" id="IsMapProject" checked="@ViewBag.IsProject">
+                                            <label class="custom-control-label" for="IsMapProject">Project</label>
+                                            <input type="hidden" id="IsMapProjecthidden" value="@ViewBag.IsProject" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-2 col-md-4">
+                                    <div class="form-group">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input clsMatchingPropertyCheckBox" id="IsMapBudget" checked="@ViewBag.IsBudget">
+                                            <label class="custom-control-label" for="IsMapBudget">Budget</label>
+                                            <input type="hidden" id="IsMapBudgethidden" value="@ViewBag.IsBudget" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="table-responsive tb-scroll-v">
+                                        <table id="TBLMatchingProperty" class="table table-bordered table-striped" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-center"></th>
+                                                    <th data-orderable="false" class="text-center">#</th>
+                                                    <th>Property ID</th>
+                                                    <th>Property Availability</th>
+                                                    <th>Property Category</th>
+                                                    <th>Property Subcategory</th>
+                                                    <th>Property Contract</th>
+                                                    <th>Residential Structures</th>
+                                                    <th>Locality</th>
+                                                    <th>Super Buildup</th>
+                                                    <th>Carpet</th>
+                                                    <th>Project Name</th>
+                                                    <th>Available Date</th>
+                                                    <th>Status</th>
+                                                    <th>Furnished Status</th>
+                                                    <th>Tenant/Buyer Preference</th>
+                                                    <th>Possesion Status</th>
+                                                    <th class="text-center"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="PropertyDetailtab3" role="tabpanel">
+                        <div class="p-3">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="table-responsive tb-scroll-v">
+                                        <table id="TBLAllProperty" class="table table-bordered table-striped" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-center"></th>
+                                                    <th data-orderable="false" class="text-center">#</th>
+                                                    <th>Property ID</th>
+                                                    <th>Property Availability</th>
+                                                    <th>Property Category</th>
+                                                    <th>Property Subcategory</th>
+                                                    <th>Property Contract</th>
+                                                    <th>Residential Structures</th>
+                                                    <th>Locality</th>
+                                                    <th>Super Buildup</th>
+                                                    <th>Carpet</th>
+                                                    <th>Project Name</th>
+                                                    <th>Available Date</th>
+                                                    <th>Status</th>
+                                                    <th>Furnished Status</th>
+                                                    <th>Tenant/Buyer Preference</th>
+                                                    <th>Possesion Status</th>
+                                                    <th class="text-center"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="QualifyConfirmationModal" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="exampleModalLabel">Are you sure?</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="fnCancelQualifyConfirmationModal();">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body p-0">
+                <div class="p-3">
+                    <div class="row">
+                        <input type="hidden" value="0" id="QualifyLeadId" />
+                        <input type="hidden" value="0" id="QualifyLeadStatusId" />
+                        <input type="hidden" value="0" id="QualifySelectedLeadStatusId" />
+                        <div class="col-lg-12">
+                            <h5 class="modal-title" id="exampleModalLabel">Once Qualified, it will convert into Opportunity!</h5>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Opportunity Assigned To</label>
+                                <span class="required text-danger">*</span>
+                                @Html.DropDownList("OppAssignedToId", ViewBag.EmptyList as SelectList, "Select Assigned To", new { @class = "form-control " })
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <button type="submit" class="btn btn-primary" onclick="return fnAcceptQualifyConfirmationModal();">Yes</button>
+                            <button type="button" class="btn btn-danger" onclick="fnCancelQualifyConfirmationModal();">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Select Employees Modal :: Start -->
+<div class="modal fade" id="teamModel" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Choose Employees</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="accordion-core-02">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="structure-tree-area accordion" id="chart_div">
+                            @{
+                                int i = 1;
+                                var CEOId = 0;
+                                int TotalReportersCount = 0;
+                                //int MinDepth = 0;
+                                //int MaxDepth = 0;
+                            }
+                            @foreach (var ceoitem in Model.ReportingStructureList.Where(o => o.Depth == 1))
+                            {
+                                if (i == 1)
+                                {
+                                    CEOId = ceoitem.EmployeeId;
+                                    TotalReportersCount = (Model.ReportingStructureList.Where(o => o.ReportingToId == ceoitem.EmployeeId).Count());
+                                    //MinDepth = (Model.ReportingStructureList.OrderBy(o => o.Depth).Take(1).ToList().FirstOrDefault().Depth);
+                                    //MaxDepth = (Model.ReportingStructureList.OrderByDescending(o => o.Depth).Take(1).ToList().FirstOrDefault().Depth);
+                                    <div class="structure-tree-head">
+                                        @*<input type="hidden" id="MinDepth" value="@MinDepth" />
+                                            <input type="hidden" id="MaxDepth" value="@MaxDepth" />*@
+                                        <div class="panel-collapse-top" id="accordion-core-01">
+                                            <div class="structure-tree-box">
+                                                <div class="structure-tree-inner">
+                                                    <div class="structure-tree-userimg">
+                                                        <img class="img-fluid" src="@ceoitem.ProfileImage" alt="@ceoitem.EmployeeName">
+                                                    </div>
+                                                    <div class="structure-tree-userinfo">
+                                                        <div class="checkbox-control custom-control custom-checkbox">
+                                                            <input type="checkbox" class="custom-control-input employee-input clsCheckBox" row="1" id="employeeCheck_@ceoitem.EmployeeId">
+                                                            <label class="custom-control-label" for="employeeCheck_@ceoitem.EmployeeId"></label>
+                                                        </div>
+                                                        <div class="structure-tree-username">@ceoitem.EmployeeName</div>
+                                                        <div class="structure-tree-userposition">@ceoitem.DesignationName</div>
+                                                    </div>
+                                                </div>
+                                                <div class="structure-tree-action">
+                                                    <button type="button" class="structure-tree-reports main-collapse collapsed" id="@ceoitem.EmployeeId" data-target="#report_1" data-toggle="collapse" aria-expanded="true">@TotalReportersCount</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            <div class="structure-tree-body" id="accordion-core-02">
+                                <div id="report_1" class="panel-collapse collapse show">
+                                    <div class="semiborder"><div class="semiborder-left"></div><div class="semiborder-right"></div></div>
+                                    <div class="structure-boxcollapse main-collapse collapse" data-target="#report_1" data-toggle="collapse" aria-expanded="true">Collapse <i class="fas fa-angle-up"></i></div>
+                                    <div class="structure-tree-report-box">
+                                        @foreach (var Manageritem in Model.ReportingStructureList)
+                                        {
+                                            if (Manageritem.ReportingToId == CEOId || Manageritem.EmployeeId == Manageritem.ReportingToId)
+                                            {
+                                                if (Manageritem.EmployeeId != CEOId)
+                                                {
+                                                    int EmployeeCount = Model.ReportingStructureList.Where(o => o.ReportingToId == Manageritem.EmployeeId).Count();
+                                                    <div class="structure-tree-box">
+                                                        <div class="structure-tree-inner">
+                                                            <div class="structure-tree-userimg">
+                                                                <img class="img-fluid" src="@Manageritem.ProfileImage" alt="@Manageritem.EmployeeName">
+                                                            </div>
+                                                            <div class="structure-tree-userinfo">
+                                                                <div class="checkbox-control custom-control custom-checkbox">
+                                                                    <input type="checkbox" class="custom-control-input employee-input clsCheckBox" FullPathIds="@Manageritem.DepthClass" row="@Manageritem.EmployeeId" EmployeeCount="@EmployeeCount" id="employeeCheck_@Manageritem.EmployeeId">
+                                                                    <label class="custom-control-label" for="employeeCheck_@Manageritem.EmployeeId"></label>
+                                                                </div>
+                                                                <div class="structure-tree-username">@Manageritem.EmployeeName</div>
+                                                                <div class="structure-tree-userposition">@Manageritem.DesignationName</div>
+                                                            </div>
+                                                        </div>
+                                                        @if (EmployeeCount > 0)
+                                                        {
+                                                            <div class="structure-tree-action">
+                                                                <button type="button" class="inner-click structure-tree-reports collapsed" onclick="fnexpandteam(this)" data-target="#report_@Manageritem.EmployeeId" id="colbtn_@Manageritem.EmployeeId" data-bs-toggle="collapse" aria-expanded="false">@EmployeeCount</button>
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                }
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                                @{
+                                    int ManagerId = 0;
+                                }
+                                @foreach (var Employee in Model.ReportingStructureList)
+                                {
+                                    ManagerId = Employee.ReportingToId;
+                                    if (Employee.EmployeeId != CEOId)
+                                    {
+                                        <div id="report_@Employee.EmployeeId" class="panel-collapse collapse">
+                                            <div class="structure-tree-report-manager">
+                                                <div class="structure-tree-report-manager-box collapse show" data-target="#report_@Employee.EmployeeId" id="data_@Employee.EmployeeId" data-toggle="collapse" aria-expanded="true">
+                                                    <div class="structure-tree-report-manager-img">
+                                                        <img class="img-fluid" src="@Employee.ProfileImage" alt="@Employee.EmployeeName">
+                                                    </div>
+                                                    <div class="structure-tree-report-manager-name">@Employee.EmployeeName</div>
+                                                </div>
+                                            </div>
+                                            <div class="semiborder"><div class="semiborder-left"></div><div class="semiborder-right"></div></div>
+                                            <div class="structure-boxcollapse collapse" data-target="#report_@Employee.EmployeeId" id="data_@Employee.EmployeeId" data-toggle="collapse" aria-expanded="true">Collapse <i class="fas fa-angle-up"></i></div>
+                                            <div class="structure-tree-report-box">
+                                                @foreach (var Developer in Model.ReportingStructureList)
+                                                {
+                                                    if (Developer.ReportingToId == Employee.EmployeeId && Developer.EmployeeId != Developer.ReportingToId)
+                                                    {
+                                                        int EmployeeCount = 0;
+                                                        foreach (var item in Model.ReportingStructureList.Where(o => o.ReportingToId == Developer.EmployeeId && o.ReportingToId != Developer.ReportingToId).GroupBy(o => o.ReportingToId).Select(group => new { Count = group.Count() }))
+                                                        {
+                                                            EmployeeCount = item.Count;
+                                                        }
+                                                        <div class="structure-tree-box">
+                                                            <div class="structure-tree-inner">
+                                                                <div class="structure-tree-userimg">
+                                                                    @if (!string.IsNullOrEmpty(Developer.ProfileImage))
+                                                                    {
+                                                                        <img class="img-fluid" src="@Developer.ProfileImage" alt="@Developer.EmployeeName" />
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <img class="img-fluid" src="/Content/profile-picture/profile3.png" alt="@Developer.EmployeeName" />
+                                                                    }
+                                                                </div>
+                                                                <div class="structure-tree-userinfo">
+                                                                    <div class="checkbox-control custom-control custom-checkbox">
+                                                                        <input type="checkbox" class="custom-control-input employee-input clsCheckBox" FullPathIds="@Developer.DepthClass" row="@Developer.EmployeeId" EmployeeCount="@EmployeeCount" id="employeeCheck_@Developer.EmployeeId">
+                                                                        <label class="custom-control-label" for="employeeCheck_@Developer.EmployeeId"></label>
+                                                                    </div>
+                                                                    <div class="structure-tree-username">@Developer.EmployeeName</div>
+                                                                    <div class="structure-tree-userposition">@Developer.DesignationName</div>
+                                                                </div>
+                                                            </div>
+                                                            @if (EmployeeCount > 0)
+                                                            {
+                                                                <div class="structure-tree-action">
+                                                                    <button type="button" class="inner-click structure-tree-reports collapsed" onclick="fnexpandteam(this)" data-target="#report_@Developer.EmployeeId" id="colbtn_@Developer.EmployeeId" data-bs-toggle="collapse" aria-expanded="false">@EmployeeCount</button>
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer text-center">
+                <button type="button" class="btn btn-primary" id="btnApplyTeamFilter">Select</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Select Employees Modal :: End -->
+<!-- Share Properties Modal :: Start -->
+<!--<div class="modal fade p-0 property-details" id="SharePropertyModal" aria-labelledby="SharePropertyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xxl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="SharePropertyModalLabel">Share Property to <span id="CustomerName"></span></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body pb-0" id="accordion-core-02">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <input type="hidden" id="URLDomainPath" value="@ConfigWrapper.GetAppSettings("DomainName")" />
+                        <input type="hidden" id="SharePropertyCompanyName" value="@AllFunctions.getCompanyName()" />
+                        <input type="hidden" id="CompanyHostingURL" value="@AllFunctions.getSessionValueByKey("CompanyHostingURL")" />
+                        <input type="hidden" id="UserMobileNo" value="" />
+                        <input type="hidden" id="UserEmailAddress" value="" />
+                        <input type="hidden" id="PropertyPopupLeadId" value="0" />
+                        <div class="table-responsive">
+                            <table id="TBLShareMatchingProperty" class="table table-bordered table-striped datatable">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">
+                                            <input type="checkbox" id="allCheckBoxShare" onclick="return initializeAllCheckBoxShare();" name="allCheckBox" hidden>
+                                        </th>
+                                        <th data-orderable="false" class="text-center">#</th>
+                                        <th>Property ID</th>
+                                        <th>Availability</th>
+                                        <th>Property Category</th>
+                                        <th>Property Subcategory</th>
+                                        <th>Property Contract</th>
+                                        <th>Residential Structures</th>
+                                        <th>Locality</th>
+                                        <th>Super Buildup Area Sq.Ft.</th>
+                                        <th>Carpet Area Sq.Ft.</th>
+                                        <th>Project Name</th>
+                                        <th>Available Date</th>
+                                        <th>Status</th>
+                                        <th>Furnished Status</th>
+                                        <th>Tenant/Buyer Preference</th>
+                                        <th class="text-center"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="share-group text-center">
+                            <div class="custom-control custom-checkbox custom-radio" title="WhatsApp" style="pointer-events:none">
+                                <input type="checkbox" onclick="fnWhatsAppShare()" class="custom-control-input" id="WhatsAppCheck">
+                                <label class="custom-control-label" for="WhatsAppCheck">
+                                    <span><i class="fab fa-whatsapp pr-2"></i>WhatsApp</span>
+                                    <span class="shareoption-select"><i class="far fa-check"></i></span>
+                                </label>
+                            </div>
+                            <div class="custom-control custom-checkbox custom-radio" title="Email" style="pointer-events:none">
+                                <input type="checkbox" onclick="fnEmailShare()" class="custom-control-input" id="EmailCheck">
+                                <label class="custom-control-label" for="EmailCheck">
+                                    <span><i class="far fa-envelope pr-2"></i>Email</span>
+                                    <span class="shareoption-select"><i class="far fa-check"></i></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>-->
+            @*<div class="modal-footer cust-modal-foot text-center">
+                    <button type="button" class="btn btn-primary btn-modal-lg">Share</button>
+                </div>*@
+        <!--</div>
+    </div>
+</div>-->
+<!-- Share Properties Modal :: End -->
+<!-- Lead Assign :: Start -->
+<div class="modal fade" id="LeadAssignToModal" data-keyboard="false" data-backdrop="static" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Lead Assign</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body py-lg-10 px-lg-10">
+                <div class="row">
+                    <input type="hidden" id="LeadIds" />
+                    <div class="col-lg-12">
+                        <h5 class="modal-title">All selected Leads will assign to this employee.</h5>
+                    </div>
+                    <div class="form-group col-lg-12">
+                        <label>Assign To</label>
+                        <span class="required text-danger">*</span>
+                        <div class="input-group">
+                            @Html.DropDownList("LeadAssignTo", ViewBag.EmptyList as SelectList, "Select Assign To", new { @class = "form-control " })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-primary" onclick="return AssignToSelectedRows();">Assign</a>
+                @*<a class="btn btn-danger" data-dismiss="modal" aria-label="Close">Close</a>*@
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Lead Assign :: End -->
+<script>
+    $("#SharePropertyPopup").click(function () {
+        $('#PropertyDetailModal').modal('hide');
+        $('#SharePropertyModal').modal('show');
+    });
+    $('#SharePropertyPopup').hide();
+    $("#myTab li a").on('click', function () {
+        if ($("#Mappedtab-1").hasClass("active")) {
+            $('#SharePropertyPopup').show();
+        }
+        else {
+            $('#SharePropertyPopup').hide();
+        }
+    });
+</script>
+@if (ViewBag.view == true)
+{
+    <input type="hidden" id="RightsView" value="true" />
+}
+else
+{
+    <input type="hidden" id="RightsView" value="false" />
+}
+@if (ViewBag.edit == true)
+{
+    <input type="hidden" id="RightsEdit" value="true" />
+}
+else
+{
+    <input type="hidden" id="RightsEdit" value="false" />
+}
+@if (ViewBag.delete == true)
+{
+    <input type="hidden" id="RightsDelete" value="true" />
+}
+else
+{
+    <input type="hidden" id="RightsDelete" value="false" />
+}
+<script src="/Transactions/Content/js/Lead/List.js?version=0.12"></script>

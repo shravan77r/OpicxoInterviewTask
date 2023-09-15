@@ -1,0 +1,935 @@
+﻿@model PropertyERP.Areas.Transactions.Models.LeadUI;
+@{
+    ViewBag.Title = "View Lead Management";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<!-- Header :: Start -->
+<div class="header-area">
+    <div class="card">
+        <div class="card-header bb-0">
+            <div class="card-header-title">
+                <h4>View Lead Management</h4>
+                <div class="header-breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="@Url.Action("Dashboard","Home")"><i data-feather="home"></i></a></li>
+                        <li class="breadcrumb-item"><a href="@Url.Action("Dashboard","Home")">Dashboard</a></li>
+                        <li class="breadcrumb-item active">View Lead Management</li>
+                    </ol>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- Header :: End -->
+<!-- Main Area :: Start -->
+<section class="main-area-section">
+    <div class="row">
+        @Html.HiddenFor(o => o.PI)
+        @Html.HiddenFor(o => o.PS)
+        @Html.HiddenFor(o => o.ViewType)
+        <div class="col-xl-12 col-lg-12">
+            <ul class="nav head-nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <button type="button" class="nav-link active" id="tab_1" data-target="#tab-1" data-toggle="tab" aria-selected="true">Lead Details</button>
+                </li>
+                <li class="nav-item">
+                    <button type="button" class="nav-link" id="tab_2" data-target="#tab-2" data-toggle="tab" aria-selected="false">Contact Details</button>
+                </li>
+                <li class="nav-item">
+                    <button type="button" class="nav-link" id="tab_3" data-target="#tab-3" data-toggle="tab" aria-selected="false">Location Preference</button>
+                </li>
+                <li class="nav-item">
+                    <button type="button" class="nav-link" id="tab_4" data-target="#tab-4" data-toggle="tab" aria-selected="false">Feature Preference</button>
+                </li>
+                <li class="nav-item">
+                    <button type="button" class="nav-link" id="tab_5" data-target="#tab-5" data-toggle="tab" aria-selected="false">Key Attributes</button>
+                </li>
+                <li class="nav-item" style="margin-left: auto">
+                    
+                    @if ((Model.PI >= 0) && (Model.PS > 0))
+                    {
+                        var PIval = Model.PI;
+                        var PSval = Model.PS;
+                        var ViewType = Model.ViewType;
+                        var EditId = Helper.AppCommon.EncryptString(Convert.ToString(Model.Id));
+                        <a href="@Url.Action("List","Lead", new { Area = "Transactions",PI = PIval,PS = PSval,ViewType = ViewType,EditId = EditId})" class="btn" style="background-color: #fdb813; font-size: 17px; ">Back</a>
+                    }
+                    else
+                    {
+                        <a href="@Url.Action("List","Lead", new { Area = "Transactions"})" class="btn" style="background-color: #fdb813; font-size: 17px; ">Back</a>
+                    }
+
+                </li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="tab-1">
+                    <div class="card card-flush">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <h4 class="card-box-title">Lead Details</h4>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-dashed-box">
+                                <div class="card-dashed-info-area">
+                                    <div class="row">
+                                        <div class="col-xl-4 col-lg-12">
+                                            <div class="form-group-box">
+                                                <div class="form-group-label">Lead ID</div>
+                                                @if (Model.LeadNo == "")
+                                                {
+                                                    <div class="form-group-value"><i>Not Defined</i></div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="form-group-value">@Model.LeadNo</div>
+                                                }
+                                            </div>
+                                            <div class="form-group-box">
+                                                <div class="form-group-label">Lead Date</div>
+                                                @if (Model.LeadDate == "")
+                                                {
+                                                    <div class="form-group-value"><i>Not Defined</i></div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="form-group-value">@Model.LeadDate</div>
+                                                }
+                                            </div>
+                                            <div class="form-group-box">
+                                                <div class="form-group-label">Lead Business Type</div>
+                                                @if (Model.LeadBusinessType == "")
+                                                {
+                                                    <div class="form-group-value"><i>Not Defined</i></div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="form-group-value">@Model.LeadBusinessType</div>
+                                                }
+                                            </div>
+                                            <div class="form-group-box">
+                                                <div class="form-group-label">Property Category</div>
+                                                <div class="form-group-value">
+                                                    @if (Model.PropertyCategoryIds != null)
+                                                    {
+                                                        if (Model.PropertyCategoryIds.Count > 0)
+                                                        {
+                                                            foreach (KeyValuePair<int?, string> entry in Model.PropertyCategoryIds)
+                                                            {
+                                                                if (@entry.Value.ToString().ToLower().Contains("residential"))
+                                                                {
+                                                                    <span class="tb-location-name icon-primary"><i class="fas fa-home"></i>@entry.Value</span>
+                                                                }
+                                                                else if (@entry.Value.ToString().ToLower().Contains("commercial"))
+                                                                {
+                                                                    <span class="tb-location-name icon-primary"><i class="fas fa-building"></i>@entry.Value</span>
+                                                                }
+                                                                else if (@entry.Value.ToString().ToLower().Contains("industrial"))
+                                                                {
+                                                                    <span class="tb-location-name icon-primary"><i class="fas fa-industry"></i>@entry.Value</span>
+                                                                }
+                                                                else if (@entry.Value.ToString().ToLower().Contains("land"))
+                                                                {
+                                                                    <span class="tb-location-name icon-primary"><i class="fas fa-sign"></i>@entry.Value</span>
+                                                                }
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <i>Not Defined</i>
+                                                        }
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <i>Not Defined</i>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-4 col-lg-12 border-col-lr">
+                                            <div class="form-group-box">
+                                                <div class="form-group-label">Property Subcategory</div>
+                                                @if (Model.PropertySubcategoryIds != null)
+                                                {
+                                                    if (Model.PropertySubcategoryIds.Count > 0)
+                                                    {
+                                                        foreach (KeyValuePair<int?, string> entry in Model.PropertySubcategoryIds)
+                                                        {
+                                                            <div class="form-group-value">@entry.Value</div>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="form-group-value"><i>Not Defined</i></div>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <div class="form-group-value"><i>Not Defined</i></div>
+                                                }
+                                            </div>
+                                            <div class="form-group-box">
+                                                <div class="form-group-label">Broker Involved</div>
+                                                @if (Model.IsBrokerInvolved)
+                                                {
+                                                    <div class="form-group-value"><span class="badge badge-success">Yes</span></div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="form-group-value"><span class="badge badge-danger">No</span></div>
+                                                }
+                                            </div>
+                                            <div class="form-group-box">
+                                                <div class="form-group-label">Loan Required</div>
+                                                @if (Model.IsLoanRequired)
+                                                {
+                                                    <div class="form-group-value"><span class="badge badge-success">Yes</span></div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="form-group-value"><span class="badge badge-danger">No</span></div>
+                                                }
+                                            </div>
+                                            <div class="form-group-box">
+                                                <div class="form-group-label">Preferred Project</div>
+                                                @if (Model.PreferredProjects == "")
+                                                {
+                                                    <div class="form-group-value"><i>Not Defined</i></div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="form-group-value">@Model.PreferredProjects</div>
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-4 col-lg-12">
+                                            <div class="form-group-box">
+                                                <div class="form-group-label">Possession Date</div>
+                                                @if (Model.PossessionDateFrom == "")
+                                                {
+                                                    <div class="form-group-value"><i>Not Defined</i></div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="form-group-value">@Model.PossessionDateFrom</div>
+                                                }
+                                            </div>
+                                            <div class="form-group-box">
+                                                <div class="form-group-label">Housing Segment</div>
+                                                @if (Model.LeadAffordability == "")
+                                                {
+                                                    <div class="form-group-value"><i>Not Defined</i></div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="form-group-value">@Model.LeadAffordability</div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="tab-2">
+                    <div class="card card-flush">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <h4 class="card-box-title">Contact Details</h4>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-dashed-box">
+                                <div class="card-dashed-info-area">
+                                    <div class="row">
+                                        <div class="col-xl-4 col-lg-12">
+                                            <div class="form-group-box">
+                                                <div class="form-group-label">Salutation</div>
+                                                @if (Model.Salutation != null)
+                                                {
+                                                    if (Model.Salutation.Count > 0)
+                                                    {
+                                                        foreach (KeyValuePair<int?, string> entry in Model.Salutation)
+                                                        {
+                                                            <div class="form-group-value">@entry.Value</div>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="form-group-value"><i>Not Defined</i></div>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <div class="form-group-value"><i>Not Defined</i></div>
+                                                }
+                                            </div>
+                                            <div class="form-group-box">
+                                                <div class="form-group-label">First Name</div>
+                                                @if (Model.FirstName == "")
+                                                {
+                                                    <div class="form-group-value"><i>Not Defined</i></div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="form-group-value">@Model.FirstName</div>
+                                                }
+                                            </div>
+                                            <div class="form-group-box">
+                                                <div class="form-group-label">Last Name</div>
+                                                @if (Model.LastName == "")
+                                                {
+                                                    <div class="form-group-value"><i>Not Defined</i></div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="form-group-value">@Model.LastName</div>
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-4 col-lg-12 border-col-lr">
+                                            <div class="form-group-box">
+                                                <div class="form-group-label">Mobile No.</div>
+                                                @if (Model.MobileNo == "")
+                                                {
+                                                    <div class="form-group-value"><i>Not Defined</i></div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="form-group-value">@Model.MobileNo</div>
+                                                }
+                                            </div>
+                                            <div class="form-group-box">
+                                                <div class="form-group-label">Email</div>
+                                                @if (Model.Email == "")
+                                                {
+                                                    <div class="form-group-value"><i>Not Defined</i></div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="form-group-value">@Model.Email</div>
+                                                }
+                                            </div>
+                                            <div class="form-group-box">
+                                                <div class="form-group-label">Alt. Mobile No.</div>
+                                                @if (Model.MobileNo2 == "")
+                                                {
+                                                    <div class="form-group-value"><i>Not Defined</i></div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="form-group-value">@Model.MobileNo2</div>
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-4 col-lg-12">
+                                            <div class="form-group-box">
+                                                <div class="form-group-label">Birth Date</div>
+                                                @if (Model.BirthDate == "")
+                                                {
+                                                    <div class="form-group-value"><i>Not Defined</i></div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="form-group-value">@Model.BirthDate</div>
+                                                }
+                                            </div>
+                                            <div class="form-group-box">
+                                                <div class="form-group-label">Anniversary Date</div>
+                                                @if (Model.AnniversaryDate == "")
+                                                {
+                                                    <div class="form-group-value"><i>Not Defined</i></div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="form-group-value">@Model.AnniversaryDate</div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="tab-3">
+                    <div class="card card-flush">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <h4 class="card-box-title">Location Preference</h4>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-dashed-box">
+                                <div class="card-dashed-info-area">
+                                    <div class="row">
+                                        <div class="col-xl-4 col-lg-12">
+                                            <div class="form-group-box">
+                                                <div class="form-group-label">Country</div>
+                                                @if (Model.CountryId != null)
+                                                {
+                                                    if (Model.CountryId.Count > 0)
+                                                    {
+                                                        foreach (KeyValuePair<int?, string> entry in Model.CountryId)
+                                                        {
+                                                            <div class="form-group-value">@entry.Value</div>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="form-group-value"><i>Not Defined</i></div>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <div class="form-group-value"><i>Not Defined</i></div>
+                                                }
+                                            </div>
+                                            <div class="form-group-box">
+                                                <div class="form-group-label">State</div>
+                                                @if (Model.StateId != null)
+                                                {
+                                                    if (Model.StateId.Count > 0)
+                                                    {
+                                                        foreach (KeyValuePair<int?, string> entry in Model.StateId)
+                                                        {
+                                                            <div class="form-group-value">@entry.Value</div>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="form-group-value"><i>Not Defined</i></div>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <div class="form-group-value"><i>Not Defined</i></div>
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-4 col-lg-12 border-col-lr">
+                                            <div class="form-group-box">
+                                                <div class="form-group-label">City</div>
+                                                @if (Model.CityId != null)
+                                                {
+                                                    if (Model.CityId.Count > 0)
+                                                    {
+                                                        foreach (KeyValuePair<int?, string> entry in Model.CityId)
+                                                        {
+                                                            <div class="form-group-value">@entry.Value</div>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="form-group-value"><i>Not Defined</i></div>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <div class="form-group-value"><i>Not Defined</i></div>
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-4 col-lg-12">
+                                            <div class="form-group-box">
+                                                <div class="form-group-label">Area/Locality</div>
+                                                @if (Model.AreaIds != null)
+                                                {
+                                                    if (Model.AreaIds.Count > 0)
+                                                    {
+                                                        foreach (KeyValuePair<int?, string> entry in Model.AreaIds)
+                                                        {
+                                                            <div class="form-group-value">@entry.Value</div>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="form-group-value"><i>Not Defined</i></div>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <div class="form-group-value"><i>Not Defined</i></div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="tab-4">
+                    <div class="card card-flush">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <h4 class="card-box-title">Feature Preference</h4>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-dashed-box">
+                                <div class="card-dashed-info-area">
+                                    <div class="row">
+                                        <div class="col-xl-4 col-lg-12">
+                                            <div class="form-group-box">
+                                                <div class="form-group-label">Requirements</div>
+                                                @if (Model.Requirement == "")
+                                                {
+                                                    <div class="form-group-value"><i>Not Defined</i></div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="form-group-value">@Model.Requirement</div>
+                                                }
+                                            </div>
+                                            <div class="form-group-box">
+                                                <div class="form-group-label">Residential Structures</div>
+                                                @if (Model.BHKs != null)
+                                                {
+                                                    if (Model.BHKs.Count > 0)
+                                                    {
+                                                        foreach (KeyValuePair<int?, string> entry in Model.BHKs)
+                                                        {
+                                                            <div class="form-group-value">@entry.Value</div>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="form-group-value"><i>Not Defined</i></div>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <div class="form-group-value"><i>Not Defined</i></div>
+                                                }
+                                            </div>
+                                            <div class="form-group-box">
+                                                <div class="form-group-label">Floor Preference</div>
+                                                @if (Model.FloorPreferenceIds != null)
+                                                {
+                                                    if (Model.FloorPreferenceIds.Count > 0)
+                                                    {
+                                                        foreach (KeyValuePair<int?, string> entry in Model.FloorPreferenceIds)
+                                                        {
+                                                            <div class="form-group-value">@entry.Value</div>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="form-group-value"><i>Not Defined</i></div>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <div class="form-group-value"><i>Not Defined</i></div>
+                                                }
+                                            </div>
+                                            <div class="form-group-box">
+                                                <div class="form-group-label">Furnished Status</div>
+                                                @if (Model.FurnishStatusIds != null)
+                                                {
+                                                    if (Model.FurnishStatusIds.Count > 0)
+                                                    {
+                                                        foreach (KeyValuePair<int?, string> entry in Model.FurnishStatusIds)
+                                                        {
+                                                            <div class="form-group-value">@entry.Value</div>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="form-group-value"><i>Not Defined</i></div>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <div class="form-group-value"><i>Not Defined</i></div>
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-4 col-lg-12 border-col-lr">
+                                            <div class="form-group-box">
+                                                <div class="form-group-label">Door Facing Direction</div>
+                                                @if (Model.DoorFacingDirectionId != null)
+                                                {
+                                                    if (Model.DoorFacingDirectionId.Count > 0)
+                                                    {
+                                                        foreach (KeyValuePair<int?, string> entry in Model.DoorFacingDirectionId)
+                                                        {
+                                                            <div class="form-group-value">@entry.Value</div>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="form-group-value"><i>Not Defined</i></div>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <div class="form-group-value"><i>Not Defined</i></div>
+                                                }
+                                            </div>
+                                            <div class="form-group-box">
+                                                <div class="form-group-label">Tenant/Buyer Preference</div>
+                                                @if (Model.AvailableForIds != null)
+                                                {
+                                                    if (Model.AvailableForIds.Count > 0)
+                                                    {
+                                                        foreach (KeyValuePair<int?, string> entry in Model.AvailableForIds)
+                                                        {
+                                                            <div class="form-group-value">@entry.Value</div>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="form-group-value"><i>Not Defined</i></div>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <div class="form-group-value"><i>Not Defined</i></div>
+                                                }
+                                            </div>
+                                            <div class="form-group-box">
+                                                <div class="form-group-label">Project Category</div>
+                                                @if (Model.ProjectTypeIds != null)
+                                                {
+                                                    if (Model.ProjectTypeIds.Count > 0)
+                                                    {
+                                                        foreach (KeyValuePair<int?, string> entry in Model.ProjectTypeIds)
+                                                        {
+                                                            <div class="form-group-value">@entry.Value</div>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="form-group-value"><i>Not Defined</i></div>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <div class="form-group-value"><i>Not Defined</i></div>
+                                                }
+                                            </div>
+                                            <div class="form-group-box">
+                                                <div class="form-group-label">Budget(₹)</div>
+                                                @if (Model.BudgetFrom > 0 || Model.BudgetTo > 0)
+                                                {
+                                                    <div class="form-group-value" id="Budgetval">@Model.BudgetFrom - @Model.BudgetTo</div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="form-group-value"><i>Not Defined</i></div>
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-4 col-lg-12">
+                                            <div class="form-group-box">
+                                                <div class="form-group-label">Super built up Area</div>
+                                                @if (Model.SuperBuildupAreaFrom > 0 || Model.SuperBuildupAreaTo > 0)
+                                                {
+                                                    <div class="form-group-value">
+                                                        <span id="SuperBuildupAreaid">@Model.SuperBuildupAreaFrom - @Model.SuperBuildupAreaTo</span>
+                                                        @if (Model.SuperBuildupAreaUnitId != null)
+                                                        {
+                                                            foreach (KeyValuePair<int?, string> entry in Model.SuperBuildupAreaUnitId)
+                                                            {
+                                                                @entry.Value
+                                                            }
+                                                        }
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="form-group-value"><i>Not Defined</i></div>
+                                                }
+
+                                            </div>
+                                            <div class="form-group-box">
+                                                <div class="form-group-label">Carpet Area</div>
+                                                @if (Model.CarpetAreaFrom > 0 || Model.CarpetAreaTo > 0)
+                                                {
+                                                    <div class="form-group-value">
+                                                        <span id="CarpetAreaid">@Model.CarpetAreaFrom - @Model.CarpetAreaTo</span>
+                                                        @if (Model.CarpetAreaUnitId != null)
+                                                        {
+                                                            foreach (KeyValuePair<int?, string> entry in Model.CarpetAreaUnitId)
+                                                            {
+                                                                @entry.Value
+                                                            }
+                                                        }
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="form-group-value"><i>Not Defined</i></div>
+                                                }
+
+                                            </div>
+                                            <div class="form-group-box">
+                                                <div class="form-group-label">Special Notes</div>
+                                                @if (Model.SpecialNote == "")
+                                                {
+                                                    <div class="form-group-value"><i>Not Defined</i></div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="form-group-value">@Model.SpecialNote</div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="tab-5">
+                    <div class="card card-flush">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <h4 class="card-box-title">Key Attributes</h4>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-dashed-box">
+                                <div class="card-dashed-info-area">
+                                    <div class="row">
+                                        <div class="col-xl-4 col-lg-12">
+                                            <div class="form-group-box">
+                                                <div class="form-group-label">Assign To</div>
+                                                @if (Model.AssignTo != null)
+                                                {
+                                                    if (Model.AssignTo.Count > 0)
+                                                    {
+                                                        foreach (KeyValuePair<int?, string> entry in Model.AssignTo)
+                                                        {
+                                                            <div class="form-group-value">@entry.Value</div>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="form-group-value"><i>Not Defined</i></div>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <div class="form-group-value"><i>Not Defined</i></div>
+                                                }
+                                            </div>
+                                            <div class="form-group-box">
+                                                <div class="form-group-label">Email to assignor</div>
+                                                @if (Model.IsEmailToAssignor)
+                                                {
+                                                    <div class="form-group-value"><span class="badge badge-success">Yes</span></div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="form-group-value"><span class="badge badge-danger">No</span></div>
+                                                }
+                                            </div>
+                                            <div class="form-group-box">
+                                                <div class="form-group-label">SMS to assignor</div>
+                                                @if (Model.IsSMSToAssignor)
+                                                {
+                                                    <div class="form-group-value"><span class="badge badge-success">Yes</span></div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="form-group-value"><span class="badge badge-danger">No</span></div>
+                                                }
+                                            </div>
+                                            <div class="form-group-box">
+                                                <div class="form-group-label">Source</div>
+                                                @if (Model.LeadSourceId != null)
+                                                {
+                                                    if (Model.LeadSourceId.Count > 0)
+                                                    {
+                                                        foreach (KeyValuePair<int?, string> entry in Model.LeadSourceId)
+                                                        {
+                                                            <div class="form-group-value">@entry.Value</div>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="form-group-value"><i>Not Defined</i></div>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <div class="form-group-value"><i>Not Defined</i></div>
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-4 col-lg-12 border-col-lr">
+                                            <div class="form-group-box">
+                                                <div class="form-group-label">Stage</div>
+                                                @if (Model.LeadStageId != null)
+                                                {
+                                                    if (Model.LeadStageId.Count > 0)
+                                                    {
+                                                        foreach (KeyValuePair<int?, string> entry in Model.LeadStageId)
+                                                        {
+                                                            <div class="form-group-value">@entry.Value</div>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="form-group-value"><i>Not Defined</i></div>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <div class="form-group-value"><i>Not Defined</i></div>
+                                                }
+                                            </div>
+                                            <div class="form-group-box">
+                                                <div class="form-group-label">Interest</div>
+                                                <div class="form-group-value">
+                                                    @if (Model.LeadPriorityId != null)
+                                                    {
+                                                        if (Model.LeadPriorityId.Count > 0)
+                                                        {
+                                                            foreach (KeyValuePair<int?, string> entry in Model.LeadPriorityId)
+                                                            {
+                                                                if (@entry.Value.ToString().ToLower().Contains("hot"))
+                                                                {
+                                                                    <span data-toggle="tooltip" data-placement="top" title="Hot"><img class="list-icon" src="~/adminpanel/images/hot.png" /></span>
+                                                                }
+                                                                else if (@entry.Value.ToString().ToLower().Contains("cold"))
+                                                                {
+                                                                    <span data-toggle="tooltip" data-placement="top" title="Cold"><img class="list-icon" src="~/adminpanel/images/cold.png" /></span>
+                                                                }
+                                                                else if (@entry.Value.ToString().ToLower().Contains("warm"))
+                                                                {
+                                                                    <span data-toggle="tooltip" data-placement="top" title="Warm"><img class="list-icon" src="~/adminpanel/images/warm.png" /></span>
+                                                                }
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <i>Not Defined</i>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <i>Not Defined</i>
+                                                    }
+                                                </div>
+                                            </div>
+                                            <div class="form-group-box">
+                                                <div class="form-group-label">Lead Lost Reason</div>
+                                                @if (Model.LeadLostReasonId != null)
+                                                {
+                                                    if (Model.LeadLostReasonId.Count > 0)
+                                                    {
+                                                        foreach (KeyValuePair<int?, string> entry in Model.LeadLostReasonId)
+                                                        {
+                                                            <div class="form-group-value">@entry.Value</div>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="form-group-value"><i>Not Defined</i></div>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <div class="form-group-value"><i>Not Defined</i></div>
+                                                }
+                                            </div>
+                                            <div class="form-group-box">
+                                                <div class="form-group-label">Lead Score</div>
+                                                <div class="form-group-value">
+                                                    <div class="rating-box">
+                                                        @if (Model.LeadScoreId != null)
+                                                        {
+                                                            if (Model.LeadScoreId.Count > 0)
+                                                            {
+                                                                foreach (KeyValuePair<int?, string> entry in Model.LeadScoreId)
+                                                                {
+                                                                    int i = 1;
+                                                                    var CountStar = @entry.Value;
+                                                                    while (i <= Convert.ToInt32(CountStar))
+                                                                    {
+                                                                        <span class="fas fa-star fill-yellow"></span>
+                                                                        i = i + 1;
+                                                                    }
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                <i>Not Defined</i>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <i>Not Defined</i>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-4 col-lg-12">
+                                            <div class="form-group-box">
+                                                <div class="form-group-label">Remarks</div>
+                                                @if (Model.Remarks == "")
+                                                {
+                                                    <div class="form-group-value"><i>Not Defined</i></div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="form-group-value">@Model.Remarks</div>
+                                                }
+                                            </div>
+                                            <div class="form-group-box">
+                                                <div class="form-group-label">Email to Inquire</div>
+                                                @if (Model.IsEmailToInquier)
+                                                {
+                                                    <div class="form-group-value"><span class="badge badge-success">Yes</span></div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="form-group-value"><span class="badge badge-danger">No</span></div>
+                                                }
+                                            </div>
+                                            <div class="form-group-box">
+                                                <div class="form-group-label">SMS to Inquire</div>
+                                                @if (Model.IsSMSToInquier)
+                                                {
+                                                    <div class="form-group-value"><span class="badge badge-success">Yes</span></div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="form-group-value"><span class="badge badge-danger">No</span></div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Main Area :: End -->
+<script src="~/js/Custom.js"></script>
+<script>
+    var BudgetFromval = fnAmtConvertInShort(@Model.BudgetFrom);
+    var BudgetToval = fnAmtConvertInShort(@Model.BudgetTo);
+    var Budgetal = BudgetFromval + " - " + BudgetToval;
+    $("#Budgetval").text(Budgetal);
+    var SuperBuildupAreaFrom = AmountWithComma(@Model.SuperBuildupAreaFrom);
+    var SuperBuildupAreaTo = AmountWithComma(@Model.SuperBuildupAreaTo);
+    var SuperBuildupAreaval = SuperBuildupAreaFrom + " - " + SuperBuildupAreaTo;
+    $("#SuperBuildupAreaid").text(SuperBuildupAreaval);
+    var CarpetAreaFrom = AmountWithComma(@Model.CarpetAreaFrom);
+    var CarpetAreaTo = AmountWithComma(@Model.CarpetAreaTo);
+    var CarpetAreaval = CarpetAreaFrom + " - " + CarpetAreaTo;
+    $("#CarpetAreaid").text(CarpetAreaval);
+</script>

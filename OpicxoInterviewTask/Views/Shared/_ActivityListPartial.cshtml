@@ -1,0 +1,72 @@
+﻿@model List<OpicxoInterviewTask.Models.Activities>
+
+<div class="col-xl-12 col-lg-12 p-0">
+    <div style="text-align:right;margin-bottom:15px;">
+        <a onclick="fnShowAllData();" title="Show All Activities">Show All Activities</a>
+    </div>
+    <div class="table-responsive">
+        <table class="table cust-table table-bordered site-visit">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Activity Date</th>
+                    <th>Wake up time</th>
+                    <th>Gym</th>
+                    <th>Meditation</th>
+                    <th>Reading</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null)
+                {
+                    var i = 1;
+                    foreach (var item in Model)
+                    {
+
+                        <tr>
+                            <td class="text-center">@i</td>
+                            <td>@item.ActivityDate</td>
+                            <td>@item.WakeUpTime</td>
+                            <td>
+                                @if (item.IsGym == 1)
+                                { 
+                                   <span>Yes</span>
+                                }
+                                else
+                                { 
+                                    <span>No</span>
+                                }
+                            </td>
+                            <td>
+                                @if (item.IsMeditation == 1)
+                                {
+                                    <span>Yes, @item.MeditationMinutes</span>
+                                }
+                                else
+                                {
+                                    <span>No</span>
+                                }
+                            </td>
+                            <td>
+                                @if (item.IsRead == 1)
+                                {
+                                    <span>Yes, @item.ReadPages</span>
+                                }
+                                else
+                                {
+                                    <span>No</span>
+                                }
+                            </td>
+                            <td class="text-center whitespace-rap">
+                                <a onclick="fnEditActivity(@item.Id);" title="Edit">Edit</a> || 
+                                <a onclick="fnDeleteActivity(@item.Id);" title="Delete">Delete</a>
+                            </td>
+                        </tr>
+                        i++;
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
