@@ -1,0 +1,542 @@
+﻿@model SSXImport.Portal.Models.Template
+@{
+    Layout = "~/Views/Shared/_Common.cshtml";
+    ViewData["Title"] = "Template";
+}
+<div class="loading-backdrop customloader" style="display:none">
+    <div class="sk-spinner sk-spinner-double-bounce">
+        <div class="sk-double-bounce1"></div>
+        <div class="sk-double-bounce2"></div>
+    </div>
+</div>
+@Html.HiddenFor(o => o.TemplateGUID)
+<input type="hidden" id="FTP_DefaultPort" value="@SSXImport.Portal.Common.AppConstant.FTP_DefaultPort" />
+<input type="hidden" id="MsSQL_DefaultPort" value="@SSXImport.Portal.Common.AppConstant.MsSQL_DefaultPort" />
+<input type="hidden" id="MySQL_DefaultPort" value="@SSXImport.Portal.Common.AppConstant.MySQL_DefaultPort" />
+
+@Html.HiddenFor(o => o.IsValidOriginConnection)
+@Html.HiddenFor(o => o.IsValidTargetConnection)
+@Html.HiddenFor(o => o.OriginConnectionString)
+@Html.HiddenFor(o => o.TargetConnectionString)
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-title  pt-2">
+                    <h5>Template</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <form id="TemplateForm">
+                                <div class="form-group">
+                                    <label for="TemplateName">
+                                        Template Name
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    @Html.TextBoxFor(o => o.TemplateName, new { @class = "form-control required", @maxlength = "50", @autocomplete = "off", @placeholder = "Enter Template Name" })
+                                    @Html.ValidationMessageFor(o => o.TemplateName, "", new { @class = "error" })
+                                </div>
+                            </form>
+                            <div class="form-group">
+                                <label for="">Origin Source</label>
+                                <input class="form-control" disabled id="lblOriginSource" placeholder="Origin Data Source" />
+                            </div>
+                            <div class="form-group">
+                                <label for="">
+                                    Template Type
+                                    <span class="text-danger">*</span>
+                                </label>
+                                @Html.DropDownListFor(o => o.TemplateType, ViewBag.TemplateTypeList as SelectList, new { @class = "form-control required", @onchange = "fnTemplateTypeOnChange(this)" })
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="">Transfer Schedule</label>
+                                <br />
+                                @if (Model.ScheduleType.GetValueOrDefault(1).Equals(1))
+                                {
+                                    <a href="#" class="link-blue" id="linkTransferSchedule">Not Scheduled</a>
+                                }
+                                else
+                                {
+                                    <a href="#" class="link-blue" id="linkTransferSchedule">Scheduled</a>
+                                }
+                            </div>
+                            <div class="form-group" style="margin-top:21px;">
+                                <div class="form-group">
+                                    <label for="">Target Source</label>
+                                    <input class="form-control" disabled id="lblTargetSource" placeholder="Target Data Source" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ibox">
+                <div class="ibox-title pt-2">
+                    <h5>Import Data</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="" id="divAlertMessage">
+                    </div>
+                    <form id="form" action="#" class="wizard-big">
+                        <h1>Origin Source</h1>
+                        <fieldset>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="">
+                                            Source
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        @Html.DropDownListFor(o => o.OriginSourceTypeId, ViewBag.OriginDataSourceList as SelectList, new { @class = "form-control required" })
+                                        @Html.ValidationMessageFor(o => o.OriginSourceServer, "", new { @class = "error" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6 apiFields d-none">
+                                    <div class="form-group">
+                                        <label for="">
+                                            API Template
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="form-group">
+                                            @Html.DropDownListFor(o => o.OriginSourceAPITemplateId, ViewBag.APITemplateList as SelectList, "Select API Template", new { @class = "form-control required" })
+                                            @Html.ValidationMessageFor(o => o.OriginSourceAPITemplateId, "", new { @class = "error" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 excelFields d-none">
+                                    <div class="form-group">
+                                        <label for="">
+                                            File Source Type
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        @{
+                                            var listFileType = new List<SelectListItem>();
+                                            listFileType.Add(new SelectListItem
+                                            {
+                                                Text = "Upload",
+                                                Value = "1"
+                                            });
+                                            listFileType.Add(new SelectListItem
+                                            {
+                                                Text = "FTP",
+                                                Value = "2"
+                                            });
+                                        }
+                                        @Html.DropDownListFor(o => o.OriginSourceFileTypeId, new SelectList(listFileType, "Value", "Text"), new { @class = "form-control required" })
+                                        @Html.ValidationMessageFor(o => o.OriginSourceFileTypeId, "", new { @class = "error" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6 excelUploadFields d-none">
+                                    <div class="form-group">
+                                        <label for="">
+                                            Select File
+                                            @*<span class="text-danger">*</span>*@
+                                        </label>
+                                        <input type="file" class="form-control" id="OriginFile" accept=".xls,.xlsx,.csv" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6 originDatabaseFields ftpFields d-none">
+                                    <div class="form-group">
+                                        <label for="">
+                                            Username
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        @Html.TextBoxFor(o => o.OriginSourceUsername, new { @class = "form-control required", @maxlength = "50", @autocomplete = "off", @placeholder = "Enter Username" })
+                                        @Html.ValidationMessageFor(o => o.OriginSourceUsername, "", new { @class = "error" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6 originDatabaseFields ftpFields d-none">
+                                    <div class="form-group">
+                                        <label for="">
+                                            Server
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        @Html.TextBoxFor(o => o.OriginSourceServer, new { @class = "form-control required", @maxlength = "100", @autocomplete = "off", @placeholder = "Enter Server" })
+                                        @Html.ValidationMessageFor(o => o.OriginSourceServer, "", new { @class = "error" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6 originDatabaseFields ftpFields d-none">
+                                    <div class="form-group">
+                                        <label for="">
+                                            Password
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        @Html.TextBoxFor(o => o.OriginSourcePassword, new { @class = "form-control required", @maxlength = "50", @autocomplete = "off", @placeholder = "Enter Password" })
+                                        @Html.ValidationMessageFor(o => o.OriginSourcePassword, "", new { @class = "error" })
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-6 originDatabaseFields ftpFields d-none">
+                                    <div class="form-group">
+                                        <label for="">
+                                            Port
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        @Html.TextBoxFor(o => o.OriginSourcePort, new { @class = "form-control required", @maxlength = "5", @autocomplete = "off", @placeholder = "Enter Port" })
+                                        @Html.ValidationMessageFor(o => o.OriginSourcePort, "", new { @class = "error" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6 originDatabaseFields ftpFields d-none" style="margin-top: 24px;">
+                                    <div class="form-group" id="btnTestOriginConnection">
+                                        @{
+                                            var btnClass = "btn-warning";
+                                            var iconClass = "fa-circle";
+                                            if (Model.IsValidOriginConnection.Equals(1))
+                                            {
+                                                btnClass = "btn-primary";
+                                                iconClass = "fa-check";
+                                            }
+                                            else if (Model.IsValidOriginConnection.Equals(2))
+                                            {
+                                                btnClass = "btn-danger";
+                                                iconClass = "fa-times";
+                                            }
+                                        }
+                                        <button class="btn @btnClass btn-lg mr-3 btn-sm" type="button" onclick="fnTestOriginConnection();">
+                                            <i class="fa @iconClass"></i>
+                                            Test Connection
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 originDatabaseFields d-none">
+                                    <div class="form-group">
+                                        <label for="">
+                                            Database
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        @Html.DropDownListFor(o => o.OriginSourceDatabase, new SelectList(Model.OriginSourceDatabaseList, "Name", "Name"), "Select Database", new { @class = "form-control required" })
+                                        @Html.ValidationMessageFor(o => o.OriginSourceDatabase, "", new { @class = "error" })
+                                        <input type="hidden" id="hdn_OriginSourceDatabase" value="@Model.OriginSourceDatabase" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6 ftpFields d-none">
+                                    <div class="form-group">
+                                        <label for="">
+                                            FTP Directory
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        @Html.DropDownListFor(o => o.OriginSourceFilePath, new SelectList(Model.OriginSourceFilePathList, "Id", "Name"), "Select Directory", new { @class = "form-control required" })
+                                        @Html.ValidationMessageFor(o => o.OriginSourceFilePath, "", new { @class = "error" })
+                                        <input type="hidden" id="hdn_OriginSourceFilePath" value="@Model.OriginSourceFilePath" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6 ftpFields d-none">
+                                    <div class="form-group">
+                                        <label for="">
+                                            FTP File
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        @Html.DropDownListFor(o => o.OriginSourceFileName, new SelectList(Model.OriginSourceFileNameList, "Id", "Name"), "Select File", new { @class = "form-control required" })
+                                        @Html.ValidationMessageFor(o => o.OriginSourceFileName, "", new { @class = "error" })
+                                        <input type="hidden" id="hdn_OriginSourceFileName" value="@Model.OriginSourceFileName" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6 excelUploadFields ftpFields d-none">
+                                    <div class="form-group" style="margin-top:2em">
+                                        <div class="icheck-primary d-inline">
+                                            @Html.CheckBoxFor(o => o.IsFirstColumnContainHeader)
+                                            <label for="IsFirstColumnContainHeader">
+                                                First Row Contain Column
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <h1>Target Source</h1>
+                        <fieldset>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="">
+                                            Source
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        @Html.DropDownListFor(o => o.TargetSourceTypeId, ViewBag.TargetDataSourceList as SelectList, new { @class = "form-control required" })
+                                        @Html.ValidationMessageFor(o => o.TargetSourceServer, "", new { @class = "error" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="">
+                                            Username
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        @Html.TextBoxFor(o => o.TargetSourceUsername, new { @class = "form-control required", @maxlength = "50", @autocomplete = "off", @placeholder = "Enter Username", @onchange = "fnResetTargetConnection();" })
+                                        @Html.ValidationMessageFor(o => o.TargetSourceUsername, "", new { @class = "error" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row databaseFields">
+                                <div class="col-md-6 databaseFields">
+                                    <div class="form-group">
+                                        <label for="">
+                                            Server
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        @Html.TextBoxFor(o => o.TargetSourceServer, new { @class = "form-control required", @maxlength = "100", @autocomplete = "off", @placeholder = "Enter Server", @onchange = "fnResetTargetConnection();" })
+                                        @Html.ValidationMessageFor(o => o.TargetSourceServer, "", new { @class = "error" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="">
+                                            Password
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        @Html.TextBoxFor(o => o.TargetSourcePassword, new { @class = "form-control required", @maxlength = "50", @autocomplete = "off", @placeholder = "Enter Password", @onchange = "fnResetTargetConnection();" })
+                                        @Html.ValidationMessageFor(o => o.TargetSourcePassword, "", new { @class = "error" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row databaseFields">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="">
+                                            Port
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        @Html.TextBoxFor(o => o.TargetSourcePort, new { @class = "form-control required", @maxlength = "5", @autocomplete = "off", @placeholder = "Enter Port", @onchange = "fnResetTargetConnection();" })
+                                        @Html.ValidationMessageFor(o => o.TargetSourcePort, "", new { @class = "error" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6" style="margin-top: 24px;">
+                                    <div class="form-group" id="btnTestTargetConnection">
+                                        @{
+                                            btnClass = "btn-warning";
+                                            iconClass = "fa-circle";
+                                            if (Model.IsValidTargetConnection.Equals(1))
+                                            {
+                                                btnClass = "btn-primary";
+                                                iconClass = "fa-check";
+                                            }
+                                            else if (Model.IsValidTargetConnection.Equals(2))
+                                            {
+                                                btnClass = "btn-danger";
+                                                iconClass = "fa-times";
+                                            }
+                                        }
+                                        <button class="btn @btnClass btn-lg mr-3 btn-sm" type="button" onclick="fnTestTargetConnection(event);">
+                                            <i class="fa @iconClass"></i>
+                                            Test Connection
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row databaseFields">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="">
+                                            Database
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        @Html.DropDownListFor(o => o.TargetSourceDatabase, new SelectList(Model.TargetSourceDatabaseList, "Name", "Name"), "Select Database", new { @class = "form-control required", @onchange = "fnSetTargetSourceTable();" })
+                                        @Html.ValidationMessageFor(o => o.TargetSourceDatabase, "", new { @class = "error" })
+                                        <input type="hidden" id="hdn_TargetSourceDatabase" value="@Model.TargetSourceDatabase" />
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <h1>Mapping</h1>
+                        <fieldset>
+                            <h4>Mapping Information</h4>
+                            <div class="row">
+                                <div class="col-md-6 databaseFields">
+                                    <div class="form-group">
+                                        <label for="">
+                                            <span id="lblOriginSourceTable">Origin Source Table</span>
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        @Html.DropDownList("OriginSourceTable", new SelectList(Model.OriginSourceTableList, "Name", "Name"), "Select Table", new { @class = "form-control required" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6 databaseFields">
+                                    <div class="form-group">
+                                        <label for="">
+                                            Target Source Table
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        @Html.DropDownList("TargetSourceTable", new SelectList(Model.TargetSourceTableList, "Name", "Name"), "Select Table", new { @class = "form-control required" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row databaseFields p-1">
+                                <div class="col-md-6 clsIsDeduplicateData" style="display:none">
+                                    <div class="icheck-primary d-inline">
+                                        @Html.CheckBox("IsDeduplicateData")
+                                        <label for="IsDeduplicateData">
+                                            De-duplicate Data
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <button class="btn btn-primary btn-sm mr-3" type="button" onclick="fnAddMappingTableDetail();"><i class="fa fa-plus"></i> Add Mapping</button>
+                                </div>
+                            </div>
+                            <div class="row databaseFields p-3">
+                                <div class="table-responsive">
+                                    <table class="table  table-bordered dataTables" width="100%" id="tblMappingTable">
+                                        <thead>
+                                            <tr>
+                                                <th width="2.5%">#</th>
+                                                <th>Source</th>
+                                                <th>Target</th>
+                                                <th>De-duplicate</th>
+                                                <th></th>
+                                                <th></th>
+                                                <th width="2.5%"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ManageMapping" tabindex="-1" role="dialog" aria-labelledby="ManageMappingLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ManageMappingLabel">Add Column Mapping</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 ">
+                        <form>
+                            <div class="form-group">
+                                <div class="table-responsive">
+                                    <input id="hdn_TemplateTableDetailGUID" type="hidden" value="" />
+                                    <table class="table  table-bordered dataTables" width="100%" id="tblMappingColumn">
+                                        <thead>
+                                            <tr>
+                                                <th width="2.5%">#</th>
+                                                <th>Source Column</th>
+                                                <th id="thSourceDependentColumn">Source Dependent Column</th>
+                                                <th>Target Column</th>
+                                                <th class="clsIsDeduplicateData" style="display:none">Unique</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="btnSave" onclick="fnSaveTemplateColumn();">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ManageFilter" tabindex="-1" role="dialog" aria-labelledby="ManageFilterLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ManageFilterLabel">Add Filter</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 ">
+                        <form>
+                            <div class="form-group">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered dataTables" width="100%" id="tblMappingFilter">
+                                        <thead>
+                                            <tr>
+                                                <th width="2.5%">#</th>
+                                                <th>Source Column</th>
+                                                <th>Operator</th>
+                                                <th>Value</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="btnSave" onclick="fnSaveTemplateFilter()">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ManageTransferSchedule" tabindex="-1" role="dialog" aria-labelledby="ManageTransferScheduleLabel" aria-hidden="true">
+    @await Html.PartialAsync("_TransferScheduler", Model)
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/plugins/steps/jquery.steps.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/rowreorder/1.2.7/css/rowReorder.dataTables.min.css" />
+    @*<link rel="stylesheet" href="~/css/plugins/datapicker/datepicker3.css" >*@
+    <style>
+        label.error {
+            color: #ed3245;
+            display: inline-block;
+            margin-left: 5px;
+        }
+
+        .wizard > .steps a, .wizard > .steps a:hover, .wizard > .steps a:active {
+            background: #6fd1bd;
+            color: #fff;
+        }
+    </style>
+}
+@section Scripts {
+    <script src="~/js/plugins/steps/jquery.steps.min.js"></script>
+    <script src="~/js/plugins/validate/jquery.validate.min.js"></script>
+    
+    <script src="https://cdn.datatables.net/rowreorder/1.2.7/js/dataTables.rowReorder.min.js"></script>
+
+    <environment include="Development">
+        <script src="~/js/Template/Template.js"></script>
+        <script src="~/js/Template/Template.Origin.js"></script>
+        <script src="~/js/Template/Template.Target.js"></script>
+        <script src="~/js/Template/Template.Mapping.js"></script>
+        <script src="~/js/Template/Template.TransferSchedule.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/js/Template/Template.min.js"></script>
+        <script src="~/js/Template/Template.Origin.min.js"></script>
+        <script src="~/js/Template/Template.Target.min.js"></script>
+        <script src="~/js/Template/Template.Mapping.min.js"></script>
+        <script src="~/js/Template/Template.TransferSchedule.min.js"></script>
+    </environment>
+}

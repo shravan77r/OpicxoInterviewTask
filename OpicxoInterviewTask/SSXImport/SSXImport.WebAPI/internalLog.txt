@@ -1,0 +1,14 @@
+2021-09-27 16:44:36.1719 Info Message Template Auto Format enabled
+2021-09-27 16:44:36.2183 Info Loading assembly: NLog.Web.AspNetCore
+2021-09-27 16:44:36.3126 Info Adding target FileTarget(Name=alldata)
+2021-09-27 16:44:36.3126 Info Adding target FileTarget(Name=otherFile-web)
+2021-09-27 16:44:36.3657 Info Validating config: TargetNames=alldata, otherFile-web, ConfigItems=45, FilePath=D:\Projects\AWSServer\SSXImport\SSXImport.WebAPI\bin\Debug\netcoreapp3.1\NLog.config
+2021-09-27 16:44:36.4044 Info Configuration initialized.
+2021-09-27 16:44:36.4044 Info NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 4.7.11.13229. Product version: 4.7.11+33ed3a9f86277651e93ddf39cda64a046a06778b. GlobalAssemblyCache: False
+2021-09-27 17:19:38.2964 Info Message Template Auto Format enabled
+2021-09-27 17:19:38.3739 Info Loading assembly: NLog.Web.AspNetCore
+2021-09-27 17:19:38.4734 Info Adding target FileTarget(Name=alldata)
+2021-09-27 17:19:38.4734 Info Adding target FileTarget(Name=otherFile-web)
+2021-09-27 17:19:38.5443 Info Validating config: TargetNames=alldata, otherFile-web, ConfigItems=46, FilePath=D:\Projects\AWSServer\SSXImport\SSXImport.WebAPI\bin\Debug\netcoreapp3.1\NLog.config
+2021-09-27 17:19:38.5969 Info Configuration initialized.
+2021-09-27 17:19:38.5969 Info NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 4.7.11.13229. Product version: 4.7.11+33ed3a9f86277651e93ddf39cda64a046a06778b. GlobalAssemblyCache: False

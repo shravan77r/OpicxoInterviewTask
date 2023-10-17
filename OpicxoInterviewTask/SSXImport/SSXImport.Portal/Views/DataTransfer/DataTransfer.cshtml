@@ -1,0 +1,83 @@
+﻿@{
+    Layout = "~/Views/Shared/_Common.cshtml";
+    ViewData["Title"] = "Data Transfer";
+}
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-title  pt-2">
+                </div>
+                <div class="ibox-content">
+                    <div class="" id="divAlertMessage">
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" value="" placeholder="Search" id="search">
+                        </div>
+                        <div class="col-md-4 d-none">
+                            <button class="btn btn-primary" type="button" id="btnSearch"><i class="fa fa-search"></i> Search</button>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table  table-bordered dataTables" width="100%" id="tblDataTransfer">
+                            <thead>
+                                <tr>
+                                    <th width="2.5%">#</th>
+                                    <th>Template Name</th>
+                                    <th>Date</th>
+                                    <th>Source</th>
+                                    <th>Target</th>
+                                    <th>Transfer Status</th>
+                                    <th>Log</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="ModalLogFile" tabindex="-1" role="dialog" aria-labelledby="ModalLogFileLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ModalLogFileLabel">Log File</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    @*<div class="col-md-12" id="divLogFile" style="white-space:break-spaces;">
+                    </div>*@
+                    <pre id="preLogFile" style="height: 300px;"></pre>
+                    @*<iframe name="iFrameLogContent" id="iFrameLogContent" scrolling="yes" frameborder="1" width="600" height="400" align="left" src="javascript:void(0);"></iframe>*@
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section Styles {
+
+}
+
+@section Scripts {
+    <script>
+        $(function () {
+            fnShowMessage('@ViewBag.message', '@ViewBag.messageType');
+        });
+    </script>
+    <environment include="Development">
+        <script src="~/js/DataTransfer/DataTransferList.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/js/DataTransfer/DataTransferList.min.js"></script>
+    </environment>
+}

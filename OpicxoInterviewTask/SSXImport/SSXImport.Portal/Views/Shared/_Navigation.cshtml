@@ -1,0 +1,137 @@
+﻿<nav class="navbar-default navbar-static-side" role="navigation">
+    <div class="sidebar-collapse">
+        <ul class="nav metismenu" id="side-menu">
+            <li class="nav-header">
+                <div class="dropdown profile-element">
+                    <img alt="Logo" src="~/images/SmartSearch-logo-inside.png" />
+                </div>
+                <div class="logo-element">
+                    <img src="~/images/logo-icon.png" width="34" class="" />
+                </div>
+            </li>
+            <li class="@Html.IsSelected(controller: "Home", cssClass: "active")">
+                <a href="@Url.Action("Home", "Home")">
+                    <i class="fa fa-home"></i> <span class="nav-label">Home</span>
+                </a>
+            </li>
+            <li class="@Html.IsSelected(controller: "APIData")">
+                <a href="#">
+                    <i class="fa fa-suitcase"></i> <span class="nav-label">API</span><span class="fa arrow"></span>
+                </a>
+                <ul class="nav nav-second-level collapse @Html.IsSelected(controller: "APIData", cssClass: "in")">
+                    <li class="@Html.IsSelected(action: "APIDataForm")"><a href="@Url.Action("APIDataForm", "APIData")">Add New</a></li>
+                    <li class="@Html.IsSelected(action: "APIData")"><a href="@Url.Action("APIData", "APIData")">View Existing</a></li>
+                </ul>
+            </li>
+            <li class="@Html.IsSelected(controller: "Template")">
+                <a href="#">
+                    <i class="fa fa-suitcase"></i> <span class="nav-label">Template</span><span class="fa arrow"></span>
+                </a>
+                <ul class="nav nav-second-level collapse @Html.IsSelected(controller: "Template", cssClass: "in")">
+                    <li class="@Html.IsSelected(action: "TemplateForm")"><a href="@Url.Action("TemplateForm", "Template")">Add New</a></li>
+                    <li class="@Html.IsSelected(action: "Template")"><a href="@Url.Action("Template", "Template")">View Existing</a></li>
+                </ul>
+            </li>
+            <li class="@Html.IsSelected(controller: "GenericTemplate")">
+                <a href="#">
+                    <i class="fa fa-suitcase"></i> <span class="nav-label">Generic Template</span><span class="fa arrow"></span>
+                </a>
+                <ul class="nav nav-second-level collapse @Html.IsSelected(controller: "GenericTemplate", cssClass: "in")">
+                    <li class="@Html.IsSelected(action: "GenericTemplateForm")"><a href="@Url.Action("GenericTemplateForm", "GenericTemplate")">Add New</a></li>
+                    <li class="@Html.IsSelected(action: "GenericTemplate")"><a href="@Url.Action("GenericTemplate", "GenericTemplate")">View Existing</a></li>
+                </ul>
+            </li>
+            <li class="@Html.IsSelected(controller: "Workflow") d-none">
+                <a href="#">
+                    <i class="fa fa-suitcase"></i> <span class="nav-label">Workflow</span><span class="fa arrow"></span>
+                </a>
+                <ul class="nav nav-second-level collapse @Html.IsSelected(controller: "Workflow", cssClass: "in")">
+                    <li class="@Html.IsSelected(action: "Workflow")"><a href="@Url.Action("Workflow", "Workflow")">Workflow</a></li>
+                    <li class="@Html.IsSelected(action: "WorkflowExecution")"><a href="@Url.Action("WorkflowExecution", "Workflow")">Workflow Execution</a></li>
+                </ul>
+            </li>
+            <li class="@Html.IsSelected(controller: "DataTransfer")">
+                <a href="#">
+                    <i class="fa fa-suitcase"></i> <span class="nav-label">Data Transfer</span><span class="fa arrow"></span>
+                </a>
+                <ul class="nav nav-second-level collapse @Html.IsSelected(controller: "DataTransfer", cssClass: "in")">
+                    <li class="d-none @Html.IsSelected(action: "Steps")"><a href="@Url.Action("Steps", "DataTransfer")">Steps</a></li>
+                    <li class="d-none @Html.IsSelected(action: "DataTransferForm")"><a href="@Url.Action("DataTransferForm", "DataTransfer")">Add Data Transfer</a></li>
+                    <li class="@Html.IsSelected(action: "DataTransfer")"><a href="@Url.Action("DataTransfer", "DataTransfer")">View Data Transfer</a></li>
+                </ul>
+            </li>
+            <li class="d-none @Html.IsSelected(controller: "Jobs")">
+                <a href="#">
+                    <i class="fa fa-suitcase"></i> <span class="nav-label">Jobs</span><span class="fa arrow"></span>
+                </a>
+                <ul class="nav nav-second-level collapse @Html.IsSelected(controller: "Jobs", cssClass: "in")">
+                    <li class="@Html.IsSelected(action: "JobDetails")"><a href="@Url.Action("JobDetails", "Jobs")">Job Details</a></li>
+                    <li class="@Html.IsSelected(action: "Open")"><a href="@Url.Action("Open", "Jobs")">Open</a></li>
+                    <li class="@Html.IsSelected(action: "Closed")"><a href="@Url.Action("Closed", "Jobs")">Closed</a></li>
+                    <li class="@Html.IsSelected(action: "RequiringApproval")"><a href="@Url.Action("RequiringApproval", "Jobs")">Requiring Approval</a></li>
+                    <li class="@Html.IsSelected(action: "PreviouslyApproved")"><a href="@Url.Action("PreviouslyApproved", "Jobs")">Previously Approved</a></li>
+                    <li class="@Html.IsSelected(action: "OnAssignmentReport")"><a href="@Url.Action("OnAssignmentReport", "Jobs")">On Assignment Report</a></li>
+                </ul>
+            </li>
+
+
+            <li class="d-none @Html.IsSelected(controller: "Candidates")">
+                <a href="#">
+                    <i class="fa fa-id-badge"></i> <span class="nav-label">Candidates</span><span class="fa arrow"></span>
+                </a>
+                <ul class="nav nav-second-level collapse @Html.IsSelected(controller: "Candidates", cssClass: "in")">
+                    <li class="@Html.IsSelected(action: "Search")"><a href="@Url.Action("Search", "Candidates")">Search</a></li>
+                    <li class="@Html.IsSelected(action: "ApproveViewHours")"><a href="@Url.Action("ApproveViewHours", "Candidates")">Approve/View Hours</a></li>
+                    <li class="@Html.IsSelected(action: "ApproveViewExpenses")"><a href="@Url.Action("ApproveViewExpenses", "Candidates")">Approve/View Expenses</a></li>
+                    <li class="@Html.IsSelected(action: "HoursReport")"><a href="@Url.Action("HoursReport", "Candidates")">Hours Report</a></li>
+                    <li class="@Html.IsSelected(action: "OnAssignmentReport")"><a href="@Url.Action("OnAssignmentReport", "Candidates")">On Assignment Report</a></li>
+                </ul>
+            </li>
+
+
+            <li class="d-none @Html.IsSelected(controller: "TimeExpense")">
+                <a href="#">
+                    <i class="fa fa-clock-o"></i> <span class="nav-label"> Time/Expense</span><span class="fa arrow"></span>
+                </a>
+                <ul class="nav nav-second-level collapse @Html.IsSelected(controller: "TimeExpense", cssClass: "in")">
+                    <li class="@Html.IsSelected(action: "ApproveViewHours")"><a href="@Url.Action("ApproveViewHours", "TimeExpense")">Approve/View Hours</a></li>
+                    <li class="@Html.IsSelected(action: "ApproveViewExpenses")"><a href="@Url.Action("ApproveViewExpenses", "TimeExpense")">Approve/View Expenses</a></li>
+                    <li class="@Html.IsSelected(action: "HoursReport")"><a href="@Url.Action("HoursReport", "TimeExpense")">Hours Report</a></li>
+                </ul>
+            </li>
+            <li class="d-none @Html.IsSelected(controller: "PurchaseOrders")">
+                <a href="#">
+                    <i class="fa fa-money"></i> <span class="nav-label"> Purchase Orders</span><span class="fa arrow"></span>
+                </a>
+                <ul class="nav nav-second-level collapse @Html.IsSelected(controller: "PurchaseOrders", cssClass: "in")">
+                    <li class="@Html.IsSelected(action: "AddNew")"><a href="@Url.Action("AddNew", "PurchaseOrders")">Add New</a></li>
+                    <li class="@Html.IsSelected(action: "ViewExisting")"><a href="@Url.Action("ViewExisting", "PurchaseOrders")">View Existing</a></li>
+                    <li class="@Html.IsSelected(action: "PoActivityReport")"><a href="@Url.Action("PoActivityReport", "PurchaseOrders")">PO Activity Report</a></li>
+                </ul>
+            </li>
+            <li class="d-none @Html.IsSelected(controller: "Reports")">
+                <a href="#">
+                    <i class="fa fa-pie-chart"></i> <span class="nav-label"> Reports</span><span class="fa arrow"></span>
+                </a>
+                <ul class="nav nav-second-level collapse @Html.IsSelected(controller: "Reports", cssClass: "in")">
+                    <li class="@Html.IsSelected(action: "JobActivity")"><a href="@Url.Action("JobActivity", "Reports")"> Job Activity</a></li>
+                    <li class="@Html.IsSelected(action: "OnAssignmentReport")"><a href="@Url.Action("OnAssignmentReport", "Reports")"> On Assignment Report</a></li>
+                    <li class="@Html.IsSelected(action: "Terminations")"><a href="@Url.Action("Terminations", "Reports")"> Terminations</a></li>
+                    <li class="@Html.IsSelected(action: "HoursReport")"><a href="@Url.Action("HoursReport", "Reports")"> Hours Report</a></li>
+                </ul>
+            </li>
+            <li class="d-none @Html.IsSelected(controller: "OutOffOffice", cssClass: "active")">
+                <a href="@Url.Action("EnableOutOfOfficeAssistant", "OutOffOffice")"><i class="fa fa-share-square-o"></i> <span class="nav-label">  Out off Office (Off)</span></a>
+
+            </li>
+            <li class="d-none special_link @Html.IsSelected(controller: "Help")">
+                <a href="#"><i class="fa fa-question-circle"></i> <span class="nav-label">  Help</span><span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level collapse @Html.IsSelected(controller: "Help", cssClass: "in")">
+                    <li class="@Html.IsSelected(action: "EmailUs")"><a href="@Url.Action("EmailUs", "Help")"> Email Us </a></li>
+
+                </ul>
+            </li>
+
+        </ul>
+    </div>
+</nav>

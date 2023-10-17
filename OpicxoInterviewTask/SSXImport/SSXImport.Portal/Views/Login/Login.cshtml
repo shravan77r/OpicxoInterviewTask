@@ -1,0 +1,72 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Smart Search X</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="shortcut icon" href="~/images/favicon.png">
+    <link rel="stylesheet" href="~/css/bootstrap.css" />
+    <link rel="stylesheet" href="~/font-awesome/css/font-awesome.css" />
+    <link rel="stylesheet" href="~/css/animate.css" />
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+</head>
+<body class="gray-bg-patter">
+    <div class="loginColumns animated fadeInDown">
+        <div class="row bg-white shadow">
+            <div class="col-md-6">
+                <div class="p-md">
+                    <div class="text-center">
+                        <img src="images/SmartSearch-logo.png" width="220" class="" />
+                        <h2 class="font-bold m-t-sm text-black">Login</h2>
+                    </div>
+                    <form class="m-t" role="form">
+                        <div class="form-group">
+                            <input type="email" class="form-control" placeholder="Username" required="">
+                        </div>
+                        <div class="form-group">
+                            <input type="password" class="form-control" placeholder="Password" required="">
+                        </div>
+                        <div class="i-checks"><label> <input type="checkbox" value=""> <i></i> Remember me </label></div>
+                        <button type="submit" class="btn btn-primary block full-width m-b m-t-sm" onclick="window.location.href='@Url.Action("Home", "Home")'">Login</button>
+
+                        <div class="text-center m-t-lg">
+                            <a href="#">
+                                Forgot password?
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-md-6 gray-bg">
+                <div class="text-center m-t-sm">
+                    <img src="images/message-cente-icon.png" />
+                    <h3 class="font-bold">Message Center</h3>
+                </div>
+                <p>
+                    Perfectly designed and precisely prepared admin theme with over 50 pages with extra new web app views.
+                </p>
+
+                <p>
+                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.
+                </p>
+
+                <p>
+                    When an unknown printer took a galley of type and scrambled it to make a type specimen book.
+                </p>
+
+
+
+            </div>
+        </div>
+        <hr />
+        <div class="row">
+            <div class="col-md-12 text-center">
+                © 1999-2020 - Smart Search Online
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>

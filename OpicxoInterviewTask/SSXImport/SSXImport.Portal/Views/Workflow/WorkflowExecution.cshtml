@@ -1,0 +1,109 @@
+﻿@{
+    Layout = "~/Views/Shared/_Common.cshtml";
+    ViewData["Title"] = "Workflow Execution";
+}
+<div class="wrapper wrapper-content animated fadeInRight">
+    <input type="hidden" id="count" value="99999990" />
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-content">
+                    <div class="" id="divAlertMessage">
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" value="" placeholder="Search" id="search">
+                        </div>
+                        <div class="col-md-4 d-none">
+                            <button class="btn btn-primary" type="button" id="btnSearch"><i class="fa fa-search"></i> Search</button>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table  table-bordered dataTables" width="100%" id="tblWorkflowExecution">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Finished</th>
+                                    <th>Mode</th>
+                                    <th>Started At</th>
+                                    <th>Stopped At</th>
+                                    <th>Workflow Name</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Styles {
+
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            BindList();
+        });
+
+        function BindList() {
+            var table = $('#tblWorkflowExecution').DataTable({
+                "paging": true,
+                "pageSize": 10,
+                "bLengthChange": false,
+                "autoWidth": false,
+                "processing": true,
+                "serverSide": true,
+                "filter": false,
+                "orderMulti": false,
+                "ajax": {
+                    "url": "/Workflow/GetWorkflowExecutionList",
+                    "type": "POST",
+                    "datatype": "json",
+                    "data": function (d) {
+                        d.keyword = $("#search").val();
+                        d.count =  $("#count").val();
+                    }, "complete": function (response) {
+                        //console.log(response);
+                        $('#count').val(JSON.parse(response.responseText).recordsTotal);;
+                    }
+                },
+                "columns": [
+                    { "data": "id", "autoWidth": true },
+                    { "data": "finished", "autoWidth": true },
+                    { "data": "mode", "autoWidth": true },
+                    { "data": "startedAt", "autoWidth": true },
+                    { "data": "stoppedAt", "autoWidth": true },
+                    { "data": "workflowName", "autoWidth": true },
+                ],
+                "responsive": true,
+                "columnDefs": [
+                    { orderable: false, "targets": "_all" }
+                ],
+                "order": [[0, "desc"]],
+            });
+
+            $("#search").on('keyup', function (event) {
+                event.preventDefault();
+                table.search(this.value).draw();
+            });
+
+            $("#btnSearch").on('click', function (event) {
+                event.preventDefault();
+                table.search(this.value).draw();
+            });
+        }
+
+        function fnShowMessage(message, messageType) {
+            if (message && messageType) {
+                $('#divAlertMessage').removeClass();
+                $('#divAlertMessage').addClass('alert alert-' + messageType, true);
+                $('#divAlertMessage').html(message);
+                $('#divAlertMessage').toggleClass('d-none', false);
+            }
+        }
+    </script>
+}

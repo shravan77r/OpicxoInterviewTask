@@ -1,0 +1,137 @@
+﻿@{
+    Layout = "~/Views/Shared/_Common.cshtml";
+    ViewData["Title"] = "View Candidates";
+}
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+
+            <div class="ibox">
+                <div class="ibox-title  pt-2">
+
+                    <a href="@Url.Action("Open", "Jobs")" class="btn btn-white btn-bitbucket">  <i class="fa fa-arrow-left"></i> Go Back</a>
+
+                </div>
+                <div class="ibox-content">
+                    <h3>Branch Manager( #1805)</h3>
+                    <div class="table-responsive">
+
+                        <table class="table  table-bordered dataTables" width="100%">
+                            <thead>
+                                <tr>
+
+                                    <th> Name</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Location</th>
+                                    <th>Notes</th>
+
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><a href="@Url.Action("Resume", "Candidates")" class="link-black">Chen Zhou </a></td>
+                                    <td><a href="@Url.Action("JobHistory", "Candidates")" class="link-black">Hire</a></td>
+                                    <td>4/29/2020 </td>
+                                    <td>DULLES,VA</td>
+
+                                    <td>
+                                        <a href="#" class="btn-transparent" title="Add Note" data-toggle="modal" data-target="#AddNote"><i class="fa fa-sticky-note"></i></a>
+                                        <a href="@Url.Action("ViewNotes", "Jobs")" class="btn-transparent" title="View"><i class="fa fa-eye"></i></a>
+                                    </td>
+
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+
+
+
+                </div>
+            </div>
+
+
+
+        </div>
+
+
+    </div>
+</div>
+
+<div class="modal fade" id="AddNote" tabindex="-1" role="dialog" aria-labelledby="AddNoteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="AddNoteLabel">Add Note</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 ">
+                        <form>
+
+
+                            <div class="form-group">
+
+                                <label for="">
+                                    Job ID : 1805
+
+                                </label>
+                                
+                            </div>
+                            <div class="form-group">
+
+                                <label for="">
+                                    Title: Admin
+
+                                </label>
+                               
+                            </div>
+                            <div class="form-group">
+
+                                <label for="">
+                                    Please add a note or comment regarding  Branch Manager Sebastian below.<br />
+
+                                </label>
+                                <textarea class="form-control" id="" rows="4"></textarea>
+                            </div>
+                        </form>
+
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section Styles {
+
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('.dataTables').DataTable({
+                pageLength: 25,
+                responsive: true,
+                scrollX: true,
+                "searching": false,
+
+                "dom": '<"top"i>rt<"bottom"flp><"clear">',
+                columnDefs: [
+                    { targets: 'no-sort', orderable: false }
+                ]
+            });
+
+        });
+
+    </script>
+}

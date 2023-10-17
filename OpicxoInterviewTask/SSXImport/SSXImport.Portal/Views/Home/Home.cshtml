@@ -1,0 +1,296 @@
+﻿@{
+    Layout = "~/Views/Shared/_Common.cshtml";
+    ViewData["Title"] = "Home";
+}
+
+<div class="text-center">
+    <h2 class="display-3">
+        Import Utility Landing page
+    </h2>
+    <h3>Session Test:</h3>
+</div>
+
+@section Styles {
+
+}
+
+@section Scripts {
+    <script src="~/js/plugins/jquery-ui/jquery-ui.min.js"></script>
+    <script src="~/js/plugins/chartJs/Chart.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            console.log('home page - $(document).ready');
+
+            $(".sortable-chart").sortable({
+                connectWith: ".sortable-area-chart",
+
+            }).disableSelection();
+
+            $(".sortable-stats").sortable({
+                connectWith: ".sortable-area-stats",
+
+            }).disableSelection();
+
+        });
+    </script>
+    @*<script>
+                  var barData = {
+            labels: ["January", "February", "March", "April", "May", "June", "July"],
+            datasets: [
+                {
+                    label: "Data 1",
+                    backgroundColor: 'rgba(220, 220, 220, 0.5)',
+                    pointBorderColor: "#fff",
+                    data: [65, 59, 80, 81, 56, 55, 40]
+                },
+                {
+                    label: "Data 2",
+                    backgroundColor: 'rgba(26,179,148,0.5)',
+                    borderColor: "rgba(26,179,148,0.7)",
+                    pointBackgroundColor: "rgba(26,179,148,1)",
+                    pointBorderColor: "#fff",
+                    data: [28, 48, 40, 19, 86, 27, 90]
+                }
+            ]
+        };
+
+        var barOptions = {
+            responsive: true
+        };
+
+
+        var ctx2 = document.getElementById("barChart1").getContext("2d");
+        new Chart(ctx2, {type: 'bar', data: barData, options:barOptions});
+
+        var polarData = {
+            datasets: [{
+                data: [
+                    300,140,200
+                ],
+                backgroundColor: [
+                    "#a3e1d4", "#dedede", "#b5b8cf"
+                ],
+                label: [
+                    "My Radar chart"
+                ]
+            }],
+            labels: [
+                "App","Software","Laptop"
+            ]
+        };
+
+        var polarOptions = {
+            segmentStrokeWidth: 2,
+            responsive: true
+
+        };
+        </script>*@
+    @*<script>
+                  var barData = {
+            labels: ["January", "February", "March", "April", "May", "June", "July"],
+            datasets: [
+                {
+                    label: "Data 1",
+                    backgroundColor: 'rgba(220, 220, 220, 0.5)',
+                    pointBorderColor: "#fff",
+                    data: [65, 59, 80, 81, 56, 55, 40]
+                },
+                {
+                    label: "Data 2",
+                    backgroundColor: 'rgba(26,179,148,0.5)',
+                    borderColor: "rgba(26,179,148,0.7)",
+                    pointBackgroundColor: "rgba(26,179,148,1)",
+                    pointBorderColor: "#fff",
+                    data: [28, 48, 40, 19, 86, 27, 90]
+                }
+            ]
+        };
+
+        var barOptions = {
+            responsive: true
+        };
+
+
+        var ctx2 = document.getElementById("barChart2").getContext("2d");
+        new Chart(ctx2, {type: 'bar', data: barData, options:barOptions});
+
+        var polarData = {
+            datasets: [{
+                data: [
+                    300,140,200
+                ],
+                backgroundColor: [
+                    "#a3e1d4", "#dedede", "#b5b8cf"
+                ],
+                label: [
+                    "My Radar chart"
+                ]
+            }],
+            labels: [
+                "App","Software","Laptop"
+            ]
+        };
+
+        var polarOptions = {
+            segmentStrokeWidth: 2,
+            responsive: true
+
+        };
+        </script>*@
+    @*<script>
+                  var barData = {
+            labels: ["January", "February", "March", "April", "May", "June", "July"],
+            datasets: [
+                {
+                    label: "Data 1",
+                    backgroundColor: 'rgba(220, 220, 220, 0.5)',
+                    pointBorderColor: "#fff",
+                    data: [65, 59, 80, 81, 56, 55, 40]
+                },
+                {
+                    label: "Data 2",
+                    backgroundColor: 'rgba(26,179,148,0.5)',
+                    borderColor: "rgba(26,179,148,0.7)",
+                    pointBackgroundColor: "rgba(26,179,148,1)",
+                    pointBorderColor: "#fff",
+                    data: [28, 48, 40, 19, 86, 27, 90]
+                }
+            ]
+        };
+
+        var barOptions = {
+            responsive: true
+        };
+
+
+        var ctx2 = document.getElementById("barChart3").getContext("2d");
+        new Chart(ctx2, {type: 'bar', data: barData, options:barOptions});
+
+        var polarData = {
+            datasets: [{
+                data: [
+                    300,140,200
+                ],
+                backgroundColor: [
+                    "#a3e1d4", "#dedede", "#b5b8cf"
+                ],
+                label: [
+                    "My Radar chart"
+                ]
+            }],
+            labels: [
+                "App","Software","Laptop"
+            ]
+        };
+
+        var polarOptions = {
+            segmentStrokeWidth: 2,
+            responsive: true
+
+        };
+        </script>
+        <script>
+                  var barData = {
+            labels: ["January", "February", "March", "April", "May", "June", "July"],
+            datasets: [
+                {
+                    label: "Data 1",
+                    backgroundColor: 'rgba(220, 220, 220, 0.5)',
+                    pointBorderColor: "#fff",
+                    data: [65, 59, 80, 81, 56, 55, 40]
+                },
+                {
+                    label: "Data 2",
+                    backgroundColor: 'rgba(26,179,148,0.5)',
+                    borderColor: "rgba(26,179,148,0.7)",
+                    pointBackgroundColor: "rgba(26,179,148,1)",
+                    pointBorderColor: "#fff",
+                    data: [28, 48, 40, 19, 86, 27, 90]
+                }
+            ]
+        };
+
+        var barOptions = {
+            responsive: true
+        };
+
+
+        var ctx2 = document.getElementById("barChart4").getContext("2d");
+        new Chart(ctx2, {type: 'bar', data: barData, options:barOptions});
+
+        var polarData = {
+            datasets: [{
+                data: [
+                    300,140,200
+                ],
+                backgroundColor: [
+                    "#a3e1d4", "#dedede", "#b5b8cf"
+                ],
+                label: [
+                    "My Radar chart"
+                ]
+            }],
+            labels: [
+                "App","Software","Laptop"
+            ]
+        };
+
+        var polarOptions = {
+            segmentStrokeWidth: 2,
+            responsive: true
+
+        };
+        </script>
+        <script>
+            var barData = {
+                labels: ["January", "February", "March", "April", "May", "June", "July"],
+                datasets: [
+                    {
+                        label: "Data 1",
+                        backgroundColor: 'rgba(220, 220, 220, 0.5)',
+                        pointBorderColor: "#fff",
+                        data: [65, 59, 80, 81, 56, 55, 40]
+                    },
+                    {
+                        label: "Data 2",
+                        backgroundColor: 'rgba(26,179,148,0.5)',
+                        borderColor: "rgba(26,179,148,0.7)",
+                        pointBackgroundColor: "rgba(26,179,148,1)",
+                        pointBorderColor: "#fff",
+                        data: [28, 48, 40, 19, 86, 27, 90]
+                    }
+                ]
+            };
+
+            var barOptions = {
+                responsive: true
+            };
+
+
+            var ctx2 = document.getElementById("barChart5").getContext("2d");
+            new Chart(ctx2, { type: 'bar', data: barData, options: barOptions });
+
+            var polarData = {
+                datasets: [{
+                    data: [
+                        300, 140, 200
+                    ],
+                    backgroundColor: [
+                        "#a3e1d4", "#dedede", "#b5b8cf"
+                    ],
+                    label: [
+                        "My Radar chart"
+                    ]
+                }],
+                labels: [
+                    "App", "Software", "Laptop"
+                ]
+            };
+
+            var polarOptions = {
+                segmentStrokeWidth: 2,
+                responsive: true
+
+            };
+        </script>*@
+}

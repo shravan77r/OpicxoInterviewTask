@@ -1,0 +1,312 @@
+﻿@{
+    Layout = "~/Views/Shared/_Common.cshtml";
+    ViewData["Title"] = "Job Details";
+}
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+
+            <div class="ibox">
+                <div class="ibox-title  pt-2">
+
+                    <h5>Details</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-md-6">
+
+                            <div class="form-group">
+                                <label for="">Status</label>
+                                <select class="form-control">
+                                    <option selected="" value=""></option>
+                                    <option  value="Open">Open</option>
+                                    <option value="Hold">Hold</option>
+                                    <option value="Clos">Closed</option>
+                                    <option value="TEMP">Template Job</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="">Job Category </label>
+                                <select class=" form-control">
+                                    <option value="959"></option>
+                                    <option value="13">Accounting</option>
+                                    <option value="925">Administration</option>
+                                    <option value="935">Applications Programming</option>
+                                    <option value="2">Aquarium</option>
+                                    <option value="701">Assemblers</option>
+                                    <option value="924">Bakery Products</option>
+                                    <option value="953">Biostatistics</option>
+                                    <option value="933">Claims</option>
+                                    <option value="506">Clerical</option>
+                                    <option value="934">Client Services</option>
+                                    <option value="209">Co-op/Student Employee</option>
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="">Job Title</label>
+                                <select class=" form-control">
+                                    <option value="new">Add New</option>
+                                    <option selected="" value=""></option>
+                                    <option value="998">ABAP programmer</option>
+                                    <option value="13">Account Executive</option>
+                                    <option value="10038">Account Manager</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="">Type</label>
+                                <select class=" form-control">
+                                    <option value="new">Add New</option>
+                                    <option selected="" value=""></option>
+                                    <option value="998">ABAP programmer</option>
+                                    <option value="13">Account Executive</option>
+                                    <option value="10038">Account Manager</option>
+                                </select>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                </div>
+            </div>
+            <div class="ibox">
+                <div class="ibox-title  pt-2">
+
+                    <h5>Education and Experience</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-md-6">
+
+                            <div class="form-group">
+                                <label for="">Min Education</label>
+                                <select class=" form-control">
+                                    <option value=" "></option>
+
+                                    <option value="BAME">B. S. Engineering</option>
+
+                                    <option value="BAA">Bachelors Degree</option>
+
+                                    <option value="BS">BS Computer Science</option>
+
+                                    <option value="DOC">Doctoral Degree</option>
+
+                                    <option value="MS">Engineering - Structural</option>
+
+                                    <option value="mba">MBA</option>
+
+                                    <option value="None">None</option>
+
+                                    <option value="Other">Other</option>
+
+                                </select>
+                            </div>
+
+
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="">Min Years Experience</label>
+                                <input type="text" class="form-control" value="">
+                            </div>
+
+
+                        </div>
+
+                    </div>
+
+
+
+                </div>
+            </div>
+            <div class="ibox">
+                <div class="ibox-title  pt-2">
+
+                    <h5>Pay Details</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-md-6">
+
+                            <div class="form-group">
+                                <label for="">Salary</label>
+                                <input type="text" class="form-control" value="">
+                            </div>
+
+
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="">Pay Period</label>
+                                <select class=" form-control">
+                                    <option value="Yearly">Yearly</option>
+                                    <option selected="" value="Hourly">Hourly</option>
+
+                                </select>
+                            </div>
+
+
+                        </div>
+
+                    </div>
+
+
+
+                </div>
+            </div>
+            <div class="ibox">
+                <div class="ibox-title  pt-2">
+
+                    <h5>Job description</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-md-6">
+
+                            <div class="form-group">
+                                <label for="">Job Description </label>
+                                <textarea class=" form-control summernote" rows="4"></textarea>
+                            </div>
+
+                        </div>
+                        <div class="col-md-6">
+
+                            <div class="form-group">
+                                <label for="">Job Requirements</label>
+                                <textarea class=" form-control summernote" rows="4"></textarea>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ibox">
+                <div class="ibox-title  pt-2">
+
+                    <h5>Work location</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="">City</label>
+                                <input type="text" class="form-control" value="">
+                            </div>
+                            <div class="form-group">
+                                <label for="">State</label>
+                                <input type="text" class="form-control" value="">
+                            </div>
+
+
+                        </div>
+                        <div class="col-md-6">
+
+                            <div class="form-group">
+                                <label for="">Postal Code</label>
+                                <input type="text" class="form-control" value="">
+
+
+                            </div>
+                            <div class="form-group">
+                                <label for="">Duration</label>
+                                <input type="text" class="form-control" value="">
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="ibox">
+                <div class="ibox-title  pt-2">
+
+                    <h5>Reference  Details</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-md-6">
+
+                            <div class="form-group">
+                                <label for="">Reference ID</label>
+                                <input type="text" class="form-control" value="">
+                            </div>
+
+
+                        </div>
+
+
+
+                    </div>
+
+
+
+                </div>
+            </div>
+
+            <div class="ibox">
+
+                <div class="ibox-content">
+
+                    <button class="btn btn-primary btn-lg mr-3 font-bold" type="submit" onclick="window.location.href='@Url.Action("Open", "Jobs")'"><i class="fa fa-save"></i> Save Job</button>
+                    <button class="btn btn-white btn-lg mr-3 font-bold" type="submit"><i class="fa fa-close"></i> Clear </button>
+
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+@section Styles {
+    <link href="~/css/plugins/summernote/summernote-bs4.css" rel="stylesheet">
+}
+
+@section Scripts {
+    <script src="~/js/plugins/summernote/summernote-bs4.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $('.summernote').summernote({ height: 250 });
+
+        });
+    </script>
+}

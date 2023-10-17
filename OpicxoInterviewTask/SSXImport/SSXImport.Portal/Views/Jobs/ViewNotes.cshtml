@@ -1,0 +1,140 @@
+﻿@{
+    Layout = "~/Views/Shared/_Common.cshtml";
+    ViewData["Title"] = "View Notes";
+}
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+
+            <div class="ibox">
+                <div class="ibox-title  pt-2">
+				<a href="@Url.Action("Open", "Jobs")" class="btn btn-white btn-bitbucket">  <i class="fa fa-arrow-left"></i> Back to Jobs</a>
+                </div>
+                <div class="ibox-content">
+				<h3>Branch Manager( #1805)</h3>
+                    <div class="table-responsive">
+
+                        <table class="table  table-bordered dataTables" width="100%">
+                            <thead>
+                                <tr>
+                                   
+                                    <th> Date</th>
+                                    <th>Type</th>
+                                    <th>Subject</th>
+                                    <th>Author</th>
+                                    <th>Action</th>
+                                   
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><a href="#" data-toggle="modal" data-target="#ViewNote" class="link-black">1/11/2021</a></td>
+                                    <td>-</td>
+                                    <td>Contact note from Career Center ID# 556  </td>
+                                    <td>p pds1 </td>
+                                   
+                                    <td>
+                                        
+                                        <a href="#" class="btn-transparent" title="View Note" data-toggle="modal" data-target="#ViewNote" title="View"><i class="fa fa-eye"></i></a>
+                                    </td>
+                                   
+                                </tr>
+                                 <tr>
+                                    <td><a href="#" data-toggle="modal" data-target="#ViewNote" class="link-black">1/11/2021</a></td>
+                                    <td>-</td>
+                                    <td>Contact note from Career Center ID# 556  </td>
+                                    <td>p pds1 </td>
+                                   
+                                    <td>
+                                        
+                                        <a href="#" class="btn-transparent" title="View Note" data-toggle="modal" data-target="#ViewNote" title="View"><i class="fa fa-eye"></i></a>
+                                    </td>
+                                   
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+
+
+                </div>
+            </div>
+            
+            
+           
+        </div>
+
+
+    </div>
+</div>
+<div class="modal fade" id="ViewNote" tabindex="-1" role="dialog" aria-labelledby="ViewNoteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ViewNoteLabel">View Note</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 ">
+                        <form>
+							<div class="form-group">
+
+                                <label for="">
+                                    Entered: 1/11/2021 251 am  |   By: pds pds1
+                                </label>
+                                
+                            </div>
+							<div class="form-group">
+
+                                <label for="">
+                                    Subject
+                                </label>
+                                <input type="text" class="form-control" value="Contact note from Career Center ID# 556">
+                            </div>
+                            <div class="form-group">
+
+                                <label for="">
+                                   Note
+                                </label>
+                                <textarea class="form-control" id="" rows="4">testing</textarea>
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section Styles {
+    
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('.dataTables').DataTable({
+                pageLength: 25,
+                responsive: true,
+                scrollX: true,
+                "searching": false,
+
+                "dom": '<"top"i>rt<"bottom"flp><"clear">',
+                columnDefs: [
+                    { targets: 'no-sort', orderable: false }
+                ]
+            });
+
+        });
+
+    </script>
+}

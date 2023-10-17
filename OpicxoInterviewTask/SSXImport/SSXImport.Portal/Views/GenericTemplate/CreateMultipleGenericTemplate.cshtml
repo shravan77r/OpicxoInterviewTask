@@ -1,0 +1,252 @@
+﻿@model SSXImport.Portal.Models.GenericTemplate
+@{
+    Layout = "~/Views/Shared/_Common.cshtml";
+
+    ViewData["Title"] = "Generic Template";
+
+    <script src="~/js/devextreme/dx.all.js"></script>
+
+    <script src="~/js/devextreme/aspnet/dx.aspnet.data.js"></script>
+    <script src="~/js/devextreme/aspnet/dx.aspnet.mvc.js"></script>
+
+
+    <div class="loading-backdrop customloader" style="display:none">
+        <div class="sk-spinner sk-spinner-double-bounce">
+            <div class="sk-double-bounce1"></div>
+            <div class="sk-double-bounce2"></div>
+        </div>
+    </div>
+   
+
+    @using (Html.BeginForm())
+    {
+        @Html.HiddenFor(o => o.EmailTemplatHiddenDesc)
+        @Html.HiddenFor(o => o.EmailTemplateId)
+        @Html.HiddenFor(o => o.EmailTemplateGUID)
+        <div class="wrapper wrapper-content animated fadeInRight">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox">
+                        <div class="ibox-title  pt-2">
+                            <h5>Generic Template : @Model.EmailTemplateName</h5>
+                            <div class="ibox-tools">
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="ibox-content">
+                            <div class="row">
+
+                                <div class="col-md-3">
+
+                                    <div class="form-group">
+                                        <label for="TemplateName" style="font-weight:bold">
+                                            Object Type :
+                                            <span class="text-danger"></span>
+                                        </label>
+                                        @if (@Model.ObjectType == "1")
+                                        {
+                                            <label>Tables</label>
+                                        }
+                                        else
+                                        {
+                                            <label>Views</label>
+                                        }
+
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+
+                                    <div class="form-group">
+                                        <label for="TemplateName" style="font-weight:bold">
+                                            Object :
+                                            <span class="text-danger"></span>
+                                        </label>
+                                        <label>@Model.Object</label>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox">
+
+                        <div class="ibox-title pt-2">
+                            <h5>Editor</h5>
+                            <div class="ibox-tools">
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="ibox-content">
+
+                            <div class="row">
+
+                                <div class="col-lg-12">
+                                    @{ int k = 0;}
+                                    @foreach (var editor in Model.ListEmailTemplateContent)
+                                    {
+                                        k++;
+
+                                        <div id="form" action="#" class="wizard-big">
+
+                                            @(Html.DevExtreme().HtmlEditorFor(o => o.EmailTemplateDesc)
+                                                        .ID("html_editor"+k).Name("html_editor")
+                                                        .Value(@Html.Raw(editor.Content).ToString())
+                                                        .Toolbar(toolbar => toolbar.Items(
+                                                        items =>
+                                                        {
+                                                            items.Add().Name(HtmlEditorToolbarItem.Undo);
+
+                                                            items.Add().Name(HtmlEditorToolbarItem.Redo);
+
+                                                            items.Add().Name(HtmlEditorToolbarItem.Separator);
+
+                                                            items.Add()
+                                                            .Name("header")
+                                                            .AcceptedValues(new JS("[false, 1, 2, 3, 4, 5]"));
+
+                                                            items.Add().Name(HtmlEditorToolbarItem.Separator);
+
+                                                            items.Add().Name(HtmlEditorToolbarItem.Bold);
+
+                                                            items.Add().Name(HtmlEditorToolbarItem.Italic);
+
+                                                            items.Add().Name(HtmlEditorToolbarItem.Strike);
+
+                                                            items.Add().Name(HtmlEditorToolbarItem.Underline);
+
+                                                            items.Add().Name(HtmlEditorToolbarItem.Separator);
+
+                                                            items.Add().Name(HtmlEditorToolbarItem.AlignLeft);
+
+                                                            items.Add().Name(HtmlEditorToolbarItem.AlignCenter);
+
+                                                            items.Add().Name(HtmlEditorToolbarItem.AlignRight);
+
+                                                            items.Add().Name(HtmlEditorToolbarItem.AlignJustify);
+
+                                                            items.Add().Name(HtmlEditorToolbarItem.Separator);
+
+                                                            items.Add()
+                                                            .Widget(widget => widget.Button()
+                                                                .Text("Show markup")
+                                                                .StylingMode(ButtonStylingMode.Text)
+                                                                .OnClick("showMarkup")
+                                                            );
+
+                                                            items.Add()
+                                                            .Name("font")
+                                                            .AcceptedValues(new JS("['Arial', 'Courier New', 'Georgia', 'Impact', 'Lucida Console', 'Tahoma', 'Times New Roman', 'Verdana']"));
+
+                                                            items.Add()
+                                                            .Name("size")
+                                                            .AcceptedValues(new JS("['8pt', '10pt', '12pt', '14pt', '18pt', '24pt', '36pt']"));
+
+
+                                                            items.Add().Name(HtmlEditorToolbarItem.Color);
+                                                            items.Add().Name(HtmlEditorToolbarItem.Background);
+                                                            items.Add().Name(HtmlEditorToolbarItem.AlignCenter);
+                                                            items.Add().Name(HtmlEditorToolbarItem.Image);
+                                                            items.Add().Name(HtmlEditorToolbarItem.Blockquote);
+                                                            items.Add().Name(HtmlEditorToolbarItem.BulletList);
+                                                            items.Add().Name(HtmlEditorToolbarItem.Clear);
+                                                            items.Add().Name(HtmlEditorToolbarItem.CodeBlock);
+                                                            items.Add().Name(HtmlEditorToolbarItem.Link);
+                                                            items.Add().Name(HtmlEditorToolbarItem.OrderedList);
+                                                            items.Add().Name(HtmlEditorToolbarItem.Subscript);
+                                                            items.Add().Name(HtmlEditorToolbarItem.Superscript);
+
+
+                                                        })
+                                                        )
+                                                    )
+                                            @(Html.DevExtreme().Popup()
+                                                        .ID("popup")
+                                                        .ShowTitle(true)
+                                                        .Title("Markup")
+                                                        .OnShowing("popupShowing")
+                                                        .Content(@<text>
+                                                            <div class="value-content"></div>
+                                                        </text>)
+                                                    )
+
+                                            <script>
+                                                function showMarkup() {
+                                                    var popupInstance = $("#popup").dxPopup("instance");
+                                                    popupInstance.toggle(!popupInstance.option("visible"));
+                                                }
+
+                                                function popupShowing() {
+                                                    var editorInstance = $("#html_editor").dxHtmlEditor("instance");
+                                                    $(".value-content").text(editorInstance.option("value"));
+                                                }
+
+                                            </script>
+
+                                        </div>
+
+                                        <br />
+
+                                        <br />
+                                    }
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    }
+
+
+
+
+
+
+@section Styles {
+        <link rel="stylesheet" href="~/css/plugins/steps/jquery.steps.css" />
+        @*<link rel="stylesheet" href="~/css/plugins/datapicker/datepicker3.css" >*@
+        <style>
+            label.error {
+                color: #ed3245;
+                display: inline-block;
+                margin-left: 5px;
+            }
+
+            .wizard > .steps a, .wizard > .steps a:hover, .wizard > .steps a:active {
+                background: #6fd1bd;
+                color: #fff;
+            }
+
+            #html_editor {
+                min-height: 300px;
+            }
+        </style>
+
+    }
+}
+@section Scripts {
+
+    <script src="~/js/Validation/jquery.validate.js"></script>
+  
+    <environment include="Development">
+       
+    </environment>
+    <environment exclude="Development">
+       
+    </environment>
+}

@@ -1,0 +1,256 @@
+﻿@model SSXImport.Portal.Models.APIData
+@{
+    Layout = "~/Views/Shared/_Common.cshtml";
+    ViewData["Title"] = "API Template";
+}
+
+<div class="loading-backdrop customloader" style="display:none">
+    <div class="sk-spinner sk-spinner-double-bounce">
+        <div class="sk-double-bounce1"></div>
+        <div class="sk-double-bounce2"></div>
+    </div>
+</div>
+@Html.HiddenFor(o => o.APIGUID)
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-title  pt-2">
+                    <h5>API Template</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="" id="divAlertMessage">
+                    </div>
+                    <form id="form" action="#" class="wizard-big">
+                        <h1>Basic Detail</h1>
+                        <fieldset>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="APName">Name<span class="text-danger">*</span> </label>
+                                        @Html.TextBoxFor(o => o.Name, new { @class = "form-control required", @maxlength = "50", @autocomplete = "off", @placeholder = "Enter API Name" })
+                                        @Html.ValidationMessageFor(o => o.Name, "", new { @class = "error" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="APIEndPoint">API End Point<span class="text-danger">*</span> </label>
+                                        @Html.TextBoxFor(o => o.APIEndPoint, new { @class = "form-control required", @maxlength = "50", @autocomplete = "off", @placeholder = "Enter API End Point" })
+                                        @Html.ValidationMessageFor(o => o.APIEndPoint, "", new { @class = "error" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="APIType">Type<span class="text-danger">*</span> </label>
+                                        @Html.DropDownListFor(o => o.Type, ViewBag.APITypeList as SelectList, new { @class = "form-control required" })
+                                        @Html.ValidationMessageFor(o => o.Type, "", new { @class = "error" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="Description">Description</label>
+                                        @Html.TextAreaFor(o => o.Description, new { @class = "form-control excluded", @autocomplete = "off", @placeholder = "Enter Description" })
+                                        @Html.ValidationMessageFor(o => o.Description, "", new { @class = "error" })
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <h1>Authorization</h1>
+                        <fieldset>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="">Authorization <span class="text-danger">*</span> </label>
+                                        @Html.DropDownListFor(o => o.AuthorizationType, ViewBag.APIDataAuthorizationTypeList as SelectList, new { @class = "form-control required", onchange = "fnAuthorizationOnchange();" })
+                                        @Html.ValidationMessageFor(o => o.AuthorizationType, "", new { @class = "error" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 d-none divBasicAuth">
+                                    <div class="form-group">
+                                        <label for="">Username <span class="text-danger">*</span> </label>
+                                        @Html.TextBoxFor(o => o.AuthorizationUsername, new { @class = "form-control required", @maxlength = "50", @autocomplete = "off", @placeholder = "Enter Authorization Username" })
+                                        @Html.ValidationMessageFor(o => o.AuthorizationUsername, "", new { @class = "error" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6 d-none divBasicAuth">
+                                    <div class="form-group">
+                                        <label for="">Password <span class="text-danger">*</span> </label>
+                                        @Html.TextBoxFor(o => o.AuthorizationPassword, new { @class = "form-control required", @maxlength = "50", @autocomplete = "off", @placeholder = "Enter Authorization Password" })
+                                        @Html.ValidationMessageFor(o => o.AuthorizationPassword, "", new { @class = "error" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6 d-none divoAuth">
+                                    <div class="form-group">
+                                        <label for="">Authorization API<span class="text-danger">*</span> </label>
+                                        @Html.DropDownListFor(o => o.AuthorizationOathAPIId, ViewBag.APITemplateList as SelectList, "Select Authorizarion API", new { @class = "form-control required" })
+                                        @Html.ValidationMessageFor(o => o.AuthorizationOathAPIId, "", new { @class = "error" })
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 d-none divoAuth">
+                                    <div class="form-group">
+                                        <label for="">Authorization Token Key<span class="text-danger">*</span> </label>
+                                        @Html.TextBoxFor(o => o.AuthorizationTokenName, new { @class = "form-control required", @maxlength = "50", @autocomplete = "off", @placeholder = "Authorization Token Key" })
+                                        @Html.ValidationMessageFor(o => o.AuthorizationTokenName, "", new { @class = "error" })
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <h1>Input Parameter</h1>
+                        <fieldset>
+                            <div>
+                                <h4>Input Parameter</h4>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="">Type<span class="text-danger">*</span> </label>
+                                            @Html.DropDownListFor(o => o.InputParameterType, ViewBag.InputParamTypeList as SelectList, new { @class = "form-control required", @onchange = "fnOnChangeInputParameterType()" })
+                                            @Html.ValidationMessageFor(o => o.InputParameterType, "", new { @class = "error" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" style="display:none" id="divBodyTypeDD">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="">Body Type<span class="text-danger">*</span> </label>
+                                            @Html.DropDownListFor(o => o.BodyParameterType, ViewBag.InputParamBodyTypeList as SelectList, new { @class = "form-control required" })
+                                            @Html.ValidationMessageFor(o => o.BodyParameterType, "", new { @class = "error" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <h4 class="parameterType" id="parameterType">Query String Parameter</h4>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="">Key<span class="text-danger">*</span> </label>
+                                            @Html.TextBoxFor(o => o.objInputParameter.KeyColumn, new { @class = "form-control", @maxlength = "50", @autocomplete = "off", @placeholder = "Enter Key" })
+                                            @Html.ValidationMessageFor(o => o.objInputParameter.KeyColumn, "", new { @class = "error" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="">Value<span class="text-danger">*</span> </label>
+                                            @Html.TextBoxFor(o => o.objInputParameter.ValueColumn, new { @class = "form-control", @maxlength = "50", @autocomplete = "off", @placeholder = "Enter value" })
+                                            @Html.ValidationMessageFor(o => o.objInputParameter.ValueColumn, "", new { @class = "error" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button class="btn btn-primary btn-sm mr-3 mt-4" type="button" onclick="fnAddInputParameterDetail();"> <i class="fa fa-plus"></i> Add </button>
+                                    </div>
+                                </div>
+                                <div class="">
+                                    <div class="table-responsive">
+                                        <table class="table  table-bordered dataTables" width="100%" id="tblInputParameter">
+                                            <thead>
+                                                <tr>
+                                                    <th width="2.5%">#</th>
+                                                    <th>Key</th>
+                                                    <th>Value</th>
+                                                    <th width="2.5%"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <h1>Out Parameter</h1>
+                        <fieldset>
+                            <div>
+                                <h4>Output Parameter Type</h4>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for=""> Key<span class="text-danger">*</span> </label>
+                                            @Html.TextBoxFor(o => o.objOutputParametere.KeyColumn, new { @class = "form-control", @maxlength = "50", @autocomplete = "off", @placeholder = "Enter Key" , @pattern = "[^\\s]+" })
+                                            @Html.ValidationMessageFor(o => o.objOutputParametere.KeyColumn, "", new { @class = "error" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="">Type<span class="text-danger">*</span> </label>
+                                            @Html.DropDownListFor(o => o.objOutputParametere.Type, ViewBag.OutPutTypeList as SelectList, new { @class = "form-control required" })
+                                            @Html.ValidationMessageFor(o => o.objOutputParametere.Type, "", new { @class = "error" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button class="btn btn-primary btn-sm mr-3 mt-4" type="button" onclick="fnAddOutputParameterDetail();"> <i class="fa fa-plus"></i> Add </button>
+                                    </div>
+                                </div>
+                                <div class="">
+                                    <div class="table-responsive">
+                                        <table class="table  table-bordered dataTables" width="100%" id="tblOutputParameter">
+                                            <thead>
+                                                <tr>
+                                                    <th width="2.5%">#</th>
+                                                    <th>Key</th>
+                                                    <th>Type</th>
+                                                    <th width="2.5%"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/plugins/steps/jquery.steps.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/rowreorder/1.2.7/css/rowReorder.dataTables.min.css" />
+    <style>
+        label.error {
+            color: #ed3245;
+            display: inline-block;
+            margin-left: 5px;
+        }
+
+        .wizard > .steps a, .wizard > .steps a:hover, .wizard > .steps a:active {
+            background: #6fd1bd;
+            color: #fff;
+        }
+
+        .sub-wizard > .steps a, .sub-wizard > .steps a:hover, .sub-wizard > .steps a:active {
+            background: #6fd1bd;
+            color: #fff;
+        }
+    </style>
+}
+
+
+@section Scripts {
+    <environment include="Development">
+        <script src="~/js/APIData/ApiData.js"></script>
+        <script src="~/js/APIData/ApiData.InputParameter.js"></script>
+        <script src="~/js/APIData/ApiData.OutputParameter.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/js/APIData/ApiData.min.js"></script>
+        <script src="~/js/APIData/ApiData.InputParameter.min.js"></script>
+        <script src="~/js/APIData/ApiData.OutputParameter.min.js"></script>
+    </environment>
+
+    <script src="~/js/plugins/steps/jquery.steps.min.js"></script>
+    <script src="~/js/plugins/validate/jquery.validate.min.js"></script>
+    <script src="https://cdn.datatables.net/rowreorder/1.2.7/js/dataTables.rowReorder.min.js"></script>
+}

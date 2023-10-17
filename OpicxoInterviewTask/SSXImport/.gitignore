@@ -1,0 +1,14 @@
+SSXImport.Portal/obj
+SSXImport.WebAPI/obj
+SSXImport.WebAPI/bin
+SSXImport.Portal/bin
+SSXImport.Business/bin/
+SSXImport.Business/obj
+SSXImport.Data/bin/Debug
+SSXImport.Data/bin
+SSXImport.Data/obj
+.vs/
+SSXImport.WebAPI/wwwroot/Document/Template
+SSXImport.WebAPI/wwwroot/LogFiles/
+SSXImport.WebAPI/wwwroot/Document/DataTransfer/
+SSXImport.Portal/wwwroot/LogFiles/

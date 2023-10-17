@@ -1,0 +1,234 @@
+body {
+    font-family: Poppins,Helvetica,sans-serif;
+    background-color: #ffffff;
+    font-size: 12px;
+    color: #303e67;
+    overflow-x: hidden;
+}
+.navbar-minimalize{
+
+}
+/*******BUTTON****/
+.gray-bg, .bg-muted {
+    background-color: #f8f8f8;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #1ab394;
+    border-color: #1ab394;
+}
+
+    .btn-primary:hover, .btn-primary:focus, .btn-primary.focus {
+        background-color: #18a689;
+        border-color: #18a689;
+        color: #FFFFFF;
+    }
+
+    .btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled).active, .show > .btn-primary.dropdown-toggle {
+        color: #fff;
+        background-color: #18a689;
+        border-color: #18a689;
+    }
+
+        .btn-primary:not(:disabled):not(.disabled):active:focus, .btn-primary:not(:disabled):not(.disabled).active:focus, .show > .btn-primary.dropdown-toggle:focus {
+            -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+            box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+        }
+
+.btn-white {
+    color: inherit;
+    background: white;
+    border: 1px solid #e7eaec;
+}
+
+    .btn-white:hover, .btn-white:focus, .btn-white:active, .btn-white.active, .open .dropdown-toggle.btn-white, .btn-white:active:focus, .btn-white:active:hover, .btn-white.active:hover, .btn-white.active:focus {
+        color: inherit;
+        border: 1px solid #d2d2d2;
+    }
+
+    .btn-white:active, .btn-white.active, .open .dropdown-toggle.btn-white {
+        background-image: none;
+    }
+
+    .btn-white:active, .btn-white.active {
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15) inset;
+    }
+/*******BUTTON END****/
+
+/*******TOP HEADER****/
+.navbar-fixed-top, .navbar-static-top {
+    background-color: #fff;
+}
+/*******TOP HEADER END****/
+
+/*******LEFT NAVBAR****/
+.navbar-default {
+    background-color: transparent;
+    border-color: #2f4050;
+    box-shadow: 1px 0px 2px rgb(0, 0, 0, .2);
+}
+
+.nav-header {
+    padding: 9px 25px;
+    background: transparent !important;
+    border-bottom: 1px solid #ffffff;
+}
+
+ul.nav-second-level {
+    background: #ffffff;
+}
+
+.mini-navbar .nav .nav-second-level {
+    background: #f3f6f9;
+}
+
+.special_link.active {
+    border-left: 4px solid #07ff93 !important;
+    background-color: #1ab394;
+}
+
+.navbar-default .special_link a:hover {
+    background: #ffffff !important;
+    color: white;
+}
+
+.navbar-default .nav > li > a:hover, .navbar-default .nav > li > a:focus {
+    background-color: #f3f6f9;
+    color: #1ab394;
+}
+.nav > li > a {
+    color: #6c7293;
+    font-weight: 400;
+    padding: 14px 20px 14px 25px;
+    display: block;
+}
+.nav > li.active {
+    border-left: 4px solid #19aa8d;
+    background: #ffffff;
+}
+.nav > li.active > a {
+    color: #1ab394;
+    font-weight:600;
+}
+.navbar-default .special_link a {
+    background: #f3f6f9;
+    color: #6c7293;
+}
+
+.special_link a:focus {
+    color: #1ab394;
+}
+
+
+.navbar-form-custom .form-group a {
+    background: #2f4050;
+    border: 1px solid #2f4050;
+}
+/*******LEFT NAVBAR END****/
+
+/*******TOP ALERT BADGE****/
+.label-primary, .badge-primary {
+    background-color: #1ab394;
+    color: #FFFFFF;
+}
+
+.label-warning, .badge-warning {
+    background-color: #f8ac59;
+    color: #FFFFFF;
+}
+/*******TOP ALERT BADGE END****/
+
+/*******TOP ALERT BADGE****/
+.text-blue {
+    color: #007bff;
+}
+/*******BOX****/
+.ibox-title {
+   
+    border-color: #e7eaec;
+}
+
+.ibox-content {
+   
+}
+/*******BOX END****/
+
+/*******FORM CONTROLS****/
+label {
+    display: inline-block;
+    margin-bottom: .1rem;
+}
+
+.form-group label {
+    font-weight: 400;
+    color: #6a6a6a;
+}
+
+.form-control, .single-line {
+    background-color: #FFFFFF;
+    border: 1px solid #d4d5d9;
+}
+
+.select2-container--bootstrap4 .select2-selection {
+   
+}
+.select2-container--bootstrap4.select2-container--focus.select2-container--open .select2-selection {
+    border-color: #1ab394!important;
+}
+.form-control:focus, .single-line:focus {
+    border-color: #1ab394;
+}
+/*******FORM CONTROLS END****/
+
+/*******PANEL****/
+.panel-default > .panel-heading {
+    color: #007bff;
+    background-color: #f5f5f5;
+    border-color: #e7eaec;
+}
+/*******PANEL END****/
+
+/******* PROFILE HEADER BG****/
+.contact-header-bg {
+    background-color: #d4f0fe;
+    border-bottom: 1px solid #b1dbef;
+}
+
+.candidate-header-bg {
+    background-color: #fef9d4;
+    border-bottom: 1px solid #d1c989;
+}
+
+.job-header-bg {
+    background-color: #ffe8a3;
+    border-bottom: 1px solid #e3ca7e;
+}
+
+.business-header-bg {
+    background-color: #e9ffc8;
+    border-bottom: 1px solid #c7dba9;
+}
+
+.profile-header .ibox-title {
+    background-color: transparent;
+    border: 0px;
+    padding: 0px 49px 0px 7px;
+    min-height: auto;
+}
+/******* PROFILE HEADER BG END****/
+
+/******* PROFILE TABS****/
+.page-tab .active {
+    border-bottom: 2px solid #1ab394;
+    color: #1ab394 !important;
+    font-weight: bold;
+}
+/******* PROFILE TABS END****/
+
+/******* CONTACT BOX****/
+
+.contact-box.active {
+    border: 2px solid #1ab394;
+}
+/******* CONTACT BOX END****/

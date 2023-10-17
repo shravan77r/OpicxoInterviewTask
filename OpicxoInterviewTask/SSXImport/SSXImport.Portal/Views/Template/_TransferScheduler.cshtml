@@ -1,0 +1,442 @@
+﻿@model SSXImport.Portal.Models.Template
+<div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="ManageTransferScheduleLabel">Transfer Schedule</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12 ">
+                    <form id="frmTransferSchedule">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="">
+                                            Schedule Type
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        @{
+                                            var listTransferSchedule = new List<SelectListItem>();
+                                            listTransferSchedule.Add(new SelectListItem
+                                            {
+                                                Text = "Not Scheduled",
+                                                Value = "1"
+                                            });
+                                            listTransferSchedule.Add(new SelectListItem
+                                            {
+                                                Text = "Scheduled",
+                                                Value = "2"
+                                            });
+                                        }
+                                        @Html.DropDownListFor(o => o.ScheduleType, new SelectList(listTransferSchedule, "Value", "Text"), new { @class = "form-control required" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6 schedulerFields d-none">
+                                    <div class="form-group" style="margin-top: 1.75em">
+                                        <div class="icheck-primary d-inline">
+                                            @Html.CheckBoxFor(o => o.IsScheduleEnabled)
+                                            <label for="IsScheduleEnabled">
+                                                Is Enabled
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 schedulerFields d-none">
+                                    <div class="form-group">
+                                        <label for="">
+                                            Frequency
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        @{
+                                            var listFrequency = new List<SelectListItem>();
+                                            listFrequency.Add(new SelectListItem
+                                            {
+                                                Text = "Daily",
+                                                Value = "1"
+                                            });
+                                            listFrequency.Add(new SelectListItem
+                                            {
+                                                Text = "Weekly",
+                                                Value = "2"
+                                            });
+                                            listFrequency.Add(new SelectListItem
+                                            {
+                                                Text = "Monthly",
+                                                Value = "3"
+                                            });
+                                        }
+                                        @Html.DropDownListFor(o => o.FrequencyType, new SelectList(listFrequency, "Value", "Text"), new { @class = "form-control required" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6 schedulerFields schedulerFieldsDaily d-none">
+                                    <div class="form-group">
+                                        <label for="">
+                                            Recurs Every day(s)
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        @Html.TextBoxFor(o => o.FrequencyRecurrsDailyEveryDay, new { @class = "form-control required", @max = "30", @type = "number", @autocomplete = "off" })
+                                        @Html.ValidationMessageFor(o => o.FrequencyRecurrsDailyEveryDay, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6 schedulerFields schedulerFieldsWeekly d-none">
+                                    <div class="form-group">
+                                        <label for="">
+                                            Recurs Every week(s)
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        @Html.TextBoxFor(o => o.FrequencyRecurrsWeeklyEveryWeek, new { @class = "form-control required numI", @max = "4", @type = "number", @autocomplete = "off" })
+                                        @Html.ValidationMessageFor(o => o.FrequencyRecurrsWeeklyEveryWeek, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6 schedulerFields schedulerFieldsWeekly d-none">
+                                    <div class="form-group">
+                                        <div class="icheck-primary d-inline">
+                                            @Html.CheckBoxFor(o => o.IsFrequencyRecurrsWeeklyOnMonday)
+                                            <label for="IsFrequencyRecurrsWeeklyOnMonday">
+                                                Monday
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 schedulerFields schedulerFieldsWeekly d-none">
+                                    <div class="form-group">
+                                        <div class="icheck-primary d-inline">
+                                            @Html.CheckBoxFor(o => o.IsFrequencyRecurrsWeeklyOnTuesday)
+                                            <label for="IsFrequencyRecurrsWeeklyOnTuesday">
+                                                Tuesday
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 schedulerFields schedulerFieldsWeekly d-none">
+                                    <div class="form-group">
+                                        <div class="icheck-primary d-inline">
+                                            @Html.CheckBoxFor(o => o.IsFrequencyRecurrsWeeklyOnWednesday)
+                                            <label for="IsFrequencyRecurrsWeeklyOnWednesday">
+                                                Wednesday
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 schedulerFields schedulerFieldsWeekly d-none">
+                                    <div class="form-group">
+                                        <div class="icheck-primary d-inline">
+                                            @Html.CheckBoxFor(o => o.IsFrequencyRecurrsWeeklyOnThursday)
+                                            <label for="IsFrequencyRecurrsWeeklyOnThursday">
+                                                Thursday
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 schedulerFields schedulerFieldsWeekly d-none">
+                                    <div class="form-group">
+                                        <div class="icheck-primary d-inline">
+                                            @Html.CheckBoxFor(o => o.IsFrequencyRecurrsWeeklyOnFriday)
+                                            <label for="IsFrequencyRecurrsWeeklyOnFriday">
+                                                Friday
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 schedulerFields schedulerFieldsWeekly d-none">
+                                    <div class="form-group">
+                                        <div class="icheck-primary d-inline">
+                                            @Html.CheckBoxFor(o => o.IsFrequencyRecurrsWeeklyOnSaturday)
+                                            <label for="IsFrequencyRecurrsWeeklyOnSaturday">
+                                                Saturday
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 schedulerFields schedulerFieldsWeekly d-none">
+                                    <div class="form-group">
+                                        <div class="icheck-primary d-inline">
+                                            @Html.CheckBoxFor(o => o.IsFrequencyRecurrsWeeklyOnSunday)
+                                            <label for="IsFrequencyRecurrsWeeklyOnSunday">
+                                                Sunday
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 schedulerFields schedulerFieldsMonthly d-none">
+                                    <div class="form-group">
+                                        <label for="">
+                                            Monthly Type
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        @{
+                                            var listMonthlyType = new List<SelectListItem>();
+                                            listMonthlyType.Add(new SelectListItem
+                                            {
+                                                Text = "Day",
+                                                Value = "1",
+                                            });
+                                            listMonthlyType.Add(new SelectListItem
+                                            {
+                                                Text = "The",
+                                                Value = "2"
+                                            });
+                                        }
+                                        @Html.DropDownListFor(o => o.FrequencyRecurrsMonthlyType, new SelectList(listMonthlyType, "Value", "Text"), new { @class = "form-control required" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6 schedulerFields schedulerFieldsMonthly schedulerFieldsMonthlyDay d-none">
+                                    <div class="form-group">
+                                        <label for="">
+                                            Day Of Month
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        @{
+                                            var listDayOfMonth = new List<SelectListItem>();
+                                            for (int i = 1; i <= 31; i++)
+                                            {
+                                                listDayOfMonth.Add(new SelectListItem
+                                                {
+                                                    Text = i.ToString(),
+                                                    Value = i.ToString(),
+                                                });
+                                            }
+                                        }
+                                        @Html.DropDownListFor(o => o.FrequencyRecurrsMonthtlyDayOfMonth, new SelectList(listDayOfMonth, "Value", "Text"), new { @class = "form-control required" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6 schedulerFields schedulerFieldsMonthly schedulerFieldsMonthlyThe d-none">
+                                    <div class="form-group">
+                                        <label for="">
+                                            Day Of Week Occurance
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        @{
+                                            var listDayOfWeekOccurance = new List<SelectListItem>();
+                                            listDayOfWeekOccurance.Add(new SelectListItem
+                                            {
+                                                Text = "First",
+                                                Value = "1",
+                                            });
+                                            listDayOfWeekOccurance.Add(new SelectListItem
+                                            {
+                                                Text = "Second",
+                                                Value = "2",
+                                            });
+                                            listDayOfWeekOccurance.Add(new SelectListItem
+                                            {
+                                                Text = "Third",
+                                                Value = "3",
+                                            });
+                                            listDayOfWeekOccurance.Add(new SelectListItem
+                                            {
+                                                Text = "Forth",
+                                                Value = "4",
+                                            });
+                                            listDayOfWeekOccurance.Add(new SelectListItem
+                                            {
+                                                Text = "Fifth",
+                                                Value = "5",
+                                            });
+                                        }
+                                        @Html.DropDownListFor(o => o.FrequencyRecurrsMonthtlyDayOfWeekOccurance, new SelectList(listDayOfWeekOccurance, "Value", "Text"), new { @class = "form-control required" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6 schedulerFields schedulerFieldsMonthly schedulerFieldsMonthlyThe d-none">
+                                    <div class="form-group">
+                                        <label for="">
+                                            Day Of Week
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        @{
+                                            var listDays = new List<SelectListItem>();
+
+                                            listDays.Add(new SelectListItem
+                                            {
+                                                Text = "Monday",
+                                                Value = "1",
+                                            });
+                                            listDays.Add(new SelectListItem
+                                            {
+                                                Text = "Tuesday",
+                                                Value = "2",
+                                            });
+                                            listDays.Add(new SelectListItem
+                                            {
+                                                Text = "Wednesday",
+                                                Value = "3",
+                                            });
+                                            listDays.Add(new SelectListItem
+                                            {
+                                                Text = "Thursday",
+                                                Value = "4",
+                                            });
+                                            listDays.Add(new SelectListItem
+                                            {
+                                                Text = "Friday",
+                                                Value = "5",
+                                            });
+                                            listDays.Add(new SelectListItem
+                                            {
+                                                Text = "Saturday",
+                                                Value = "6",
+                                            });
+                                            listDays.Add(new SelectListItem
+                                            {
+                                                Text = "Sunday",
+                                                Value = "7",
+                                            });
+                                        }
+                                        @Html.DropDownListFor(o => o.FrequencyRecurrsMonthtlyDayOfWeek, new SelectList(listDays, "Value", "Text"), new { @class = "form-control required" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6 schedulerFields schedulerFieldsMonthly d-none">
+                                    <div class="form-group">
+                                        <label for="">
+                                            Recurs Every Month(s)
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        @Html.TextBoxFor(o => o.FrequencyRecurrsMonthtlyEveryMonth, new { @class = "form-control required numI", @max = "12", @type = "number", @autocomplete = "off" })
+                                        @Html.ValidationMessageFor(o => o.FrequencyRecurrsMonthtlyEveryMonth, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <hr class="schedulerFields d-none" />
+                            <div class="row schedulerFields d-none">
+                                <div class="col-md-6 schedulerFields d-none">
+                                    <div class="form-group">
+                                        <label for="">
+                                            Daily Frequency Type
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        @{
+                                            var listDailyFrequencyType = new List<SelectListItem>();
+                                            listDailyFrequencyType.Add(new SelectListItem
+                                            {
+                                                Text = "Once",
+                                                Value = "1",
+                                            });
+                                            listDailyFrequencyType.Add(new SelectListItem
+                                            {
+                                                Text = "Every",
+                                                Value = "2"
+                                            });
+                                        }
+                                        @Html.DropDownListFor(o => o.DailyFrequencyType, new SelectList(listDailyFrequencyType, "Value", "Text"), new { @class = "form-control required" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6 schedulerFields schedulerFieldsDailyFrequencyOnce d-none">
+                                    <div class="form-group">
+                                        <label for="">
+                                            Occurs Once at
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        @Html.TextBoxFor(o => o.DailyFrequencyTime, new { @class = "form-control required timepicker", @autocomplete = "off" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6 schedulerFields schedulerFieldsDailyFrequencyEvery d-none">
+                                    <div class="form-group">
+                                        <label for="">
+                                            Occurs Every
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                @{
+                                                    var listDailyOccuranceType = new List<SelectListItem>();
+                                                    listDailyOccuranceType.Add(new SelectListItem
+                                                    {
+                                                        Text = "Hours",
+                                                        Value = "1",
+                                                    });
+                                                    listDailyOccuranceType.Add(new SelectListItem
+                                                    {
+                                                        Text = "Minutes",
+                                                        Value = "2"
+                                                    });
+                                                    listDailyOccuranceType.Add(new SelectListItem
+                                                    {
+                                                        Text = "Seconds",
+                                                        Value = "3"
+                                                    });
+                                                }
+                                                @Html.DropDownListFor(o => o.DailyFrequencyOccuranceType, new SelectList(listDailyOccuranceType, "Value", "Text"), new { @class = "form-control required" })
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    @Html.TextBoxFor(o => o.DailyFrequencyOccuranceEvery, new { @class = "form-control required", @max = "60", @type = "number" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 schedulerFields schedulerFieldsDailyFrequencyEvery d-none">
+                                    <div class="form-group">
+                                        <label for="">
+                                            Occurs Start Time
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        @Html.TextBoxFor(o => o.DailyFrequencyOccuranceStartTime, new { @class = "form-control required timepicker", @autocomplete = "off" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6 schedulerFields schedulerFieldsDailyFrequencyEvery d-none">
+                                    <div class="form-group">
+                                        <label for="">
+                                            Occurs End Time
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        @Html.TextBoxFor(o => o.DailyFrequencyOccuranceEndTime, new { @class = "form-control required timepicker", @autocomplete = "off" })
+                                    </div>
+                                </div>
+                            </div>
+                            <hr class="schedulerFields d-none" />
+                            <div class="row schedulerFields d-none">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="">
+                                            Duration Start Date
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="input-group date">
+                                            @Html.TextBoxFor(o => o.DurationStartDate, new { @class = "form-control required", @autocomplete = "off" })
+                                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                        </div>
+                                    </div>
+                                    @*<div class="input-group date">
+                                            <input type="text" class="form-control" value="03/04/2014"> <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                        </div>*@
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group" style="margin-top: 1.75em">
+                                        <div class="icheck-primary d-inline">
+                                            @Html.CheckBoxFor(o => o.IsDurationEndDateSpecified, new { @onclick = "fnChangeDisplayDurationEndDate();" })
+                                            <label for="IsDurationEndDateSpecified">
+                                                Duration End Date Specified
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 d-none durationEndDate">
+                                    <div class="form-group">
+                                        <label for="">
+                                            Duration End Date
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="input-group date">
+                                            @Html.TextBoxFor(o => o.DurationEndDate, new { @class = "form-control required", @autocomplete = "off" })
+                                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-white" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" id="btnSave" onclick="fnChangeInTransferSchedule()">Save</button>
+        </div>
+    </div>
+</div>
+
